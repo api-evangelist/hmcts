@@ -1,0 +1,535 @@
+# x-archived-from: hmcts-results-validation-service-openapi.yml
+# x-archived-on: 2026-10-09
+openapi: 3.0.0
+
+info:
+  title: Results Validation Service API
+  description: API for validating draft hearing results against declarative, programmatic, and LLM-assisted rules
+  version: 0.1.0
+  contact:
+    email: no-reply@hmcts.com
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+
+paths:
+  /:
+    get:
+      operationId: getRoot
+      tags:
+        - root
+      summary: Root endpoint
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Hello
+
+  /api/validation/validate:
+    post:
+      operationId: validateDraftResults
+      tags:
+        - validation
+      summary: Validate draft hearing results
+      description: Validates draft results against all enabled validators and returns unified response with errors and warnings
+      parameters:
+        - $ref: '#/components/parameters/CjscppuidHeader'
+        - $ref: '#/components/parameters/CppclientcorrelationidHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DraftValidationRequest'
+      responses:
+        '200':
+          description: Validation completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DraftValidationResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/validation/rules:
+    get:
+      operationId: listValidationRules
+      tags:
+        - validation-rules
+      summary: List all validation rules
+      description: Returns all registered validation rules across all rule types
+      parameters:
+        - $ref: '#/components/parameters/CjscppuidHeader'
+        - $ref: '#/components/parameters/CppclientcorrelationidHeader'
+      responses:
+        '200':
+          description: List of validation rules
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleListResponse'
+
+  /api/validation/rules/{ruleId}:
+    get:
+      operationId: getValidationRuleById
+      tags:
+        - validation-rules
+      summary: Get a validation rule by ID
+      description: Returns full details for a single validation rule
+      parameters:
+        - in: path
+          name: ruleId
+          required: true
+          schema:
+            type: string
+          description: Rule identifier (e.g. DR-SENT-001)
+        - $ref: '#/components/parameters/CjscppuidHeader'
+        - $ref: '#/components/parameters/CppclientcorrelationidHeader'
+      responses:
+        '200':
+          description: Rule details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleDetailResponse'
+        '404':
+          description: Rule not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      operationId: updateValidationRule
+      tags:
+        - validation-rules
+      summary: Enable or disable a validation rule
+      description: Updates the enabled status and/or severity of a validation rule identified by its ID
+      parameters:
+        - in: path
+          name: ruleId
+          required: true
+          schema:
+            type: string
+          description: Rule identifier (e.g. DR-SENT-001)
+        - $ref: '#/components/parameters/CjscppuidHeader'
+        - $ref: '#/components/parameters/CppclientcorrelationidHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRuleRequest'
+      responses:
+        '200':
+          description: Rule updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleDetailResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Rule not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  parameters:
+    CjscppuidHeader:
+      in: header
+      name: CJSCPPUID
+      required: true
+      schema:
+        type: string
+      description: User identifier for CP authentication
+
+    CppclientcorrelationidHeader:
+      in: header
+      name: CPPCLIENTCORRELATIONID
+      required: false
+      schema:
+        type: string
+      description: Session-level correlation ID from UI
+
+  schemas:
+    DraftValidationRequest:
+      type: object
+      required:
+        - hearingId
+        - hearingDay
+        - courtType
+        - resultLines
+        - defendants
+        - offences
+      properties:
+        hearingId:
+          type: string
+          description: Hearing identifier
+        caseId:
+          type: string
+          description: Case identifier (optional, for log correlation)
+        hearingDay:
+          type: string
+          format: date
+          description: Date of hearing
+        courtType:
+          type: string
+          enum:
+            - MAGISTRATES
+            - CROWN
+            - YOUTH
+          description: Court type
+        resultLines:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResultLineDto'
+        defendants:
+          type: array
+          items:
+            $ref: '#/components/schemas/DefendantDto'
+        offences:
+          type: array
+          items:
+            $ref: '#/components/schemas/OffenceDto'
+
+    Prompt:
+      type: object
+      required:
+        - promptRef
+        - promptValue
+      properties:
+        promptRef:
+          type: string
+          description: >-
+            Identifies the data field this prompt captures (e.g. endDate,
+            endDateOfTagging).
+        promptValue:
+          type: string
+          description: >-
+            The raw string value entered for this prompt.
+
+    ResultLineDto:
+      type: object
+      required:
+        - resultLineId
+        - shortCode
+        - label
+        - defendantId
+        - offenceId
+      properties:
+        resultLineId:
+          type: string
+          description: Result line identifier
+        shortCode:
+          type: string
+          description: Result code (e.g. IMP, EMONE)
+        label:
+          type: string
+          description: Display label
+        defendantId:
+          type: string
+          description: Reference to defendant
+        offenceId:
+          type: string
+          description: Reference to offence
+        isConcurrent:
+          type: boolean
+          description: Whether this sentence is concurrent with another
+        consecutiveToOffence:
+          type: string
+          description: Offence identifier that this sentence is consecutive to
+        category:
+          type: string
+          enum: [A, I, F]
+          description: >-
+            Closed enum identifying the role of this result line on the offence:
+            A = Ancillary (e.g. adjournment, listing); I = Intermediary
+            (e.g. plea, hearing-internal); F = Final (the line that makes
+            the offence inactive).
+        prompts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Prompt'
+          description: >-
+            Structured data fields captured alongside the result line.
+
+    DefendantDto:
+      type: object
+      required:
+        - defendantId
+        - firstName
+        - lastName
+      properties:
+        defendantId:
+          type: string
+          description: Defendant identifier
+        firstName:
+          type: string
+          description: Defendant first name
+        lastName:
+          type: string
+          description: Defendant last name
+        masterDefendantId:
+          type: string
+          description: Master defendant identifier for linked cases (same person across cases)
+        dateOfBirth:
+          type: string
+          format: date
+          description: >-
+            Defendant's date of birth. Optional during the transition period while
+            callers are updated to populate it.
+
+    OffenceDto:
+      type: object
+      required:
+        - offenceId
+        - offenceCode
+        - offenceTitle
+      properties:
+        offenceId:
+          type: string
+          description: Offence identifier
+        offenceCode:
+          type: string
+          description: Offence code (e.g. TH68001)
+        offenceTitle:
+          type: string
+          description: Offence description
+        hasActiveElectronicMonitoring:
+          type: boolean
+          description: Active electronic monitoring indicator
+        orderIndex:
+          type: integer
+          description: Offence order index (count number) for display in validation messages
+        caseUrn:
+          type: string
+          description: Case URN (prosecution case reference) for identifying which case this offence belongs to
+        hasExistingCtlRecord:
+          type: boolean
+          description: >-
+            True if a Custody Time Limit record is already associated with this offence from a
+            previous hearing. When true the CTL missing check (DR-CTL-001) is suppressed.
+        isConvicted:
+          type: boolean
+          description: >-
+            True if this offence is convicted (guilty plea, finding of guilt, or a recorded date
+            of conviction). When true the CTL missing check (DR-CTL-001) is suppressed.
+
+    DraftValidationResponse:
+      type: object
+      properties:
+        validationId:
+          type: string
+          description: Unique validation request identifier
+        timestamp:
+          type: string
+          format: date-time
+          description: Validation execution timestamp
+        mode:
+          type: string
+          description: Validation mode (e.g. advisory)
+        rulesEvaluated:
+          type: array
+          items:
+            type: string
+          description: Rule IDs that were evaluated
+        isValid:
+          type: boolean
+          description: Whether validation passed (no errors)
+        errors:
+          $ref: '#/components/schemas/ValidationErrors'
+        warnings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationIssue'
+        processingTimeMs:
+          type: integer
+          description: Processing time in milliseconds
+
+    ValidationErrors:
+      type: object
+      description: Container for validation errors, combining human-readable messages with structured validation issues
+      required:
+        - errorMessages
+      properties:
+        errorMessages:
+          type: array
+          items:
+            type: string
+          description: Top-level human-readable summaries of the validation errors
+        validationIssues:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationIssue'
+          description: Structured validation issues with rule details and affected entities
+
+    ValidationIssue:
+      type: object
+      description: >
+        Represents a single validation issue raised against a hearing result.
+        Each issue is scoped to either the OFFENCE or DEFENDANT level, indicated by validationLevel.
+        Issues with severity ERROR must always have validationLevel OFFENCE and populate affectedOffences.
+        Issues with severity WARNING may have validationLevel OFFENCE or DEFENDANT.
+        When validationLevel is OFFENCE, affectedOffences lists every offence the issue applies to,
+        each carrying its own per-offence message. When validationLevel is DEFENDANT,
+        affectedDefendants lists every defendant the issue applies to, each carrying its own
+        per-defendant message.
+      properties:
+        ruleId:
+          type: string
+          description: Rule identifier
+        severity:
+          type: string
+          enum:
+            - ERROR
+            - WARNING
+          description: "Issue severity. ERROR issues are always at OFFENCE level (validationLevel must be OFFENCE). WARNING issues may be at either OFFENCE or DEFENDANT level."
+        affectedResultCodes:
+          type: array
+          items:
+            type: string
+          description: Affected result codes
+        affectedOffences:
+          type: array
+          items:
+            $ref: '#/components/schemas/AffectedOffence'
+          description: Populated when validationLevel is OFFENCE. Each entry identifies an offence the issue applies to, with a per-offence message. Always populated for ERROR severity issues.
+        affectedDefendants:
+          type: array
+          items:
+            $ref: '#/components/schemas/AffectedDefendant'
+          description: Populated when validationLevel is DEFENDANT. Each entry identifies a defendant the issue applies to, with a per-defendant message. Only applicable to WARNING severity issues.
+        validationLevel:
+          type: string
+          enum:
+            - OFFENCE
+            - DEFENDANT
+          description: "Scopes the issue to either offence or defendant level. Must be OFFENCE when severity is ERROR. Determines whether affectedOffences or affectedDefendants is populated."
+
+    AffectedDefendant:
+      type: object
+      description: A defendant affected by a validation issue, including a specific message for that defendant
+      required:
+        - defendantId
+        - message
+      properties:
+        defendantId:
+          type: string
+          description: Defendant identifier
+        message:
+          type: string
+          description: Human-readable message describing why this defendant is affected by the validation issue
+
+    AffectedOffence:
+      type: object
+      description: An offence affected by a validation issue, including a specific message for that offence
+      required:
+        - offenceId
+        - message
+      properties:
+        offenceId:
+          type: string
+          description: Offence identifier
+        offenceTitle:
+          type: string
+          description: Offence title
+        message:
+          type: string
+          description: Human-readable message describing why this offence is affected by the validation issue
+
+    RuleListResponse:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: Total number of rules
+        enabledCount:
+          type: integer
+          description: Number of enabled rules
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/RuleDetailResponse'
+          description: List of rule summaries
+
+    RuleDetailResponse:
+      type: object
+      required:
+        - ruleId
+        - enabled
+      properties:
+        ruleId:
+          type: string
+          description: Rule identifier
+        title:
+          type: string
+          description: Rule display title
+        description:
+          type: string
+          description: Rule description
+        priority:
+          type: integer
+          description: Rule priority/order
+        severity:
+          type: string
+          enum:
+            - ERROR
+            - WARNING
+          description: Default severity
+        enabled:
+          type: boolean
+          description: Whether rule is currently active
+
+    UpdateRuleRequest:
+      type: object
+      description: >
+        At least one field must be provided. Only supplied fields are updated;
+        omitted fields are left unchanged.
+      properties:
+        enabled:
+          type: boolean
+          description: Whether the rule should be active
+        severity:
+          type: string
+          enum:
+            - ERROR
+            - WARNING
+          description: >
+            Severity ceiling for the rule. Caps the rule's condition severities
+            downward (e.g. an ERROR condition is reduced to WARNING) but never
+            promotes them above their configured severity. Setting WARNING stops
+            the rule from blocking shares; setting ERROR leaves each condition at
+            its configured severity.
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Machine-readable error code
+        message:
+          type: string
+          description: Human-readable error message
+        details:
+          type: object
+          additionalProperties: true
+          description: Additional error context
+        timestamp:
+          type: string
+          format: date-time
+        traceId:
+          type: string
+          description: Unique identifier for error tracing

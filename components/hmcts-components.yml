@@ -1,0 +1,18 @@
+generated: '2026-10-09'
+method: searched
+source: https://registry.npmjs.org/-/v1/search?text=%40hmcts
+name: HM Courts & Tribunals Service UI Components
+families:
+- family: case-management
+  description: Angular Case UI Toolkit for Core Case Data.
+  package: '@hmcts/ccd-case-ui-toolkit'
+  url: https://github.com/hmcts/ccd-case-ui-toolkit
+- family: payments
+  description: Angular web component for displaying payments returned from ccpay api.
+  package: '@hmcts/ccpay-web-component'
+  url: https://github.com/hmcts/ccpay-web-component
+- family: documents
+  description: Media Viewer (rpx-xui-media-viewer).
+  package: '@hmcts/media-viewer'
+  url: https://github.com/hmcts/rpx-xui-media-viewer
+loaders: []

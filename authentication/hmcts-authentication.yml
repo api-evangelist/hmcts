@@ -1,0 +1,25 @@
+generated: '2026-10-09'
+method: derived
+source: openapi/hmcts-crime-hearing-results-document-subscription-openapi.yml
+summary:
+  types:
+  - apiKey
+  - http
+  api_key_in:
+  - header
+schemes:
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  sources:
+  - openapi/hmcts-crime-hearing-results-document-subscription-openapi.yml
+- name: subscriptionKey
+  type: apiKey
+  in: header
+  parameter: Ocp-Apim-Subscription-Key
+  description: Subscription key for API access
+  sources:
+  - openapi/hmcts-crime-hearing-results-document-subscription-openapi.yml
+docs: https://hmcts.github.io/standards/standards/authentication-and-authorization.html
+docs_note: 'HMCTS engineering standard: "CFT services should use OpenID Connect with CFT IDAM for user authentication." Use the authorization code flow (PKCE where supported) for browser users, client credentials only for service-to-service. No saved contract declares an openIdConnect scheme.'

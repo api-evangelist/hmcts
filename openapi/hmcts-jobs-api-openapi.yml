@@ -1,0 +1,213 @@
+openapi: 3.2.0
+info:
+  title: Hmcts Jobs API
+  version: '@version@'
+  contact:
+    name: HMCTS AppReg Team
+    url: https://github.com/hmcts/appreg-api
+  description: 'Operations tagged jobs across 2 of this provider''s published API definitions: appreg-api-openapi.yaml, hmcts-applications-register-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: /
+tags:
+- description: Background job operations for asynchronous tasks (polling status across all job types).
+  name: Jobs
+paths:
+  /jobs/{jobId}:
+    get:
+      description: Returns the current status and details of a background job.
+      operationId: getJobStatusById
+      parameters:
+      - description: The unique identifier of the job.
+        example: 9f7b2a35-57ac-4a1c-9c41-83b6c8157af4
+        in: path
+        name: jobId
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.hmcts.appreg.v1+json:
+              schema:
+                $ref: '#/components/schemas/job-acknowledgement'
+          description: Job status retrieved successfully.
+          headers:
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              example: Accept
+              schema:
+                type: string
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '404':
+          content:
+            application/problem+json:
+              examples:
+                missing:
+                  value:
+                    type: https://errors.hmcts.net/appreg/not-found
+                    title: Not Found
+                    status: 404
+                    detail: Result code with id=123 was not found
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: The requested resource was not found.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Get the status of a background job
+      tags:
+      - Jobs
+    servers:
+    - url: /
+components:
+  schemas:
+    job-acknowledgement:
+      additionalProperties: false
+      description: Acknowledgement returned when a background job is created.
+      properties:
+        id:
+          description: Unique identifier for the job, in UUID v4 format.
+          example: 9f7b2a35-57ac-4a1c-9c41-83b6c8157af4
+          format: uuid
+          type: string
+        type:
+          $ref: '#/components/schemas/job-type'
+        status:
+          $ref: '#/components/schemas/job-status'
+        createdCount:
+          description: 'Number of applications imported by this job, excluding the CSV header and including subsequently soft-deleted applications. Available only when polling a completed BULK_UPLOAD_ENTRIES job; omitted from all other responses. Counted from retained job-to-application mappings, not the current list size.
+
+            '
+          example: 12
+          format: int64
+          minimum: 0
+          type: integer
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
+        mainFeeTotal:
+          description: 'Current main fees in GBP for non-deleted applications created by this upload, regardless of payment or remission status. Available only when polling a completed BULK_UPLOAD_ENTRIES job; zero when no applicable fees remain. Calculated on read, so later changes to applications or associated fees can change this value. Omitted from all other responses.
+
+            '
+          example: 120.5
+          type: number
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
+        offsiteFeeTotal:
+          description: 'Current applicable offsite fees in GBP for non-deleted applications created by this upload, regardless of payment or remission status. Available only when polling a completed BULK_UPLOAD_ENTRIES job; zero when no applicable fees remain. Calculated on read, not an upload-time snapshot. Omitted from all other responses.
+
+            '
+          example: 30.25
+          type: number
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
+        totalFeeValue:
+          description: 'Sum of mainFeeTotal and offsiteFeeTotal in GBP. Available only when polling a completed BULK_UPLOAD_ENTRIES job. Zero when no applicable fees remain; calculated on read. Omitted from all other responses.
+
+            '
+          example: 150.75
+          type: number
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
+        error_description:
+          description: 'Details of a failed job. Bulk-upload validation failures may include actionable input errors; unexpected bulk-upload processing failures use a generic message and identify the job reference to quote to support.
+
+            '
+          type: string
+      required:
+      - id
+      - status
+      - type
+      type: object
+    job-status:
+      description: The status of the job being polled by the user.
+      enum:
+      - RECEIVED
+      - VALIDATING
+      - PROCESSING
+      - FAILED
+      - COMPLETED
+      example: RECEIVED
+      type: string
+    problem:
+      description: RFC 9457/7807 problem details.
+      properties:
+        type:
+          description: Problem type identifier (URI).
+          example: https://errors.hmcts.net/appreg/bad-request
+          format: uri
+          type: string
+        title:
+          description: Short, human-readable summary.
+          example: Invalid request parameters
+          type: string
+        status:
+          description: HTTP status code.
+          example: 400
+          format: int32
+          type: integer
+        detail:
+          description: Human-readable explanation specific to this occurrence.
+          example: startDateFrom must be on or before startDateTo
+          type: string
+        instance:
+          description: URI reference to the specific occurrence (if applicable).
+          example: urn:request:2f9c3d8a-1b3a-4a1e-9b7f-6b2a6a0a2b2f
+          format: uri
+          type: string
+        correlationId:
+          description: Server-side correlation ID for tracing.
+          example: 3e1a2c95a7d84a5fb3e1a2c95a7d84a5
+          type: string
+      required:
+      - status
+      - title
+      - type
+      type: object
+    job-type:
+      description: The type of the job being polled by the user.
+      enum:
+      - ACTIVITY_AUDIT_REPORT
+      - FEES_REPORT
+      - LIST_MAINTENANCE_REPORT
+      - SEARCH_WARRANTS_REPORT
+      - WORKLOAD_REPORT
+      - DURATION_REPORT
+      - PRIVATE_PROSECUTORS_INDEX_REPORT
+      - BULK_UPLOAD_ENTRIES
+      example: FEES_REPORT
+      type: string
+x-refined-from:
+- appreg-api-openapi.yaml
+- hmcts-applications-register-openapi.yml

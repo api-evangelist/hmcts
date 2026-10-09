@@ -1,0 +1,274 @@
+openapi: 3.2.0
+info:
+  title: Hmcts Display API
+  version: 0.0.1
+  description: 'Operations tagged Display across 2 of this provider''s published API definitions: ccd-data-store-definition.yaml, hmcts-core-case-data-definition-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://core-case-data.common-components.reform/api
+tags:
+- name: Display
+paths:
+  /display/tab-structure/{id}:
+    get:
+      summary: Fetch a Case Tab Collection for a given Case Type
+      description: Returns the schema of a single case type.
+      parameters:
+      - name: id
+        in: path
+        description: Case Type ID
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: A Case Tab Collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseTabCollection'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Display
+      operationId: getDisplayTabStructureById
+      x-operation-id-source: derived
+    servers:
+    - url: https://core-case-data.common-components.reform/api
+  /display/work-basket-definition/{id}:
+    get:
+      summary: Fetch the UI definition for the work basket for a given Case Type
+      parameters:
+      - name: id
+        in: path
+        description: Case Type ID
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Work Basket Result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkBasketResult'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Display
+      operationId: getDisplayWorkBasketDefinitionById
+      x-operation-id-source: derived
+    servers:
+    - url: https://core-case-data.common-components.reform/api
+  /display/search-input-definition/{id}:
+    get:
+      summary: Fetch the UI definition for the search inputs for a given Case Type
+      parameters:
+      - name: id
+        in: path
+        description: Case Type ID
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: A Search input definition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchInputDefinition'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Display
+      operationId: getDisplaySearchInputDefinitionById
+      x-operation-id-source: derived
+    servers:
+    - url: https://core-case-data.common-components.reform/api
+  /display/search-result-definition/{id}:
+    get:
+      summary: Fetch the UI definition for the search result fields for a given Case Type
+      parameters:
+      - name: id
+        in: path
+        description: Case Type ID
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: A Search result definition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResultDefinition'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Display
+      operationId: getDisplaySearchResultDefinitionById
+      x-operation-id-source: derived
+    servers:
+    - url: https://core-case-data.common-components.reform/api
+components:
+  schemas:
+    SearchInputFields:
+      type: object
+      properties:
+        case_type_id:
+          type: string
+        case_field_id:
+          type: string
+        label:
+          type: string
+        order:
+          type: integer
+          format: int32
+    CaseTypeTabField:
+      type: object
+      properties:
+        case_field:
+          $ref: '#/components/schemas/CaseField'
+        order:
+          type: integer
+          format: int32
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        fields:
+          type: string
+    CaseTypeTab:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        order:
+          type: integer
+          format: int32
+        tab_fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseTypeTabField'
+    CaseTabCollection:
+      type: object
+      properties:
+        case_type_id:
+          type: string
+          description: Unique identifier for a Case Type.
+        channels:
+          type: array
+          description: The channels this tab is targetted at
+          items:
+            type: string
+        tabs:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseTypeTab'
+      required:
+      - case_type_id
+      - tabs
+    WorkBasketResult:
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkBasketResultFields'
+    SearchInputDefinition:
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchInputFields'
+    SearchResultsFields:
+      type: object
+      properties:
+        case_type_id:
+          type: string
+        case_field_id:
+          type: string
+        label:
+          type: string
+        order:
+          type: integer
+          format: int32
+    FieldType:
+      type: object
+      properties:
+        name:
+          type: string
+    CaseField:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The id of the case field
+        case_type_id:
+          type: string
+          description: Foriegn key to the case type as fields should not work across
+        label:
+          type: string
+        hint_text:
+          type: string
+        field_type:
+          $ref: '#/components/schemas/FieldType'
+        hidden:
+          type: boolean
+        validation_expr:
+          type: string
+        security_label:
+          type: string
+          description: Gov security level of the data (official, top secret etc)
+        live_from:
+          type: string
+        live_until:
+          type: string
+      required:
+      - id
+      - label
+      - field_type
+    SearchResultDefinition:
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchResultsFields'
+    WorkBasketResultFields:
+      type: object
+      properties:
+        case_type_id:
+          type: string
+        case_field_id:
+          type: string
+        label:
+          type: string
+        order:
+          type: integer
+          format: int32
+x-refined-from:
+- ccd-data-store-definition.yaml
+- hmcts-core-case-data-definition-openapi.yml

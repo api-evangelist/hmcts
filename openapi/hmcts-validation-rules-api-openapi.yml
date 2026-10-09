@@ -1,0 +1,196 @@
+openapi: 3.2.0
+info:
+  title: Hmcts Validation Rules API
+  version: 0.1.0
+  contact:
+    email: no-reply@hmcts.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  description: 'Operations tagged validation-rules across 2 of this provider''s published API definitions: api-cp-crime-hearing-results-validator-openapi-spec.yml, hmcts-results-validation-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+tags:
+- name: validation-rules
+paths:
+  /api/validation/rules:
+    get:
+      operationId: listValidationRules
+      tags:
+      - validation-rules
+      summary: List all validation rules
+      description: Returns all registered validation rules across all rule types
+      parameters:
+      - $ref: '#/components/parameters/CjscppuidHeader'
+      - $ref: '#/components/parameters/CppclientcorrelationidHeader'
+      responses:
+        '200':
+          description: List of validation rules
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleListResponse'
+  /api/validation/rules/{ruleId}:
+    get:
+      operationId: getValidationRuleById
+      tags:
+      - validation-rules
+      summary: Get a validation rule by ID
+      description: Returns full details for a single validation rule
+      parameters:
+      - in: path
+        name: ruleId
+        required: true
+        schema:
+          type: string
+        description: Rule identifier (e.g. DR-SENT-001)
+      - $ref: '#/components/parameters/CjscppuidHeader'
+      - $ref: '#/components/parameters/CppclientcorrelationidHeader'
+      responses:
+        '200':
+          description: Rule details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleDetailResponse'
+        '404':
+          description: Rule not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      operationId: updateValidationRule
+      tags:
+      - validation-rules
+      summary: Enable or disable a validation rule
+      description: Updates the enabled status and/or severity of a validation rule identified by its ID
+      parameters:
+      - in: path
+        name: ruleId
+        required: true
+        schema:
+          type: string
+        description: Rule identifier (e.g. DR-SENT-001)
+      - $ref: '#/components/parameters/CjscppuidHeader'
+      - $ref: '#/components/parameters/CppclientcorrelationidHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRuleRequest'
+      responses:
+        '200':
+          description: Rule updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleDetailResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Rule not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  parameters:
+    CppclientcorrelationidHeader:
+      in: header
+      name: CPPCLIENTCORRELATIONID
+      required: false
+      schema:
+        type: string
+      description: Session-level correlation ID from UI
+    CjscppuidHeader:
+      in: header
+      name: CJSCPPUID
+      required: true
+      schema:
+        type: string
+      description: User identifier for CP authentication
+  schemas:
+    RuleListResponse:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: Total number of rules
+        enabledCount:
+          type: integer
+          description: Number of enabled rules
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/RuleDetailResponse'
+          description: List of rule summaries
+    UpdateRuleRequest:
+      type: object
+      description: 'At least one field must be provided. Only supplied fields are updated; omitted fields are left unchanged.
+
+        '
+      properties:
+        enabled:
+          type: boolean
+          description: Whether the rule should be active
+        severity:
+          type: string
+          enum:
+          - ERROR
+          - WARNING
+          description: 'Severity ceiling for the rule. Caps the rule''s condition severities downward (e.g. an ERROR condition is reduced to WARNING) but never promotes them above their configured severity. Setting WARNING stops the rule from blocking shares; setting ERROR leaves each condition at its configured severity.
+
+            '
+    RuleDetailResponse:
+      type: object
+      required:
+      - ruleId
+      - enabled
+      properties:
+        ruleId:
+          type: string
+          description: Rule identifier
+        title:
+          type: string
+          description: Rule display title
+        description:
+          type: string
+          description: Rule description
+        priority:
+          type: integer
+          description: Rule priority/order
+        severity:
+          type: string
+          enum:
+          - ERROR
+          - WARNING
+          description: Default severity
+        enabled:
+          type: boolean
+          description: Whether rule is currently active
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Machine-readable error code
+        message:
+          type: string
+          description: Human-readable error message
+        details:
+          type: object
+          additionalProperties: true
+          description: Additional error context
+        timestamp:
+          type: string
+          format: date-time
+        traceId:
+          type: string
+          description: Unique identifier for error tracing
+x-refined-from:
+- api-cp-crime-hearing-results-validator-openapi-spec.yml
+- hmcts-results-validation-service-openapi.yml

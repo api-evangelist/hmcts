@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/hmcts/main/json-schema/hmcts-event-payload-schema.json",
+  "title": "EventPayload",
+  "description": "Payload representing a stored PCR/Nows document event with defendant and case details.",
+  "x-generated": "2026-10-09",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/hmcts-crime-hearing-results-document-subscription-openapi.yml#/components/schemas/EventPayload",
+  "type": "object",
+  "required": [
+    "eventId",
+    "materialId",
+    "hearingId",
+    "eventType",
+    "timestamp",
+    "defendant"
+  ],
+  "properties": {
+    "eventType": {
+      "type": "string",
+      "description": "Type of the event, e.g., PRISON_COURT_REGISTER_GENERATED",
+      "$ref": "#/$defs/EventType"
+    },
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier of the stored PCR/Nows document event"
+    },
+    "hearingId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier of the hearing associated with this event"
+    },
+    "materialId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier of the stored PCR/Nows document"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the event occurred"
+    },
+    "defendant": {
+      "type": "object",
+      "required": [
+        "masterDefendantId",
+        "name"
+      ],
+      "properties": {
+        "masterDefendantId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique identifier for the master defendant"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full name of the defendant"
+        },
+        "dateOfBirth": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of birth of the defendant"
+        },
+        "custodyEstablishmentDetails": {
+          "type": "object",
+          "description": "Details of the custody establishment",
+          "properties": {
+            "emailAddress": {
+              "type": "string",
+              "format": "email",
+              "description": "Email address of the prison"
+            }
+          }
+        },
+        "cases": {
+          "type": "array",
+          "description": "List of cases associated with the defendant",
+          "items": {
+            "type": "object",
+            "required": [
+              "urn"
+            ],
+            "properties": {
+              "urn": {
+                "type": "string",
+                "description": "Case URN associated with the defendant"
+              }
+            }
+          }
+        }
+      }
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Full structured document payload, when provided."
+    }
+  },
+  "$defs": {
+    "EventType": {
+      "type": "string",
+      "description": "Possible values:\n  - PRISON_COURT_REGISTER_GENERATED\n  - WEE_Layout5\n  - NEE_DetentionOnRecommendationForDeportation\n  - OEE_MedicalRemandAdditionalDetails\n  - WEE_RemandAfterBailAppealByProsecutor\n  - WEE_CustodialSentence\n  - WEE_CustodialSentenceWitness\n  - WEE_CommittalToCrownCourtForConsiderationOfTheQuestionOfBailOnAChargeOfMurder\n  - WEE_CommittalToCrownCourtForSentence\n  - WEE_SendingToCrownCourtForTrial\n  - OEE_BailAppealEndOfCustody\n  - WEE_CommitmentPendingTransferToServiceCustody\n  - WEE_NonPaymentOfMoneyOwedCivilDebt\n  - WEE_CustodyWarrantOnDischargeOfExtraditionPendingAppeal\n  - WEE_CustodyWarrantOnDischargeOfExtraditionPendingAppealPart2\n  - WEE_CustodyWarrantOnExtradition\n  - WEE_CustodyWarrantOnExtraditionCategory2Territory\n  - WEE_CustodyWarrantOnExtraditionWithConsent\n  - WEE_CustodyWarrantOnExtraditionWithBailDirection\n  - WEE_CustodyWarrantOnExtraditionWithBailDirectionWithConsent\n  - WEE_CustodyWarrantOnExtraditionWithBailDirectionCategory2Territory\n  - WEE_CustodyWarrantSendingToSecretaryOfStateCategory2Territory\n  - WEE_CustodyWarrantSendingToSecretaryOfStateOnConsentCategory2Territory\n  - WEE_CustodyWarrantWithBailDirectionOnDischargeOfExtraditionPendingAppeal\n  - WEE_CustodyWarrantWithBailDirectionOnDischargeOfExtraditionPendingAppealPart2\n  - WEE_CustodyWarrantWithBailDirectionSendingToSecretaryOfStateCategory2Territory\n  - WEE_CustodyWarrantWithBailDirectionSendingToSecretaryOfStateOnConsentCategory2Territory\n  - WEE_ExtraditionRemandAfterBailAppealByProsecutor\n  - WEE_ExtraditionSupplementToCustodyWarrant\n  - OBE_TerminationOfFootballBanning\n  - OBE_ChangeOfFootballBanning\n  - NEE_FootballBanning\n  - WEE_Remand\n  - WXE_RemandWarrantYouthDetentionAccommodation\n  - OXE_DetentionAndTraining\n  - WEE_InjunctionDetention\n  - OPE_SupervisionOnBreachOfDetentionAndTraining\n  - WEE_CommittalToCrownCourtAuthorityToHoldInYouthDetentionAccommodation\n  - WEE_Detention\n  - WEE_DetentionInYouthDetentionAccommodationBreach\n  - WEE_SendingToCrownCourtAuthorityToHoldInYouthDetentionAccommodation\n"
+    }
+  }
+}

@@ -1,0 +1,216 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/hmcts/main/json-schema/hmcts-application-code-get-detail-dto-schema.json",
+  "title": "application-code-get-detail-dto",
+  "description": "Immutable DTO representing a detailed Application Code.",
+  "x-generated": "2026-10-09",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/hmcts-applications-register-openapi.yml#/components/schemas/application-code-get-detail-dto",
+  "properties": {
+    "applicationCode": {
+      "description": "Code that identifies the application.",
+      "type": "string"
+    },
+    "title": {
+      "description": "Human-readable title.",
+      "type": "string"
+    },
+    "wording": {
+      "$ref": "#/$defs/template-detail"
+    },
+    "isFeeDue": {
+      "description": "True if Application List Entries using this Application Code require an Application List Entry Fee Status to be created and linked.\n",
+      "type": "boolean"
+    },
+    "requiresRespondent": {
+      "description": "True if Application List Entries using this Application Code require a respondent to be created and linked.\n",
+      "type": "boolean"
+    },
+    "bulkRespondentAllowed": {
+      "description": "True if Application List Entries using this Application Code allow multiple respondents to be created and linked.\n",
+      "type": "boolean"
+    },
+    "feeReference": {
+      "description": "A short reference code that identifies a Fee.",
+      "maxLength": 12,
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "feeAmount": {
+      "$ref": "#/$defs/application_code_get_detail_dto_feeAmount"
+    },
+    "feeDescription": {
+      "description": "Descriptive text for the fee.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "offsiteFeeReference": {
+      "description": "A short reference code that identifies a offsite Fee.",
+      "maxLength": 12,
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "offsiteFeeAmount": {
+      "$ref": "#/$defs/application_code_get_detail_dto_offsiteFeeAmount"
+    },
+    "offsiteFeeDescription": {
+      "description": "Descriptive text for the offsite fee.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "startDate": {
+      "description": "Date the Application Code became active.",
+      "format": "date",
+      "type": "string"
+    },
+    "endDate": {
+      "description": "Date the Application Code became inactive. `null` indicates that this row is still active.",
+      "format": "date",
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "applicationCode",
+    "bulkRespondentAllowed",
+    "endDate",
+    "isFeeDue",
+    "requiresRespondent",
+    "startDate",
+    "title",
+    "wording"
+  ],
+  "type": "object",
+  "$defs": {
+    "application_code_get_detail_dto_feeAmount": {
+      "description": "Fee amount for this Application Code, expressed in pence (GBP minor units). Always use integer values; 1 GBP = 100 pence.\n",
+      "properties": {
+        "value": {
+          "description": "Amount in pence.",
+          "format": "int64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "currency": {
+          "default": "GBP",
+          "description": "ISO 4217 currency code (always \"GBP\" for now).",
+          "enum": [
+            "GBP"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "application_code_get_detail_dto_offsiteFeeAmount": {
+      "description": "Offsite Fee amount for this Application Code, expressed in pence (GBP minor units). Always use integer values; 1 GBP = 100 pence.\n",
+      "properties": {
+        "value": {
+          "description": "Amount in pence.",
+          "format": "int64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "currency": {
+          "default": "GBP",
+          "description": "ISO 4217 currency code (always \"GBP\" for now).",
+          "enum": [
+            "GBP"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "template-constraint": {
+      "description": "The template field with an associated value",
+      "properties": {
+        "type": {
+          "description": "The data type of the value.",
+          "enum": [
+            "TEXT"
+          ],
+          "type": "string"
+        },
+        "length": {
+          "description": "The length of the data value.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "length",
+        "type"
+      ],
+      "type": "object"
+    },
+    "template-detail": {
+      "description": "The wording details",
+      "properties": {
+        "template": {
+          "description": "The template name. It contains the field names between curly braces.",
+          "type": "string"
+        },
+        "substitution-key-constraints": {
+          "description": "A list of fields and the associated constraints",
+          "items": {
+            "$ref": "#/$defs/template-key-with-constraint"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "template"
+      ],
+      "type": "object"
+    },
+    "template-key-with-constraint": {
+      "description": "The template field with an associated value",
+      "properties": {
+        "key": {
+          "description": "Field key for substitution into the template.",
+          "type": "string"
+        },
+        "value": {
+          "description": "The optional value for the key.",
+          "type": "string"
+        },
+        "constraint": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/template-constraint"
+            }
+          ],
+          "description": "The constraint details for the field"
+        }
+      },
+      "required": [
+        "constraint",
+        "key"
+      ],
+      "type": "object"
+    }
+  }
+}

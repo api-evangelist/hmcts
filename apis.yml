@@ -1,23 +1,1198 @@
 aid: hmcts
+
 name: HM Courts & Tribunals Service
-description: 'HM Courts & Tribunals Service is a company surfaced via the API Evangelist harvest backlog
-  (source: spectral-ruleset-github) and added to the network as a stub for full-pipeline profiling.'
+
+description: HM Courts & Tribunals Service (HMCTS) is the executive agency of the UK Ministry of Justice responsible for administering the criminal,
+  civil and family courts in England and Wales and the reserved unified tribunals across the United Kingdom. Its engineering teams publish open
+  source code on GitHub (github.com/hmcts) and the "HMCTS way" engineering standards at hmcts.github.io, including Spectral API linting rulesets
+  used in its API repositories.
+
 url: https://raw.githubusercontent.com/api-evangelist/hmcts/refs/heads/main/apis.yml
+
 x-type: company
+
 x-source: harvest:spectral-ruleset-github
-x-tier: stub
-x-tier-reason: harvest
+
+x-tier: profiled
+x-tier-reason: enrichment pass 2026-10-09 (modular-v1; was harvest)
+
 specificationVersion: '0.20'
+
 created: '2026-10-09'
+
 modified: '2026-10-09'
+
 tags:
 - Company
-apis: []
+- Government
+- Courts
+- Justice
+- Public Sector
+- United Kingdom
+
+image: https://avatars.githubusercontent.com/u/22817111?v=4
+
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+
 common:
+- type: AgenticAccess
+  url: agentic-access/hmcts-agentic-access.yml
+- type: Spectral
+  url: rules/hmcts-rules.yml
+- type: Spectral
+  url: rules/hmcts-api-cp-crime-hearing-results-validator-spectral-rules.yml
+- type: Spectral
+  url: rules/hmcts-api-cp-crime-hearing-results-document-subscription-spectral-rules.yml
+- type: JSONLD
+  url: json-ld/hmcts-context.jsonld
+- type: Vocabulary
+  url: vocabulary/hmcts-vocabulary.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Webhooks
+  url: asyncapi/hmcts-webhooks.yml
+- type: DataModel
+  url: data-model/hmcts-data-model.yml
+- type: Components
+  url: components/hmcts-components.yml
+- type: Conventions
+  url: conventions/hmcts-conventions.yml
+- type: Security
+  url: https://www.gov.uk/help/report-vulnerability
+- type: Lifecycle
+  url: lifecycle/hmcts-lifecycle.yml
+- type: ErrorCatalog
+  url: errors/hmcts-problem-types.yml
+- type: Conformance
+  url: conformance/hmcts-conformance.yml
+- type: Overlay
+  url: overlays/hmcts-applications-register-overlay.yaml
+- type: SecurityTxt
+  url: well-known/hmcts-security.txt
+- type: SecurityTxt
+  url: well-known/hmcts-api-security.txt
+- type: WellKnown
+  url: well-known/hmcts-well-known.yml
+- type: Hosts
+  url: hosts/hmcts-hosts.yml
+- type: Vendors
+  url: vendors/hmcts-vendors.yml
+- type: SDKs
+  url: packages/hmcts-packages.yml
+- type: Packages
+  url: packages/hmcts-packages.yml
+- type: SignUp
+  url: https://www.gov.uk/government/publications/register-a-food-business-privacy-notice
+- type: Newsroom
+  url: https://www.gov.uk/government/news/we-need-your-help
+- type: Authentication
+  url: authentication/hmcts-authentication.yml
+- type: VulnerabilityDisclosure
+  url: security/hmcts-vulnerability-disclosure.yml
+- type: DomainSecurity
+  url: security/hmcts-domain-security.yml
 - type: Website
   url: https://www.gov.uk/government/organisations/hm-courts-and-tribunals-service
+- type: Documentation
+  url: https://hmcts.github.io/
+- type: GitHubOrganization
+  url: https://github.com/hmcts
+- type: Blog
+  url: https://insidehmcts.blog.gov.uk/
+- type: About
+  url: https://www.gov.uk/government/organisations/hm-courts-and-tribunals-service/about
+- type: Support
+  url: https://www.gov.uk/help
+- type: TermsOfService
+  url: https://www.gov.uk/help/terms-conditions
+- type: PrivacyPolicy
+  url: https://www.gov.uk/government/organisations/hm-courts-and-tribunals-service/about/personal-information-charter
+- type: LinkedIn
+  url: https://www.linkedin.com/company/hmctsgovuk
+- type: Twitter
+  url: https://twitter.com/HMCTSgovuk
+- type: YouTube
+  url: https://www.youtube.com/channel/UC5Altka7XMeXog5ZFzBT9dA
+- type: x-coverage
+  state: identity-verified
+  evidence: Website https://www.gov.uk/government/organisations/hm-courts-and-tribunals-service 200 (meta description names HMCTS); GitHub org
+    api.github.com/orgs/hmcts 200 name "HM Courts & Tribunals Service" blog -> gov.uk org page; hmcts.github.io 200 title "The HMCTS way - HMCTS";
+    insidehmcts.blog.gov.uk 200; probed 2026-10-09. No public developer portal, pricing, or API reference found (api.gov.uk/hmcts 404).
+- type: SpectralRules
+  url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription/blob/9f3ab203a23196e728b1e8ae68092245b98ddb7b/.spectral.yml
+- type: SpectralRules
+  url: https://github.com/hmcts/api-cp-crime-hearing-results-validator/blob/7535367a437135400f6fa6043f71a2ad87f740a4/.spectral.yml
+
+apis:
+- aid: hmcts:hmcts-admin-api
+  name: HM Courts & Tribunals Service Admin API
+  description: Administrative operations such as jobs can be run from this set of endpoints.
+  humanURL: https://github.com/hmcts/appreg-api
+  baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
+  tags:
+  - admin
+  properties:
+  - type: OpenAPI
+    url: openapi/hmcts-admin-api-openapi.yml
+  - type: GitHubRepository
+    url: https://github.com/hmcts/appreg-api
+  - type: JSONSchema
+    url: json-schema/hmcts-job-acknowledgement-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-update-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-create-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-application-code-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-1-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription
+  - type: JSONSchema
+    url: json-schema/hmcts-event-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-hmac-credentials-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rotate-secret-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-event-type-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-validator
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-update-rule-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-detail-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-list-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/ccd-data-store-api
+- aid: hmcts:hmcts-application-codes-api
+  name: HM Courts & Tribunals Service Application Codes API
+  description: >-
+    Application Codes are reference data, not managed in App Reg. They are required to provide a set repeatable
+    data that can be used by Application List Entries, such as the title, wording or whether an application
+    has an associated fee.
+  humanURL: https://github.com/hmcts/appreg-api
+  baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
+  tags:
+  - application-codes
+  properties:
+  - type: OpenAPI
+    url: openapi/hmcts-application-codes-api-openapi.yml
+  - type: GitHubRepository
+    url: https://github.com/hmcts/appreg-api
+  - type: JSONSchema
+    url: json-schema/hmcts-job-acknowledgement-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-update-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-create-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-application-code-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-1-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription
+  - type: JSONSchema
+    url: json-schema/hmcts-event-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-hmac-credentials-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rotate-secret-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-event-type-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-validator
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-update-rule-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-detail-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-list-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/ccd-data-store-api
+- aid: hmcts:hmcts-application-list-entries-api
+  name: HM Courts & Tribunals Service Application List Entries API
+  description: >-
+    An Application List Entry records all details of an individual Application. This will always belong
+    to an Application List.
+  humanURL: https://github.com/hmcts/appreg-api
+  baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
+  tags:
+  - application-list-entries
+  properties:
+  - type: OpenAPI
+    url: openapi/hmcts-application-list-entries-api-openapi.yml
+  - type: GitHubRepository
+    url: https://github.com/hmcts/appreg-api
+  - type: JSONSchema
+    url: json-schema/hmcts-job-acknowledgement-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-update-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-create-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-application-code-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-1-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription
+  - type: JSONSchema
+    url: json-schema/hmcts-event-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-hmac-credentials-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rotate-secret-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-event-type-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-validator
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-update-rule-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-detail-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-list-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/ccd-data-store-api
+- aid: hmcts:hmcts-application-list-entry-results-api
+  name: HM Courts & Tribunals Service Application List Entry Results API
+  description: >-
+    An Application List Entry Result records the result of an individual Application. Each Application
+    can have multiple child Results and Results cannot exist without a parent Application.
+  humanURL: https://github.com/hmcts/appreg-api
+  baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
+  tags:
+  - application-list-entry-results
+  properties:
+  - type: OpenAPI
+    url: openapi/hmcts-application-list-entry-results-api-openapi.yml
+  - type: GitHubRepository
+    url: https://github.com/hmcts/appreg-api
+  - type: JSONSchema
+    url: json-schema/hmcts-job-acknowledgement-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-update-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-create-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-application-code-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-1-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription
+  - type: JSONSchema
+    url: json-schema/hmcts-event-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-hmac-credentials-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rotate-secret-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-event-type-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-validator
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-update-rule-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-detail-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-list-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/ccd-data-store-api
+- aid: hmcts:hmcts-application-lists-api
+  name: HM Courts & Tribunals Service Application Lists API
+  description: >-
+    An Application List records the date, time and location at which one or more Applications is to be
+    considered by a magistrate or delegated authority.
+  humanURL: https://github.com/hmcts/appreg-api
+  baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
+  tags:
+  - application-lists
+  properties:
+  - type: OpenAPI
+    url: openapi/hmcts-application-lists-api-openapi.yml
+  - type: GitHubRepository
+    url: https://github.com/hmcts/appreg-api
+  - type: JSONSchema
+    url: json-schema/hmcts-job-acknowledgement-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-update-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-create-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-application-code-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-1-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription
+  - type: JSONSchema
+    url: json-schema/hmcts-event-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-hmac-credentials-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rotate-secret-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-event-type-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-validator
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-update-rule-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-detail-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-list-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/ccd-data-store-api
+- aid: hmcts:hmcts-caseworkers-api
+  name: HM Courts & Tribunals Service Caseworkers API
+  description: The Caseworkers API from HM Courts & Tribunals Service — 5 operation(s) for caseworkers.
+  humanURL: https://github.com/hmcts/appreg-api
+  baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
+  tags:
+  - Caseworkers
+  properties:
+  - type: OpenAPI
+    url: openapi/hmcts-caseworkers-api-openapi.yml
+  - type: GitHubRepository
+    url: https://github.com/hmcts/appreg-api
+  - type: JSONSchema
+    url: json-schema/hmcts-job-acknowledgement-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-update-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-create-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-application-code-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-1-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription
+  - type: JSONSchema
+    url: json-schema/hmcts-event-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-hmac-credentials-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rotate-secret-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-event-type-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-validator
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-update-rule-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-detail-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-list-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/ccd-data-store-api
+- aid: hmcts:hmcts-court-locations-api
+  name: HM Courts & Tribunals Service Court Locations API
+  description: >-
+    Court Locations are reference data, not managed in App Reg. They are a consolidation of both crown
+    and magistrates courts where an application will be heard and resulted.
+  humanURL: https://github.com/hmcts/appreg-api
+  baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
+  tags:
+  - court-locations
+  properties:
+  - type: OpenAPI
+    url: openapi/hmcts-court-locations-api-openapi.yml
+  - type: GitHubRepository
+    url: https://github.com/hmcts/appreg-api
+  - type: JSONSchema
+    url: json-schema/hmcts-job-acknowledgement-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-update-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-create-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-application-code-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-1-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription
+  - type: JSONSchema
+    url: json-schema/hmcts-event-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-hmac-credentials-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rotate-secret-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-event-type-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-validator
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-update-rule-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-detail-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-list-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/ccd-data-store-api
+- aid: hmcts:hmcts-criminal-justice-areas-api
+  name: HM Courts & Tribunals Service Criminal Justice Areas API
+  description: >-
+    Criminal Justice Areas are reference data, not managed in App Reg. They are officially recognized
+    justice regions and used to classify records by jurisdiction.
+  humanURL: https://github.com/hmcts/appreg-api
+  baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
+  tags:
+  - criminal-justice-areas
+  properties:
+  - type: OpenAPI
+    url: openapi/hmcts-criminal-justice-areas-api-openapi.yml
+  - type: GitHubRepository
+    url: https://github.com/hmcts/appreg-api
+  - type: JSONSchema
+    url: json-schema/hmcts-job-acknowledgement-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-update-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-create-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-application-code-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-1-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription
+  - type: JSONSchema
+    url: json-schema/hmcts-event-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-hmac-credentials-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rotate-secret-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-event-type-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-validator
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-update-rule-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-detail-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-list-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/ccd-data-store-api
+- aid: hmcts:hmcts-data-api
+  name: HM Courts & Tribunals Service Data API
+  description: The Data API from HM Courts & Tribunals Service — 2 operation(s) for data.
+  humanURL: https://github.com/hmcts/appreg-api
+  baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
+  tags:
+  - Data
+  properties:
+  - type: OpenAPI
+    url: openapi/hmcts-data-api-openapi.yml
+  - type: GitHubRepository
+    url: https://github.com/hmcts/appreg-api
+  - type: JSONSchema
+    url: json-schema/hmcts-job-acknowledgement-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-update-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-create-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-application-code-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-1-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription
+  - type: JSONSchema
+    url: json-schema/hmcts-event-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-hmac-credentials-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rotate-secret-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-event-type-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-validator
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-update-rule-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-detail-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-list-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/ccd-data-store-api
+- aid: hmcts:hmcts-display-api
+  name: HM Courts & Tribunals Service Display API
+  description: The Display API from HM Courts & Tribunals Service — 4 operation(s) for display.
+  humanURL: https://github.com/hmcts/appreg-api
+  baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
+  tags:
+  - Display
+  properties:
+  - type: OpenAPI
+    url: openapi/hmcts-display-api-openapi.yml
+  - type: GitHubRepository
+    url: https://github.com/hmcts/appreg-api
+  - type: JSONSchema
+    url: json-schema/hmcts-job-acknowledgement-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-update-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-create-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-application-code-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-1-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription
+  - type: JSONSchema
+    url: json-schema/hmcts-event-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-hmac-credentials-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rotate-secret-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-event-type-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-validator
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-update-rule-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-detail-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-list-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/ccd-data-store-api
+- aid: hmcts:hmcts-internal-api
+  name: HM Courts & Tribunals Service Internal API
+  description: The Internal API from HM Courts & Tribunals Service — 1 operation(s) for internal.
+  humanURL: https://github.com/hmcts/appreg-api
+  baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
+  tags:
+  - Internal
+  properties:
+  - type: OpenAPI
+    url: openapi/hmcts-internal-api-openapi.yml
+  - type: GitHubRepository
+    url: https://github.com/hmcts/appreg-api
+  - type: JSONSchema
+    url: json-schema/hmcts-job-acknowledgement-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-update-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-create-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-application-code-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-1-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription
+  - type: JSONSchema
+    url: json-schema/hmcts-event-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-hmac-credentials-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rotate-secret-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-event-type-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-validator
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-update-rule-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-detail-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-list-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/ccd-data-store-api
+- aid: hmcts:hmcts-jobs-api
+  name: HM Courts & Tribunals Service Jobs API
+  description: Background job operations for asynchronous tasks (polling status across all job types).
+  humanURL: https://github.com/hmcts/appreg-api
+  baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
+  tags:
+  - jobs
+  properties:
+  - type: OpenAPI
+    url: openapi/hmcts-jobs-api-openapi.yml
+  - type: GitHubRepository
+    url: https://github.com/hmcts/appreg-api
+  - type: JSONSchema
+    url: json-schema/hmcts-job-acknowledgement-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-update-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-create-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-application-code-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-1-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription
+  - type: JSONSchema
+    url: json-schema/hmcts-event-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-hmac-credentials-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rotate-secret-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-event-type-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-validator
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-update-rule-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-detail-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-list-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/ccd-data-store-api
+- aid: hmcts:hmcts-notification-api
+  name: HM Courts & Tribunals Service Notification API
+  description: >-
+    The Notification API from HM Courts & Tribunals Service — 1 operation(s) for notification.
+  humanURL: https://github.com/hmcts/appreg-api
+  baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
+  tags:
+  - Notification
+  properties:
+  - type: OpenAPI
+    url: openapi/hmcts-notification-api-openapi.yml
+  - type: GitHubRepository
+    url: https://github.com/hmcts/appreg-api
+  - type: JSONSchema
+    url: json-schema/hmcts-job-acknowledgement-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-update-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-create-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-application-code-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-1-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription
+  - type: JSONSchema
+    url: json-schema/hmcts-event-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-hmac-credentials-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rotate-secret-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-event-type-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-validator
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-update-rule-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-detail-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-list-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/ccd-data-store-api
+- aid: hmcts:hmcts-reports-api
+  name: HM Courts & Tribunals Service Reports API
+  description: Endpoints to generate and retrieve CSV reports asynchronously.
+  humanURL: https://github.com/hmcts/appreg-api
+  baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
+  tags:
+  - reports
+  properties:
+  - type: OpenAPI
+    url: openapi/hmcts-reports-api-openapi.yml
+  - type: GitHubRepository
+    url: https://github.com/hmcts/appreg-api
+  - type: JSONSchema
+    url: json-schema/hmcts-job-acknowledgement-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-update-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-create-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-application-code-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-1-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription
+  - type: JSONSchema
+    url: json-schema/hmcts-event-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-hmac-credentials-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rotate-secret-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-event-type-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-validator
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-update-rule-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-detail-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-list-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/ccd-data-store-api
+- aid: hmcts:hmcts-result-codes-api
+  name: HM Courts & Tribunals Service Result Codes API
+  description: >-
+    Result codes are reference data, not managed in App Reg. They are required to provide a set of ways
+    an Application List Entry can be resulted. e.g. Approved/Denied.
+  humanURL: https://github.com/hmcts/appreg-api
+  baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
+  tags:
+  - result-codes
+  properties:
+  - type: OpenAPI
+    url: openapi/hmcts-result-codes-api-openapi.yml
+  - type: GitHubRepository
+    url: https://github.com/hmcts/appreg-api
+  - type: JSONSchema
+    url: json-schema/hmcts-job-acknowledgement-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-update-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-create-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-application-code-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-1-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription
+  - type: JSONSchema
+    url: json-schema/hmcts-event-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-hmac-credentials-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rotate-secret-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-event-type-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-validator
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-update-rule-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-detail-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-list-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/ccd-data-store-api
+- aid: hmcts:hmcts-root-api
+  name: HM Courts & Tribunals Service Root API
+  description: The root API from HM Courts & Tribunals Service — 1 operation(s) for root.
+  humanURL: https://github.com/hmcts/appreg-api
+  baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
+  tags:
+  - root
+  properties:
+  - type: OpenAPI
+    url: openapi/hmcts-root-api-openapi.yml
+  - type: GitHubRepository
+    url: https://github.com/hmcts/appreg-api
+  - type: JSONSchema
+    url: json-schema/hmcts-job-acknowledgement-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-update-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-create-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-application-code-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-1-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription
+  - type: JSONSchema
+    url: json-schema/hmcts-event-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-hmac-credentials-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rotate-secret-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-event-type-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-validator
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-update-rule-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-detail-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-list-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/ccd-data-store-api
+- aid: hmcts:hmcts-standard-applicants-api
+  name: HM Courts & Tribunals Service Standard Applicants API
+  description: >-
+    Standard Applicants are reference data, not managed in App Reg. Only code, name and usage dates are
+    exposed by reference-data endpoints and exports. Personal and contact details are excluded, including
+    when Standard Applicants appear in application responses and reports. Ordinary applicants and respondents
+    are unaffected.
+  humanURL: https://github.com/hmcts/appreg-api
+  baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
+  tags:
+  - standard-applicants
+  properties:
+  - type: OpenAPI
+    url: openapi/hmcts-standard-applicants-api-openapi.yml
+  - type: GitHubRepository
+    url: https://github.com/hmcts/appreg-api
+  - type: JSONSchema
+    url: json-schema/hmcts-job-acknowledgement-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-update-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-create-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-application-code-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-1-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription
+  - type: JSONSchema
+    url: json-schema/hmcts-event-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-hmac-credentials-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rotate-secret-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-event-type-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-validator
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-update-rule-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-detail-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-list-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/ccd-data-store-api
+- aid: hmcts:hmcts-subscription-api
+  name: HM Courts & Tribunals Service Subscription API
+  description: >-
+    The Subscription API from HM Courts & Tribunals Service — 4 operation(s) for subscription.
+  humanURL: https://github.com/hmcts/appreg-api
+  baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
+  tags:
+  - Subscription
+  properties:
+  - type: OpenAPI
+    url: openapi/hmcts-subscription-api-openapi.yml
+  - type: GitHubRepository
+    url: https://github.com/hmcts/appreg-api
+  - type: JSONSchema
+    url: json-schema/hmcts-job-acknowledgement-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-update-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-create-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-application-code-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-1-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription
+  - type: JSONSchema
+    url: json-schema/hmcts-event-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-hmac-credentials-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rotate-secret-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-event-type-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-validator
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-update-rule-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-detail-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-list-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/ccd-data-store-api
+- aid: hmcts:hmcts-validation-api
+  name: HM Courts & Tribunals Service Validation API
+  description: The validation API from HM Courts & Tribunals Service — 1 operation(s) for validation.
+  humanURL: https://github.com/hmcts/appreg-api
+  baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
+  tags:
+  - validation
+  properties:
+  - type: OpenAPI
+    url: openapi/hmcts-validation-api-openapi.yml
+  - type: GitHubRepository
+    url: https://github.com/hmcts/appreg-api
+  - type: JSONSchema
+    url: json-schema/hmcts-job-acknowledgement-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-update-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-create-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-application-code-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-1-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription
+  - type: JSONSchema
+    url: json-schema/hmcts-event-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-hmac-credentials-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rotate-secret-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-event-type-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-validator
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-update-rule-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-detail-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-list-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/ccd-data-store-api
+- aid: hmcts:hmcts-validation-rules-api
+  name: HM Courts & Tribunals Service Validation Rules API
+  description: >-
+    The validation-rules API from HM Courts & Tribunals Service — 2 operation(s) for validation-rules.
+  humanURL: https://github.com/hmcts/appreg-api
+  baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
+  tags:
+  - validation-rules
+  properties:
+  - type: OpenAPI
+    url: openapi/hmcts-validation-rules-api-openapi.yml
+  - type: GitHubRepository
+    url: https://github.com/hmcts/appreg-api
+  - type: JSONSchema
+    url: json-schema/hmcts-job-acknowledgement-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-update-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-create-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-application-code-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-entry-get-detail-dto-1-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription
+  - type: JSONSchema
+    url: json-schema/hmcts-event-payload-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-hmac-credentials-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-client-subscription-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rotate-secret-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-event-type-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/api-cp-crime-hearing-results-validator
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-draft-validation-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-update-rule-request-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-detail-response-schema.json
+  - type: JSONSchema
+    url: json-schema/hmcts-rule-list-response-schema.json
+  - type: GitHubRepository
+    url: https://github.com/hmcts/ccd-data-store-api
+x-enrichment:
+  date: '2026-10-09'
+  status: enriched
+  artifacts_added: 63
+  pass: modular-v1
+  engine: identity=anthropic,contract=anthropic,surfaces=anthropic,docs=anthropic,regulatory=anthropic

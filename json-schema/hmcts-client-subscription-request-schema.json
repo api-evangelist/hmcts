@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/hmcts/main/json-schema/hmcts-client-subscription-request-schema.json",
+  "title": "ClientSubscriptionRequest",
+  "x-generated": "2026-10-09",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/hmcts-crime-hearing-results-document-subscription-openapi.yml#/components/schemas/ClientSubscriptionRequest",
+  "type": "object",
+  "required": [
+    "notificationEndpoint",
+    "eventTypes"
+  ],
+  "properties": {
+    "notificationEndpoint": {
+      "$ref": "#/$defs/NotificationEndpoint"
+    },
+    "eventTypes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/EventType"
+      }
+    }
+  },
+  "$defs": {
+    "EventType": {
+      "type": "string",
+      "description": "Possible values:\n  - PRISON_COURT_REGISTER_GENERATED\n  - WEE_Layout5\n  - NEE_DetentionOnRecommendationForDeportation\n  - OEE_MedicalRemandAdditionalDetails\n  - WEE_RemandAfterBailAppealByProsecutor\n  - WEE_CustodialSentence\n  - WEE_CustodialSentenceWitness\n  - WEE_CommittalToCrownCourtForConsiderationOfTheQuestionOfBailOnAChargeOfMurder\n  - WEE_CommittalToCrownCourtForSentence\n  - WEE_SendingToCrownCourtForTrial\n  - OEE_BailAppealEndOfCustody\n  - WEE_CommitmentPendingTransferToServiceCustody\n  - WEE_NonPaymentOfMoneyOwedCivilDebt\n  - WEE_CustodyWarrantOnDischargeOfExtraditionPendingAppeal\n  - WEE_CustodyWarrantOnDischargeOfExtraditionPendingAppealPart2\n  - WEE_CustodyWarrantOnExtradition\n  - WEE_CustodyWarrantOnExtraditionCategory2Territory\n  - WEE_CustodyWarrantOnExtraditionWithConsent\n  - WEE_CustodyWarrantOnExtraditionWithBailDirection\n  - WEE_CustodyWarrantOnExtraditionWithBailDirectionWithConsent\n  - WEE_CustodyWarrantOnExtraditionWithBailDirectionCategory2Territory\n  - WEE_CustodyWarrantSendingToSecretaryOfStateCategory2Territory\n  - WEE_CustodyWarrantSendingToSecretaryOfStateOnConsentCategory2Territory\n  - WEE_CustodyWarrantWithBailDirectionOnDischargeOfExtraditionPendingAppeal\n  - WEE_CustodyWarrantWithBailDirectionOnDischargeOfExtraditionPendingAppealPart2\n  - WEE_CustodyWarrantWithBailDirectionSendingToSecretaryOfStateCategory2Territory\n  - WEE_CustodyWarrantWithBailDirectionSendingToSecretaryOfStateOnConsentCategory2Territory\n  - WEE_ExtraditionRemandAfterBailAppealByProsecutor\n  - WEE_ExtraditionSupplementToCustodyWarrant\n  - OBE_TerminationOfFootballBanning\n  - OBE_ChangeOfFootballBanning\n  - NEE_FootballBanning\n  - WEE_Remand\n  - WXE_RemandWarrantYouthDetentionAccommodation\n  - OXE_DetentionAndTraining\n  - WEE_InjunctionDetention\n  - OPE_SupervisionOnBreachOfDetentionAndTraining\n  - WEE_CommittalToCrownCourtAuthorityToHoldInYouthDetentionAccommodation\n  - WEE_Detention\n  - WEE_DetentionInYouthDetentionAccommodationBreach\n  - WEE_SendingToCrownCourtAuthorityToHoldInYouthDetentionAccommodation\n"
+    },
+    "NotificationEndpoint": {
+      "type": "object",
+      "required": [
+        "callbackUrl"
+      ],
+      "properties": {
+        "callbackUrl": {
+          "type": "string",
+          "pattern": "^https://.*$",
+          "description": "The location where event data will be sent. Event notifications will be POSTed to this URL with EventNotificationPayload in the request body."
+        }
+      }
+    }
+  }
+}

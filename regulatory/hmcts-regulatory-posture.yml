@@ -1,0 +1,45 @@
+generated: '2026-10-09'
+method: searched
+probe: true
+source: https://www.gov.uk/government/organisations/hm-courts-and-tribunals-service/about/personal-information-charter
+signals:
+  data_subject_request:
+    url: https://www.gov.uk/government/organisations/hm-courts-and-tribunals-service/about/personal-information-charter
+    section: 'HMCTS privacy policy'
+    rights_named: [access]
+    evidence:
+    - source: https://www.gov.uk/government/organisations/hm-courts-and-tribunals-service/about/personal-information-charter
+      http_status: 200
+      fetched: '2026-10-09'
+      quote: >-
+        What you can expect from the Ministry of Justice and HM Courts and Tribunals Service (HMCTS) when we
+        hold or request personal information (personal data) about you; how you can get access to a copy of
+        your personal data and what you can do if you think we’ve done something wrong.
+    - source: https://www.gov.uk/government/organisations/hm-courts-and-tribunals-service/about/personal-information-charter
+      http_status: 200
+      fetched: '2026-10-09'
+      quote: >-
+        As an executive agency of the Ministry of Justice, the MOJ personal information charter also explains
+        how we deal with requests for personal information.
+    note: >-
+      HMCTS's charter says data subjects can get a copy of their personal data, and it sends request
+      handling to the Ministry of Justice personal information charter. The page itself names no request
+      channel or response time. Each online service carries its own privacy notice ("the privacy notice and
+      terms and conditions are stated within the online service").
+  accessibility_conformance:
+    url: https://www.gov.uk/help/accessibility-statement
+    section: 'Compliance status'
+    standard: WCAG 2.2 AA
+    conformance: partial
+    evidence:
+    - source: https://www.gov.uk/help/accessibility-statement
+      http_status: 200
+      fetched: '2026-10-09'
+      quote: >-
+        This website is partially compliant with the Web Content Accessibility Guidelines version 2.2 AA
+        standard, due to the non-compliances and exemptions listed below.
+    note: >-
+      This statement belongs to the GOV.UK platform (Government Digital Service), which hosts the HMCTS
+      organisation pages and legal pages. HMCTS did not write it. It says it covers www.gov.uk and not
+      service subdomains, so it does not tell you how accessible HMCTS's own digital services or APIs are.
+      The page lists the failures against WCAG 2.2 AA.

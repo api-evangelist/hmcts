@@ -1,0 +1,255 @@
+openapi: 3.2.0
+info:
+  title: Hmcts Data API
+  version: 0.0.1
+  description: 'Operations tagged Data across 2 of this provider''s published API definitions: ccd-data-store-definition.yaml, hmcts-core-case-data-definition-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://core-case-data.common-components.reform/api
+tags:
+- name: Data
+paths:
+  /data/case-type/{id}:
+    get:
+      summary: Fetch a Case Type Schema
+      description: Returns the schema of a single case type.
+      parameters:
+      - name: id
+        in: path
+        description: Case Type ID
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: A Case Type Schema
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseType'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Data
+      operationId: getDataCaseTypeById
+      x-operation-id-source: derived
+    servers:
+    - url: https://core-case-data.common-components.reform/api
+  /data/jurisdictions/{jurisdiction_id}/case-type:
+    parameters:
+    - name: jurisdiction_id
+      in: path
+      description: ID for a Jurisdiction
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get case types
+      description: Get the case types as a list with optional jurisdiction filter
+      responses:
+        200:
+          description: List of Case Types
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CaseType'
+      tags:
+      - Data
+      operationId: getDataJurisdictionsByJurisdictionIdCaseType
+      x-operation-id-source: derived
+    post:
+      summary: Create a new Case Type
+      description: Create a new Case Type and return the object which was created
+      responses:
+        201:
+          description: Successfully created a new Case Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseType'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaseType'
+        description: case type definition
+        required: true
+      tags:
+      - Data
+      operationId: postDataJurisdictionsByJurisdictionIdCaseType
+      x-operation-id-source: derived
+    servers:
+    - url: https://core-case-data.common-components.reform/api
+components:
+  schemas:
+    CaseState:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          description: Short name to display.
+          type: string
+        description:
+          type: string
+      required:
+      - id
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        fields:
+          type: string
+    CaseEventField:
+      type: object
+      properties:
+        case_field_id:
+          type: string
+          description: Foriegn key to CaseField.id
+        required:
+          type: boolean
+          description: whether this field is required for this event or not
+      required:
+      - case_field_id
+      - required
+    CaseEvents:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        case_fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseEventField'
+        valid_pre_states:
+          type: array
+          items:
+            type: string
+        post_state:
+          type: string
+      required:
+      - id
+      - name
+    FieldType:
+      type: object
+      properties:
+        name:
+          type: string
+    CaseField:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The id of the case field
+        case_type_id:
+          type: string
+          description: Foriegn key to the case type as fields should not work across
+        label:
+          type: string
+        hint_text:
+          type: string
+        field_type:
+          $ref: '#/components/schemas/FieldType'
+        hidden:
+          type: boolean
+        validation_expr:
+          type: string
+        security_label:
+          type: string
+          description: Gov security level of the data (official, top secret etc)
+        live_from:
+          type: string
+        live_until:
+          type: string
+      required:
+      - id
+      - label
+      - field_type
+    CaseType:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for a Case Type.
+        version:
+          $ref: '#/components/schemas/Version'
+        name:
+          type: string
+          description: Display name of the Case Type.
+        jurisdiction:
+          $ref: '#/components/schemas/Jurisdiction'
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseEvents'
+        states:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseState'
+        case_fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseField'
+      required:
+      - id
+      - version
+      - name
+      - Jurisdiction
+      - states
+    Version:
+      type: object
+      properties:
+        number:
+          type: integer
+          description: Sequantial version number
+        live_from:
+          type: string
+          format: date-time
+          description: Date and time from when this version is valid from
+        live_until:
+          type: string
+          format: date-time
+          description: Date and time this version is to be retired
+      required:
+      - number
+      - live_from
+    Jurisdiction:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        live_from:
+          type: string
+          format: date-time
+        live_until:
+          type: string
+          format: date-time
+      required:
+      - id
+      - name
+x-refined-from:
+- ccd-data-store-definition.yaml
+- hmcts-core-case-data-definition-openapi.yml

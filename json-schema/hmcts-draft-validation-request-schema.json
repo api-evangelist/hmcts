@@ -1,0 +1,208 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/hmcts/main/json-schema/hmcts-draft-validation-request-schema.json",
+  "title": "DraftValidationRequest",
+  "x-generated": "2026-10-09",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/hmcts-results-validation-service-openapi.yml#/components/schemas/DraftValidationRequest",
+  "type": "object",
+  "required": [
+    "hearingId",
+    "hearingDay",
+    "courtType",
+    "resultLines",
+    "defendants",
+    "offences"
+  ],
+  "properties": {
+    "hearingId": {
+      "type": "string",
+      "description": "Hearing identifier"
+    },
+    "caseId": {
+      "type": "string",
+      "description": "Case identifier (optional, for log correlation)"
+    },
+    "hearingDay": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of hearing"
+    },
+    "courtType": {
+      "type": "string",
+      "enum": [
+        "MAGISTRATES",
+        "CROWN",
+        "YOUTH"
+      ],
+      "description": "Court type"
+    },
+    "resultLines": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ResultLineDto"
+      }
+    },
+    "defendants": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/DefendantDto"
+      }
+    },
+    "offences": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/OffenceDto"
+      }
+    }
+  },
+  "$defs": {
+    "DefendantDto": {
+      "type": "object",
+      "required": [
+        "defendantId",
+        "firstName",
+        "lastName"
+      ],
+      "properties": {
+        "defendantId": {
+          "type": "string",
+          "description": "Defendant identifier"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "Defendant first name"
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Defendant last name"
+        },
+        "masterDefendantId": {
+          "type": "string",
+          "description": "Master defendant identifier for linked cases (same person across cases)"
+        },
+        "dateOfBirth": {
+          "type": "string",
+          "format": "date",
+          "description": "Defendant's date of birth. Optional during the transition period while callers are updated to populate it."
+        }
+      }
+    },
+    "OffenceDto": {
+      "type": "object",
+      "required": [
+        "offenceId",
+        "offenceCode",
+        "offenceTitle"
+      ],
+      "properties": {
+        "offenceId": {
+          "type": "string",
+          "description": "Offence identifier"
+        },
+        "offenceCode": {
+          "type": "string",
+          "description": "Offence code (e.g. TH68001)"
+        },
+        "offenceTitle": {
+          "type": "string",
+          "description": "Offence description"
+        },
+        "hasActiveElectronicMonitoring": {
+          "type": "boolean",
+          "description": "Active electronic monitoring indicator"
+        },
+        "orderIndex": {
+          "type": "integer",
+          "description": "Offence order index (count number) for display in validation messages"
+        },
+        "caseUrn": {
+          "type": "string",
+          "description": "Case URN (prosecution case reference) for identifying which case this offence belongs to"
+        },
+        "hasExistingCtlRecord": {
+          "type": "boolean",
+          "description": "True if a Custody Time Limit record is already associated with this offence from a previous hearing. When true the CTL missing check (DR-CTL-001) is suppressed."
+        },
+        "isConvicted": {
+          "type": "boolean",
+          "description": "True if this offence is convicted (guilty plea, finding of guilt, or a recorded date of conviction). When true the CTL missing check (DR-CTL-001) is suppressed."
+        }
+      }
+    },
+    "Prompt": {
+      "type": "object",
+      "required": [
+        "promptRef",
+        "promptValue"
+      ],
+      "properties": {
+        "promptRef": {
+          "type": "string",
+          "description": "Identifies the data field this prompt captures (e.g. endDate, endDateOfTagging)."
+        },
+        "promptValue": {
+          "type": "string",
+          "description": "The raw string value entered for this prompt."
+        }
+      }
+    },
+    "ResultLineDto": {
+      "type": "object",
+      "required": [
+        "resultLineId",
+        "shortCode",
+        "label",
+        "defendantId",
+        "offenceId"
+      ],
+      "properties": {
+        "resultLineId": {
+          "type": "string",
+          "description": "Result line identifier"
+        },
+        "shortCode": {
+          "type": "string",
+          "description": "Result code (e.g. IMP, EMONE)"
+        },
+        "label": {
+          "type": "string",
+          "description": "Display label"
+        },
+        "defendantId": {
+          "type": "string",
+          "description": "Reference to defendant"
+        },
+        "offenceId": {
+          "type": "string",
+          "description": "Reference to offence"
+        },
+        "isConcurrent": {
+          "type": "boolean",
+          "description": "Whether this sentence is concurrent with another"
+        },
+        "consecutiveToOffence": {
+          "type": "string",
+          "description": "Offence identifier that this sentence is consecutive to"
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "A",
+            "I",
+            "F"
+          ],
+          "description": "Closed enum identifying the role of this result line on the offence: A = Ancillary (e.g. adjournment, listing); I = Intermediary (e.g. plea, hearing-internal); F = Final (the line that makes the offence inactive)."
+        },
+        "prompts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Prompt"
+          },
+          "description": "Structured data fields captured alongside the result line."
+        }
+      }
+    }
+  }
+}

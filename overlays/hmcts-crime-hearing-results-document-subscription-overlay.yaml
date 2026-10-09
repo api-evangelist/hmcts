@@ -1,0 +1,55 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Crime Hearing Results Document Subscription API
+  version: 1.0.0
+extends: ../openapi/_original/hmcts-crime-hearing-results-document-subscription-openapi.yml
+x-generated: '2026-10-09'
+x-method: generated
+actions:
+- target: $.info
+  update:
+    x-provider: HM Courts & Tribunals Service
+    x-api-evangelist:
+      aid: hmcts
+      profiled: '2026-10-09'
+      source_repo: https://github.com/api-evangelist/hmcts
+- target: $.paths['/event-types'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/client-subscriptions'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/client-subscriptions/{clientSubscriptionId}'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/client-subscriptions/{clientSubscriptionId}'].put
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/client-subscriptions/{clientSubscriptionId}'].delete
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: true
+- target: $.paths['/notifications'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/client-subscriptions/{clientSubscriptionId}/secret/rotate'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/client-subscriptions/{clientSubscriptionId}/documents/{documentId}'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false

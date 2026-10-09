@@ -1,0 +1,119 @@
+generated: '2026-10-09'
+method: derived
+source: the pre-flight dossier, apis.yml pointers, spec servers, well-known, vendors -- nothing fetched here
+generator: derive-hosts.py
+summary:
+  hosts: 9
+  own: 1
+  other_domain: 3
+  platform: 5
+  roles:
+  - api
+  - docs
+  - marketing
+  - other
+  - source
+  - website
+hosts:
+- host: api-cp-crime-hearing-results-document-subscription.net
+  found_by:
+  - apis[]
+  types: []
+  serves:
+  - api
+  registrable_domain: api-cp-crime-hearing-results-document-subscription.net
+  role: other
+  relation: other-domain
+- host: api.gov.uk
+  found_by:
+  - contract-discovery
+  types: []
+  serves: []
+  registrable_domain: api.gov.uk
+  role: api
+  relation: other-domain
+- host: github.com
+  found_by:
+  - pointer
+  - apis[]
+  types:
+  - GitHubOrganization
+  - SpectralRules
+  serves:
+  - docs
+  registrable_domain: github.com
+  role: source
+  relation: platform
+- host: hmcts.github.io
+  found_by:
+  - pointer
+  - vendor-detect
+  types:
+  - Documentation
+  serves:
+  - hosting
+  vendor: github-pages
+  registrable_domain: github.io
+  role: docs
+  relation: platform
+- host: insidehmcts.blog.gov.uk
+  found_by:
+  - pointer
+  - probed
+  - contract-discovery
+  - well-known
+  types:
+  - Blog
+  serves: []
+  registrable_domain: blog.gov.uk
+  role: marketing
+  relation: other-domain
+- host: twitter.com
+  found_by:
+  - pointer
+  types:
+  - Twitter
+  serves: []
+  registrable_domain: twitter.com
+  role: other
+  relation: platform
+- host: www.gov.uk
+  found_by:
+  - pointer
+  - probed
+  - contract-discovery
+  - well-known
+  - vendor-detect
+  types:
+  - Security
+  - SignUp
+  - Newsroom
+  - Website
+  - About
+  - Support
+  - TermsOfService
+  - PrivacyPolicy
+  serves:
+  - cdn
+  vendor: fastly
+  registrable_domain: www.gov.uk
+  role: website
+  relation: own
+- host: www.linkedin.com
+  found_by:
+  - pointer
+  types:
+  - LinkedIn
+  serves: []
+  registrable_domain: linkedin.com
+  role: other
+  relation: platform
+- host: www.youtube.com
+  found_by:
+  - pointer
+  types:
+  - YouTube
+  serves: []
+  registrable_domain: youtube.com
+  role: other
+  relation: platform

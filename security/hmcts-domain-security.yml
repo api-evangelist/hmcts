@@ -1,0 +1,18 @@
+generated: '2026-10-09'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: www.gov.uk
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Dec 28 22:06:14 2026 GMT
+  hsts: true
+  hsts_max_age: 31536000
+domains:
+- domain: www.gov.uk
+  dnssec: true
+  caa:
+  - www-cdn.production.govuk.service.gov.uk.
+  - www-gov-uk.map.fastly.net.
+  spf: false
+  dmarc: false

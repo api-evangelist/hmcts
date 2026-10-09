@@ -1,0 +1,1024 @@
+{
+  "@context": {
+    "@vocab": "https://www.gov.uk/schema#",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "hmcts": "https://www.gov.uk/schema#",
+    "admin-job-type": "hmcts:admin-job-type",
+    "admin-job-status": "hmcts:admin-job-status",
+    "lastRan": {
+      "@id": "hmcts:lastRan",
+      "@type": "xsd:dateTime"
+    },
+    "enabled": {
+      "@id": "hmcts:enabled",
+      "@type": "xsd:boolean"
+    },
+    "problem": "hmcts:problem",
+    "type": {
+      "@id": "hmcts:type",
+      "@type": "@id"
+    },
+    "title": {
+      "@id": "hmcts:title",
+      "@type": "xsd:string"
+    },
+    "status": {
+      "@id": "hmcts:status",
+      "@type": "xsd:integer"
+    },
+    "detail": {
+      "@id": "hmcts:detail",
+      "@type": "xsd:string"
+    },
+    "instance": {
+      "@id": "hmcts:instance",
+      "@type": "@id"
+    },
+    "correlationId": {
+      "@id": "hmcts:correlationId",
+      "@type": "xsd:string"
+    },
+    "job-retention-policy": "hmcts:job-retention-policy",
+    "retentionPeriodDays": {
+      "@id": "hmcts:retentionPeriodDays",
+      "@type": "xsd:integer"
+    },
+    "application-code-get-detail-dto": "hmcts:application-code-get-detail-dto",
+    "applicationCode": {
+      "@id": "hmcts:applicationCode",
+      "@type": "xsd:string"
+    },
+    "wording": {
+      "@id": "hmcts:wording",
+      "@type": "@id"
+    },
+    "isFeeDue": {
+      "@id": "hmcts:isFeeDue",
+      "@type": "xsd:boolean"
+    },
+    "requiresRespondent": {
+      "@id": "hmcts:requiresRespondent",
+      "@type": "xsd:boolean"
+    },
+    "bulkRespondentAllowed": {
+      "@id": "hmcts:bulkRespondentAllowed",
+      "@type": "xsd:boolean"
+    },
+    "feeReference": {
+      "@id": "hmcts:feeReference",
+      "@type": "xsd:string"
+    },
+    "feeAmount": {
+      "@id": "hmcts:feeAmount",
+      "@type": "@id"
+    },
+    "feeDescription": {
+      "@id": "hmcts:feeDescription",
+      "@type": "xsd:string"
+    },
+    "offsiteFeeReference": {
+      "@id": "hmcts:offsiteFeeReference",
+      "@type": "xsd:string"
+    },
+    "offsiteFeeAmount": {
+      "@id": "hmcts:offsiteFeeAmount",
+      "@type": "@id"
+    },
+    "offsiteFeeDescription": {
+      "@id": "hmcts:offsiteFeeDescription",
+      "@type": "xsd:string"
+    },
+    "startDate": {
+      "@id": "hmcts:startDate",
+      "@type": "xsd:date"
+    },
+    "endDate": {
+      "@id": "hmcts:endDate",
+      "@type": "xsd:date"
+    },
+    "application-list-get-filter-dto": "hmcts:application-list-get-filter-dto",
+    "date": {
+      "@id": "hmcts:date",
+      "@type": "xsd:date"
+    },
+    "time": {
+      "@id": "hmcts:time",
+      "@type": "xsd:string"
+    },
+    "courtLocationCode": {
+      "@id": "hmcts:courtLocationCode",
+      "@type": "xsd:string"
+    },
+    "cjaCode": {
+      "@id": "hmcts:cjaCode",
+      "@type": "xsd:string"
+    },
+    "description": {
+      "@id": "hmcts:description",
+      "@type": "xsd:string"
+    },
+    "otherLocationDescription": {
+      "@id": "hmcts:otherLocationDescription",
+      "@type": "xsd:string"
+    },
+    "hasEntries": {
+      "@id": "hmcts:hasEntries",
+      "@type": "xsd:boolean"
+    },
+    "application-list-create-dto": "hmcts:application-list-create-dto",
+    "durationHours": {
+      "@id": "hmcts:durationHours",
+      "@type": "xsd:integer"
+    },
+    "durationMinutes": {
+      "@id": "hmcts:durationMinutes",
+      "@type": "xsd:integer"
+    },
+    "application-list-get-detail-dto": "hmcts:application-list-get-detail-dto",
+    "id": {
+      "@id": "hmcts:id",
+      "@type": "xsd:string"
+    },
+    "courtCode": {
+      "@id": "hmcts:courtCode",
+      "@type": "xsd:string"
+    },
+    "courtName": {
+      "@id": "hmcts:courtName",
+      "@type": "xsd:string"
+    },
+    "version": {
+      "@id": "hmcts:version",
+      "@type": "xsd:integer"
+    },
+    "entriesCount": {
+      "@id": "hmcts:entriesCount",
+      "@type": "xsd:integer"
+    },
+    "bulk-get-application-list-entries-request-dto": "hmcts:bulk-get-application-list-entries-request-dto",
+    "listIds": {
+      "@id": "hmcts:listIds",
+      "@container": "@list"
+    },
+    "entryIds": {
+      "@id": "hmcts:entryIds",
+      "@container": "@list"
+    },
+    "application-list-get-print-dto": "hmcts:application-list-get-print-dto",
+    "cja": {
+      "@id": "hmcts:cja",
+      "@type": "xsd:string"
+    },
+    "duration": {
+      "@id": "hmcts:duration",
+      "@type": "xsd:string"
+    },
+    "entries": {
+      "@id": "hmcts:entries",
+      "@container": "@list"
+    },
+    "application-list-update-dto": "hmcts:application-list-update-dto",
+    "entry-get-filter-dto": "hmcts:entry-get-filter-dto",
+    "applicantOrganisation": {
+      "@id": "hmcts:applicantOrganisation",
+      "@type": "xsd:string"
+    },
+    "applicantSurname": {
+      "@id": "hmcts:applicantSurname",
+      "@type": "xsd:string"
+    },
+    "standardApplicantCode": {
+      "@id": "hmcts:standardApplicantCode",
+      "@type": "xsd:string"
+    },
+    "respondentOrganisation": {
+      "@id": "hmcts:respondentOrganisation",
+      "@type": "xsd:string"
+    },
+    "respondentSurname": {
+      "@id": "hmcts:respondentSurname",
+      "@type": "xsd:string"
+    },
+    "respondentPostcode": {
+      "@id": "hmcts:respondentPostcode",
+      "@type": "xsd:string"
+    },
+    "accountReference": {
+      "@id": "hmcts:accountReference",
+      "@type": "xsd:string"
+    },
+    "applicationTitle": {
+      "@id": "hmcts:applicationTitle",
+      "@type": "xsd:string"
+    },
+    "applicantName": {
+      "@id": "hmcts:applicantName",
+      "@type": "xsd:string"
+    },
+    "respondentName": {
+      "@id": "hmcts:respondentName",
+      "@type": "xsd:string"
+    },
+    "bulk-action-preview-request-dto": "hmcts:bulk-action-preview-request-dto",
+    "action": {
+      "@id": "hmcts:action",
+      "@type": "@id"
+    },
+    "selection": {
+      "@id": "hmcts:selection",
+      "@type": "@id"
+    },
+    "bulk-action-preview-response-dto": "hmcts:bulk-action-preview-response-dto",
+    "limit": {
+      "@id": "hmcts:limit",
+      "@type": "xsd:integer"
+    },
+    "selectedCount": {
+      "@id": "hmcts:selectedCount",
+      "@type": "xsd:integer"
+    },
+    "eligibleCount": {
+      "@id": "hmcts:eligibleCount",
+      "@type": "xsd:integer"
+    },
+    "ineligibleCount": {
+      "@id": "hmcts:ineligibleCount",
+      "@type": "xsd:integer"
+    },
+    "entry-application-list-get-filter-dto": "hmcts:entry-application-list-get-filter-dto",
+    "sequenceNumber": {
+      "@id": "hmcts:sequenceNumber",
+      "@type": "xsd:integer"
+    },
+    "feeRequired": {
+      "@id": "hmcts:feeRequired",
+      "@type": "xsd:boolean"
+    },
+    "resulted": {
+      "@id": "hmcts:resulted",
+      "@type": "xsd:string"
+    },
+    "entry-create-dto": "hmcts:entry-create-dto",
+    "applicant": {
+      "@id": "hmcts:applicant",
+      "@type": "@id"
+    },
+    "respondent": {
+      "@id": "hmcts:respondent",
+      "@type": "@id"
+    },
+    "numberOfRespondents": {
+      "@id": "hmcts:numberOfRespondents",
+      "@type": "xsd:integer"
+    },
+    "wordingFields": {
+      "@id": "hmcts:wordingFields",
+      "@container": "@list"
+    },
+    "feeStatuses": {
+      "@id": "hmcts:feeStatuses",
+      "@container": "@list"
+    },
+    "hasOffsiteFee": {
+      "@id": "hmcts:hasOffsiteFee",
+      "@type": "xsd:boolean"
+    },
+    "caseReference": {
+      "@id": "hmcts:caseReference",
+      "@type": "xsd:string"
+    },
+    "accountNumber": {
+      "@id": "hmcts:accountNumber",
+      "@type": "xsd:string"
+    },
+    "notes": {
+      "@id": "hmcts:notes",
+      "@type": "xsd:string"
+    },
+    "lodgementDate": {
+      "@id": "hmcts:lodgementDate",
+      "@type": "xsd:date"
+    },
+    "officials": {
+      "@id": "hmcts:officials",
+      "@container": "@list"
+    },
+    "entry-get-detail-dto": "hmcts:entry-get-detail-dto",
+    "listId": {
+      "@id": "hmcts:listId",
+      "@type": "xsd:string"
+    },
+    "application-list-entry-bulk-action-preview-request-dto": "hmcts:application-list-entry-bulk-action-preview-request-dto",
+    "bulk-officials-update-dto": "hmcts:bulk-officials-update-dto",
+    "bulk-fees-update-dto": "hmcts:bulk-fees-update-dto",
+    "feeDetails": {
+      "@id": "hmcts:feeDetails",
+      "@container": "@list"
+    },
+    "bulk-update-response-dto": "hmcts:bulk-update-response-dto",
+    "totalCount": {
+      "@id": "hmcts:totalCount",
+      "@type": "xsd:integer"
+    },
+    "updatedCount": {
+      "@id": "hmcts:updatedCount",
+      "@type": "xsd:integer"
+    },
+    "entry-get-detail-dto_1": "hmcts:entry-get-detail-dto_1",
+    "entry-update-dto": "hmcts:entry-update-dto",
+    "job-acknowledgement": "hmcts:job-acknowledgement",
+    "createdCount": {
+      "@id": "hmcts:createdCount",
+      "@type": "xsd:integer"
+    },
+    "mainFeeTotal": {
+      "@id": "hmcts:mainFeeTotal",
+      "@type": "xsd:decimal"
+    },
+    "offsiteFeeTotal": {
+      "@id": "hmcts:offsiteFeeTotal",
+      "@type": "xsd:decimal"
+    },
+    "totalFeeValue": {
+      "@id": "hmcts:totalFeeValue",
+      "@type": "xsd:decimal"
+    },
+    "error_description": {
+      "@id": "hmcts:error_description",
+      "@type": "xsd:string"
+    },
+    "move-entries-dto": "hmcts:move-entries-dto",
+    "targetListId": {
+      "@id": "hmcts:targetListId",
+      "@type": "xsd:string"
+    },
+    "entry_update_closed_dto": "hmcts:entry_update_closed_dto",
+    "additionalNotes": {
+      "@id": "hmcts:additionalNotes",
+      "@type": "xsd:string"
+    },
+    "bulk-result-dto": "hmcts:bulk-result-dto",
+    "result": {
+      "@id": "hmcts:result",
+      "@type": "@id"
+    },
+    "result-get-dto": "hmcts:result-get-dto",
+    "entryId": {
+      "@id": "hmcts:entryId",
+      "@type": "xsd:string"
+    },
+    "resultCode": {
+      "@id": "hmcts:resultCode",
+      "@type": "xsd:string"
+    },
+    "updatedDateTime": {
+      "@id": "hmcts:updatedDateTime",
+      "@type": "xsd:dateTime"
+    },
+    "bulk-delete-results-dto": "hmcts:bulk-delete-results-dto",
+    "results": {
+      "@id": "hmcts:results",
+      "@container": "@list"
+    },
+    "result-create-dto": "hmcts:result-create-dto",
+    "result-update-dto": "hmcts:result-update-dto",
+    "court-location-get-detail-dto": "hmcts:court-location-get-detail-dto",
+    "name": {
+      "@id": "hmcts:name",
+      "@type": "xsd:string"
+    },
+    "locationCode": {
+      "@id": "hmcts:locationCode",
+      "@type": "xsd:string"
+    },
+    "criminal-justice-area-get-dto": "hmcts:criminal-justice-area-get-dto",
+    "code": {
+      "@id": "hmcts:code",
+      "@type": "xsd:string"
+    },
+    "activity-audit-filter-dto": "hmcts:activity-audit-filter-dto",
+    "dateFrom": {
+      "@id": "hmcts:dateFrom",
+      "@type": "xsd:date"
+    },
+    "dateTo": {
+      "@id": "hmcts:dateTo",
+      "@type": "xsd:date"
+    },
+    "username": {
+      "@id": "hmcts:username",
+      "@type": "xsd:string"
+    },
+    "activityTypes": {
+      "@id": "hmcts:activityTypes",
+      "@container": "@list"
+    },
+    "fees-report-filter-dto": "hmcts:fees-report-filter-dto",
+    "location": {
+      "@id": "hmcts:location",
+      "@type": "@id"
+    },
+    "list-maintenance-filter-dto": "hmcts:list-maintenance-filter-dto",
+    "listDescription": {
+      "@id": "hmcts:listDescription",
+      "@type": "xsd:string"
+    },
+    "search-warrants-report-filter-dto": "hmcts:search-warrants-report-filter-dto",
+    "workload-filter-dto": "hmcts:workload-filter-dto",
+    "duration-filter-dto": "hmcts:duration-filter-dto",
+    "private-prosecutors-index-filter-dto": "hmcts:private-prosecutors-index-filter-dto",
+    "applicantFirstName": {
+      "@id": "hmcts:applicantFirstName",
+      "@type": "xsd:string"
+    },
+    "applicantOrganisationName": {
+      "@id": "hmcts:applicantOrganisationName",
+      "@type": "xsd:string"
+    },
+    "standardApplicantName": {
+      "@id": "hmcts:standardApplicantName",
+      "@type": "xsd:string"
+    },
+    "respondentFirstName": {
+      "@id": "hmcts:respondentFirstName",
+      "@type": "xsd:string"
+    },
+    "respondentOrganisationName": {
+      "@id": "hmcts:respondentOrganisationName",
+      "@type": "xsd:string"
+    },
+    "result-code-get-detail-dto": "hmcts:result-code-get-detail-dto",
+    "standard-applicant-print-dto": "hmcts:standard-applicant-print-dto",
+    "reportTitle": {
+      "@id": "hmcts:reportTitle",
+      "@type": "xsd:string"
+    },
+    "searchCriteria": {
+      "@id": "hmcts:searchCriteria",
+      "@type": "@id"
+    },
+    "generatedAt": {
+      "@id": "hmcts:generatedAt",
+      "@type": "xsd:dateTime"
+    },
+    "recordCount": {
+      "@id": "hmcts:recordCount",
+      "@type": "xsd:integer"
+    },
+    "applicants": {
+      "@id": "hmcts:applicants",
+      "@container": "@list"
+    },
+    "standard-applicant-get-detail-dto": "hmcts:standard-applicant-get-detail-dto",
+    "page": "hmcts:page",
+    "pageNumber": {
+      "@id": "hmcts:pageNumber",
+      "@type": "xsd:integer"
+    },
+    "pageSize": {
+      "@id": "hmcts:pageSize",
+      "@type": "xsd:integer"
+    },
+    "totalElements": {
+      "@id": "hmcts:totalElements",
+      "@type": "xsd:integer"
+    },
+    "totalPages": {
+      "@id": "hmcts:totalPages",
+      "@type": "xsd:integer"
+    },
+    "sort": {
+      "@id": "hmcts:sort",
+      "@type": "@id"
+    },
+    "first": {
+      "@id": "hmcts:first",
+      "@type": "xsd:boolean"
+    },
+    "last": {
+      "@id": "hmcts:last",
+      "@type": "xsd:boolean"
+    },
+    "elementsOnPage": {
+      "@id": "hmcts:elementsOnPage",
+      "@type": "xsd:integer"
+    },
+    "application-code-get-summary-dto": "hmcts:application-code-get-summary-dto",
+    "template-detail": "hmcts:template-detail",
+    "template": {
+      "@id": "hmcts:template",
+      "@type": "xsd:string"
+    },
+    "substitution-key-constraints": {
+      "@id": "hmcts:substitution-key-constraints",
+      "@container": "@list"
+    },
+    "application-list-status": "hmcts:application-list-status",
+    "application-list-get-summary-dto": "hmcts:application-list-get-summary-dto",
+    "entry-get-print-dto": "hmcts:entry-get-print-dto",
+    "applicationWording": {
+      "@id": "hmcts:applicationWording",
+      "@type": "xsd:string"
+    },
+    "resultWordings": {
+      "@id": "hmcts:resultWordings",
+      "@container": "@list"
+    },
+    "entry-get-summary-dto": "hmcts:entry-get-summary-dto",
+    "legislation": {
+      "@id": "hmcts:legislation",
+      "@type": "xsd:string"
+    },
+    "isFeeRequired": {
+      "@id": "hmcts:isFeeRequired",
+      "@type": "xsd:boolean"
+    },
+    "isResulted": {
+      "@id": "hmcts:isResulted",
+      "@type": "xsd:boolean"
+    },
+    "bulk-action-type": "hmcts:bulk-action-type",
+    "bulk-action-selection-dto": "hmcts:bulk-action-selection-dto",
+    "selectionType": {
+      "@id": "hmcts:selectionType",
+      "@type": "@id"
+    },
+    "filter": {
+      "@id": "hmcts:filter",
+      "@type": "@id"
+    },
+    "excludedEntryIds": {
+      "@id": "hmcts:excludedEntryIds",
+      "@container": "@list"
+    },
+    "template-substitution": "hmcts:template-substitution",
+    "key": {
+      "@id": "hmcts:key",
+      "@type": "xsd:string"
+    },
+    "value": {
+      "@id": "hmcts:value",
+      "@type": "xsd:string"
+    },
+    "fee-status": "hmcts:fee-status",
+    "paymentReference": {
+      "@id": "hmcts:paymentReference",
+      "@type": "xsd:string"
+    },
+    "paymentStatus": {
+      "@id": "hmcts:paymentStatus",
+      "@type": "@id"
+    },
+    "statusDate": {
+      "@id": "hmcts:statusDate",
+      "@type": "xsd:date"
+    },
+    "official": "hmcts:official",
+    "surname": {
+      "@id": "hmcts:surname",
+      "@type": "xsd:string"
+    },
+    "forename": {
+      "@id": "hmcts:forename",
+      "@type": "xsd:string"
+    },
+    "application-list-entry-bulk-action-selection-dto": "hmcts:application-list-entry-bulk-action-selection-dto",
+    "bulk-fee-details-dto": "hmcts:bulk-fee-details-dto",
+    "job-type": "hmcts:job-type",
+    "job-status": "hmcts:job-status",
+    "bulk-delete-result-item-dto": "hmcts:bulk-delete-result-item-dto",
+    "resultId": {
+      "@id": "hmcts:resultId",
+      "@type": "xsd:string"
+    },
+    "court-location-get-summary-dto": "hmcts:court-location-get-summary-dto",
+    "activity-type": "hmcts:activity-type",
+    "legacy-report-location": "hmcts:legacy-report-location",
+    "result-code-get-summary-dto": "hmcts:result-code-get-summary-dto",
+    "standard-applicant-get-summary-dto": "hmcts:standard-applicant-get-summary-dto",
+    "standard-applicant-print-search-criteria-dto": "hmcts:standard-applicant-print-search-criteria-dto",
+    "from": {
+      "@id": "hmcts:from",
+      "@type": "xsd:date"
+    },
+    "to": {
+      "@id": "hmcts:to",
+      "@type": "xsd:date"
+    },
+    "standard-applicant-print-row-dto": "hmcts:standard-applicant-print-row-dto",
+    "useFrom": {
+      "@id": "hmcts:useFrom",
+      "@type": "xsd:date"
+    },
+    "useTo": {
+      "@id": "hmcts:useTo",
+      "@type": "xsd:date"
+    },
+    "template-key-with-constraint": "hmcts:template-key-with-constraint",
+    "constraint": {
+      "@id": "hmcts:constraint"
+    },
+    "bulk-action-selection-type": "hmcts:bulk-action-selection-type",
+    "person": "hmcts:person",
+    "contactDetails": {
+      "@id": "hmcts:contactDetails",
+      "@type": "@id"
+    },
+    "organisation": "hmcts:organisation",
+    "payment-status": "hmcts:payment-status",
+    "official-type": "hmcts:official-type",
+    "template-constraint": "hmcts:template-constraint",
+    "length": {
+      "@id": "hmcts:length",
+      "@type": "xsd:integer"
+    },
+    "full-name": "hmcts:full-name",
+    "firstName": {
+      "@id": "hmcts:firstName",
+      "@type": "xsd:string"
+    },
+    "middleName": {
+      "@id": "hmcts:middleName",
+      "@type": "xsd:string"
+    },
+    "lastName": {
+      "@id": "hmcts:lastName",
+      "@type": "xsd:string"
+    },
+    "contact-details": "hmcts:contact-details",
+    "addressLine1": {
+      "@id": "hmcts:addressLine1",
+      "@type": "xsd:string"
+    },
+    "addressLine2": {
+      "@id": "hmcts:addressLine2",
+      "@type": "xsd:string"
+    },
+    "addressLine3": {
+      "@id": "hmcts:addressLine3",
+      "@type": "xsd:string"
+    },
+    "addressLine4": {
+      "@id": "hmcts:addressLine4",
+      "@type": "xsd:string"
+    },
+    "addressLine5": {
+      "@id": "hmcts:addressLine5",
+      "@type": "xsd:string"
+    },
+    "postcode": {
+      "@id": "hmcts:postcode",
+      "@type": "xsd:string"
+    },
+    "phone": {
+      "@id": "hmcts:phone",
+      "@type": "xsd:string"
+    },
+    "mobile": {
+      "@id": "hmcts:mobile",
+      "@type": "xsd:string"
+    },
+    "email": {
+      "@id": "hmcts:email",
+      "@type": "xsd:string"
+    },
+    "bulkUploadApplicationListEntries_request": "hmcts:bulkUploadApplicationListEntries_request",
+    "file": {
+      "@id": "hmcts:file",
+      "@type": "xsd:string"
+    },
+    "application_code_get_detail_dto_feeAmount": "hmcts:application_code_get_detail_dto_feeAmount",
+    "currency": {
+      "@id": "hmcts:currency",
+      "@type": "xsd:string"
+    },
+    "application_code_get_detail_dto_offsiteFeeAmount": "hmcts:application_code_get_detail_dto_offsiteFeeAmount",
+    "sort_orders_inner": "hmcts:sort_orders_inner",
+    "property": {
+      "@id": "hmcts:property",
+      "@type": "xsd:string"
+    },
+    "direction": {
+      "@id": "hmcts:direction",
+      "@type": "xsd:string"
+    },
+    "NotificationEndpoint": "hmcts:NotificationEndpoint",
+    "callbackUrl": {
+      "@id": "hmcts:callbackUrl",
+      "@type": "xsd:string"
+    },
+    "EventTypeResponse": "hmcts:EventTypeResponse",
+    "events": {
+      "@id": "hmcts:events",
+      "@container": "@list"
+    },
+    "EventTypePayload": "hmcts:EventTypePayload",
+    "eventName": {
+      "@id": "hmcts:eventName",
+      "@type": "xsd:string"
+    },
+    "displayName": {
+      "@id": "hmcts:displayName",
+      "@type": "xsd:string"
+    },
+    "category": {
+      "@id": "hmcts:category",
+      "@type": "xsd:string"
+    },
+    "ClientSubscriptionRequest": "hmcts:ClientSubscriptionRequest",
+    "notificationEndpoint": {
+      "@id": "hmcts:notificationEndpoint",
+      "@type": "@id"
+    },
+    "eventTypes": {
+      "@id": "hmcts:eventTypes",
+      "@container": "@list"
+    },
+    "ClientSubscription": "hmcts:ClientSubscription",
+    "clientSubscriptionId": {
+      "@id": "hmcts:clientSubscriptionId",
+      "@type": "xsd:string"
+    },
+    "createdAt": {
+      "@id": "hmcts:createdAt",
+      "@type": "xsd:dateTime"
+    },
+    "updatedAt": {
+      "@id": "hmcts:updatedAt",
+      "@type": "xsd:dateTime"
+    },
+    "hmac": {
+      "@id": "hmcts:hmac",
+      "@type": "@id"
+    },
+    "HmacCredentials": "hmcts:HmacCredentials",
+    "keyId": {
+      "@id": "hmcts:keyId",
+      "@type": "xsd:string"
+    },
+    "secret": {
+      "@id": "hmcts:secret",
+      "@type": "xsd:string"
+    },
+    "RotateSecretRequest": "hmcts:RotateSecretRequest",
+    "ErrorResponse": "hmcts:ErrorResponse",
+    "error": {
+      "@id": "hmcts:error",
+      "@type": "xsd:string"
+    },
+    "message": {
+      "@id": "hmcts:message",
+      "@type": "xsd:string"
+    },
+    "EventPayload": "hmcts:EventPayload",
+    "eventType": {
+      "@id": "hmcts:eventType",
+      "@type": "@id"
+    },
+    "eventId": {
+      "@id": "hmcts:eventId",
+      "@type": "xsd:string"
+    },
+    "hearingId": {
+      "@id": "hmcts:hearingId",
+      "@type": "xsd:string"
+    },
+    "materialId": {
+      "@id": "hmcts:materialId",
+      "@type": "xsd:string"
+    },
+    "timestamp": {
+      "@id": "hmcts:timestamp",
+      "@type": "xsd:dateTime"
+    },
+    "defendant": {
+      "@id": "hmcts:defendant"
+    },
+    "payload": {
+      "@id": "hmcts:payload"
+    },
+    "EventNotificationPayload": "hmcts:EventNotificationPayload",
+    "hearingEventId": {
+      "@id": "hmcts:hearingEventId",
+      "@type": "xsd:string"
+    },
+    "masterDefendantId": {
+      "@id": "hmcts:masterDefendantId",
+      "@type": "xsd:string"
+    },
+    "documentId": {
+      "@id": "hmcts:documentId",
+      "@type": "xsd:string"
+    },
+    "documentGeneratedTimestamp": {
+      "@id": "hmcts:documentGeneratedTimestamp",
+      "@type": "xsd:dateTime"
+    },
+    "cases": {
+      "@id": "hmcts:cases",
+      "@container": "@list"
+    },
+    "prisonEmailAddress": {
+      "@id": "hmcts:prisonEmailAddress",
+      "@type": "xsd:string"
+    },
+    "DraftValidationRequest": "hmcts:DraftValidationRequest",
+    "caseId": {
+      "@id": "hmcts:caseId",
+      "@type": "xsd:string"
+    },
+    "hearingDay": {
+      "@id": "hmcts:hearingDay",
+      "@type": "xsd:date"
+    },
+    "courtType": {
+      "@id": "hmcts:courtType",
+      "@type": "xsd:string"
+    },
+    "resultLines": {
+      "@id": "hmcts:resultLines",
+      "@container": "@list"
+    },
+    "defendants": {
+      "@id": "hmcts:defendants",
+      "@container": "@list"
+    },
+    "offences": {
+      "@id": "hmcts:offences",
+      "@container": "@list"
+    },
+    "Prompt": "hmcts:Prompt",
+    "promptRef": {
+      "@id": "hmcts:promptRef",
+      "@type": "xsd:string"
+    },
+    "promptValue": {
+      "@id": "hmcts:promptValue",
+      "@type": "xsd:string"
+    },
+    "ResultLineDto": "hmcts:ResultLineDto",
+    "resultLineId": {
+      "@id": "hmcts:resultLineId",
+      "@type": "xsd:string"
+    },
+    "shortCode": {
+      "@id": "hmcts:shortCode",
+      "@type": "xsd:string"
+    },
+    "label": {
+      "@id": "hmcts:label",
+      "@type": "xsd:string"
+    },
+    "defendantId": {
+      "@id": "hmcts:defendantId",
+      "@type": "xsd:string"
+    },
+    "offenceId": {
+      "@id": "hmcts:offenceId",
+      "@type": "xsd:string"
+    },
+    "isConcurrent": {
+      "@id": "hmcts:isConcurrent",
+      "@type": "xsd:boolean"
+    },
+    "consecutiveToOffence": {
+      "@id": "hmcts:consecutiveToOffence",
+      "@type": "xsd:string"
+    },
+    "prompts": {
+      "@id": "hmcts:prompts",
+      "@container": "@list"
+    },
+    "DefendantDto": "hmcts:DefendantDto",
+    "dateOfBirth": {
+      "@id": "hmcts:dateOfBirth",
+      "@type": "xsd:date"
+    },
+    "OffenceDto": "hmcts:OffenceDto",
+    "offenceCode": {
+      "@id": "hmcts:offenceCode",
+      "@type": "xsd:string"
+    },
+    "offenceTitle": {
+      "@id": "hmcts:offenceTitle",
+      "@type": "xsd:string"
+    },
+    "hasActiveElectronicMonitoring": {
+      "@id": "hmcts:hasActiveElectronicMonitoring",
+      "@type": "xsd:boolean"
+    },
+    "orderIndex": {
+      "@id": "hmcts:orderIndex",
+      "@type": "xsd:integer"
+    },
+    "caseUrn": {
+      "@id": "hmcts:caseUrn",
+      "@type": "xsd:string"
+    },
+    "hasExistingCtlRecord": {
+      "@id": "hmcts:hasExistingCtlRecord",
+      "@type": "xsd:boolean"
+    },
+    "isConvicted": {
+      "@id": "hmcts:isConvicted",
+      "@type": "xsd:boolean"
+    },
+    "DraftValidationResponse": "hmcts:DraftValidationResponse",
+    "validationId": {
+      "@id": "hmcts:validationId",
+      "@type": "xsd:string"
+    },
+    "mode": {
+      "@id": "hmcts:mode",
+      "@type": "xsd:string"
+    },
+    "rulesEvaluated": {
+      "@id": "hmcts:rulesEvaluated",
+      "@container": "@list"
+    },
+    "isValid": {
+      "@id": "hmcts:isValid",
+      "@type": "xsd:boolean"
+    },
+    "errors": {
+      "@id": "hmcts:errors",
+      "@type": "@id"
+    },
+    "warnings": {
+      "@id": "hmcts:warnings",
+      "@container": "@list"
+    },
+    "processingTimeMs": {
+      "@id": "hmcts:processingTimeMs",
+      "@type": "xsd:integer"
+    },
+    "ValidationErrors": "hmcts:ValidationErrors",
+    "errorMessages": {
+      "@id": "hmcts:errorMessages",
+      "@container": "@list"
+    },
+    "validationIssues": {
+      "@id": "hmcts:validationIssues",
+      "@container": "@list"
+    },
+    "ValidationIssue": "hmcts:ValidationIssue",
+    "ruleId": {
+      "@id": "hmcts:ruleId",
+      "@type": "xsd:string"
+    },
+    "severity": {
+      "@id": "hmcts:severity",
+      "@type": "xsd:string"
+    },
+    "affectedResultCodes": {
+      "@id": "hmcts:affectedResultCodes",
+      "@container": "@list"
+    },
+    "affectedOffences": {
+      "@id": "hmcts:affectedOffences",
+      "@container": "@list"
+    },
+    "affectedDefendants": {
+      "@id": "hmcts:affectedDefendants",
+      "@container": "@list"
+    },
+    "validationLevel": {
+      "@id": "hmcts:validationLevel",
+      "@type": "xsd:string"
+    },
+    "AffectedDefendant": "hmcts:AffectedDefendant",
+    "AffectedOffence": "hmcts:AffectedOffence",
+    "RuleListResponse": "hmcts:RuleListResponse",
+    "count": {
+      "@id": "hmcts:count",
+      "@type": "xsd:integer"
+    },
+    "enabledCount": {
+      "@id": "hmcts:enabledCount",
+      "@type": "xsd:integer"
+    },
+    "rules": {
+      "@id": "hmcts:rules",
+      "@container": "@list"
+    },
+    "RuleDetailResponse": "hmcts:RuleDetailResponse",
+    "priority": {
+      "@id": "hmcts:priority",
+      "@type": "xsd:integer"
+    },
+    "UpdateRuleRequest": "hmcts:UpdateRuleRequest"
+  },
+  "@type": "schema:Dataset",
+  "schema:name": "HM Courts & Tribunals Service API JSON-LD context",
+  "schema:description": "A JSON-LD @context for the objects HM Courts & Tribunals Service's own API contract declares: one class per component schema, one property per declared field, typed from the contract. Derived by script (derive-json-ld.py, 2026-10-09) from openapi/hmcts-applications-register-openapi.yml, openapi/hmcts-core-case-data-aggregated-openapi.yml, openapi/hmcts-core-case-data-definition-openapi.yml.",
+  "dcterms:created": "2026-10-09",
+  "dcterms:source": [
+    "openapi/hmcts-applications-register-openapi.yml",
+    "openapi/hmcts-core-case-data-aggregated-openapi.yml",
+    "openapi/hmcts-core-case-data-definition-openapi.yml",
+    "openapi/hmcts-crime-hearing-results-document-subscription-openapi.yml",
+    "openapi/hmcts-results-validation-service-openapi.yml"
+  ]
+}

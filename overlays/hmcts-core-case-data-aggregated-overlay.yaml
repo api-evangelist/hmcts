@@ -1,0 +1,60 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Core Case Data - Aggregated API
+  version: 1.0.0
+extends: ../openapi/_original/hmcts-core-case-data-aggregated-openapi.yml
+x-generated: '2026-10-09'
+x-method: generated
+actions:
+- target: $.info
+  update:
+    x-provider: HM Courts & Tribunals Service
+    x-api-evangelist:
+      aid: hmcts
+      profiled: '2026-10-09'
+      source_repo: https://github.com/api-evangelist/hmcts
+- target: $.paths['/caseworkers/{uid}/profile'].get
+  description: Spec has no operationId; add a deterministic one derived from method + path (our suggestion, not provider-published).
+  update:
+    x-suggested-operationId: getCaseworkersProfile
+- target: $.paths['/caseworkers/{uid}/profile'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/caseworkers/{uid}/jurisdictions/{jid}/case-types/{ctid}/inputs'].get
+  description: Spec has no operationId; add a deterministic one derived from method + path (our suggestion, not provider-published).
+  update:
+    x-suggested-operationId: getCaseworkersJurisdictionsCaseTypesInputs
+- target: $.paths['/caseworkers/{uid}/jurisdictions/{jid}/case-types/{ctid}/inputs'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/caseworkers/{uid}/cases'].get
+  description: Spec has no operationId; add a deterministic one derived from method + path (our suggestion, not provider-published).
+  update:
+    x-suggested-operationId: getCaseworkersCases
+- target: $.paths['/caseworkers/{uid}/cases'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/caseworkers/{uid}/cases/{cid}'].get
+  description: Spec has no operationId; add a deterministic one derived from method + path (our suggestion, not provider-published).
+  update:
+    x-suggested-operationId: getCaseworkersCases
+- target: $.paths['/caseworkers/{uid}/cases/{cid}'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/caseworkers/{uid}/cases/{cid}/event-triggers/{etid}'].get
+  description: Spec has no operationId; add a deterministic one derived from method + path (our suggestion, not provider-published).
+  update:
+    x-suggested-operationId: getCaseworkersCasesEventTriggers
+- target: $.paths['/caseworkers/{uid}/cases/{cid}/event-triggers/{etid}'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false

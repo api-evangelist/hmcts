@@ -1,0 +1,35 @@
+generated: '2026-10-09'
+method: derived
+source: openapi/
+docs:
+- https://hmcts.github.io/standards/practices/apis.html
+- https://hmcts.github.io/standards/standards/authentication-and-authorization.html
+name: HM Courts & Tribunals Service API Conventions
+design_standard: 'HMCTS design guidance points at the Zalando RESTful API Guidelines (HMCTS fork at https://hmcts.github.io/restful-api-standards/); this is an engineering standard, and behaviour below is read from the saved contracts.'
+authentication:
+  style: 'Crime Hearing Results Document Subscription API declares bearerAuth (HTTP bearer, JWT) and subscriptionKey (apiKey header Ocp-Apim-Subscription-Key). The other saved contracts declare no securitySchemes. Engineering standard: OpenID Connect with CFT IDAM for user auth, client credentials for service-to-service.'
+  see: authentication/hmcts-authentication.yml
+request_id:
+  header: X-Correlation-Id
+  evidence: X-Correlation-Id header parameter referenced 34 times across the saved contracts (components/parameters/XCorrelationId in the crime hearing results contracts).
+personal_data:
+  rule: 'HMCTS services must not transmit personal data in URL paths or query strings; use the request body or HTTP headers.'
+  source: https://hmcts.github.io/standards/practices/apis.html
+versioning:
+  policy: 'Use content type negotiation or endpoint naming to version the API. Do not make backward incompatible changes to existing endpoints.'
+  source: https://hmcts.github.io/standards/practices/apis.html
+  observed: Crime Hearing Results Document Subscription server URL carries a {version} path variable (default 1.0.0).
+  see: lifecycle/hmcts-lifecycle.yml
+webhooks:
+  signing: 'Callbacks carry X-Key-Id and X-Signature (HMAC-SHA256 of the callback request using the subscription shared secret, returned once at subscription creation); secret rotation via rotateClientSubscriptionSecret.'
+  source: openapi/hmcts-crime-hearing-results-document-subscription-openapi.yml
+idempotency:
+  coverage: none
+  note: No Idempotency-Key or equivalent header is declared on any write operation in the saved contracts (38 POST/PUT/PATCH/DELETE operations across five contracts). The Zalando guidelines HMCTS adopts discuss Idempotency-Key, but no HMCTS API contract implements it.
+dry_run:
+  note: Applications Register API exposes preview operations bulkActionPreview and applicationListEntryBulkActionPreview ahead of bulk actions; no general dry-run mode is documented.
+reversibility:
+  status: none-documented
+  note: Write surfaces include deletes (deleteApplicationList, deleteApplicationListEntry, bulkDeleteResultEntries, deleteClientSubscription) and updates, but no cancel/undo/restore operation and no reversal window is documented in the contracts or the HMCTS engineering docs.
+rate_limit_signaling:
+  note: No rate-limit headers or 429 responses are documented; see rate-limits/hmcts-rate-limits.yml.

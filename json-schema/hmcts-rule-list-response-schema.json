@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/hmcts/main/json-schema/hmcts-rule-list-response-schema.json",
+  "title": "RuleListResponse",
+  "x-generated": "2026-10-09",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/hmcts-results-validation-service-openapi.yml#/components/schemas/RuleListResponse",
+  "type": "object",
+  "properties": {
+    "count": {
+      "type": "integer",
+      "description": "Total number of rules"
+    },
+    "enabledCount": {
+      "type": "integer",
+      "description": "Number of enabled rules"
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/RuleDetailResponse"
+      },
+      "description": "List of rule summaries"
+    }
+  },
+  "$defs": {
+    "RuleDetailResponse": {
+      "type": "object",
+      "required": [
+        "ruleId",
+        "enabled"
+      ],
+      "properties": {
+        "ruleId": {
+          "type": "string",
+          "description": "Rule identifier"
+        },
+        "title": {
+          "type": "string",
+          "description": "Rule display title"
+        },
+        "description": {
+          "type": "string",
+          "description": "Rule description"
+        },
+        "priority": {
+          "type": "integer",
+          "description": "Rule priority/order"
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "ERROR",
+            "WARNING"
+          ],
+          "description": "Default severity"
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether rule is currently active"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+# harvested from https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription/blob/9f3ab203a23196e728b1e8ae68092245b98ddb7b/.spectral.yml on 2026-10-09 — a Spectral ruleset published in the provider's own GitHub repository (hmcts/api-cp-crime-hearing-results-document-subscription); found by GitHub code search, fetched verbatim
+x-method: harvested
+x-stamped: 2026-10-09
+x-source-url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription/blob/9f3ab203a23196e728b1e8ae68092245b98ddb7b/.spectral.yml
+extends: ["spectral:oas"]
+rules:
+  oas3-valid-media-example: off
+  oas3-valid-schema-example: off
+  duplicated-entry-in-enum: off # Spectral bug on OAS 3.1.0 — re-enable once fixed upstream

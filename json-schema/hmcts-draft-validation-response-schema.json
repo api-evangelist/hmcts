@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/hmcts/main/json-schema/hmcts-draft-validation-response-schema.json",
+  "title": "DraftValidationResponse",
+  "x-generated": "2026-10-09",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/hmcts-results-validation-service-openapi.yml#/components/schemas/DraftValidationResponse",
+  "type": "object",
+  "properties": {
+    "validationId": {
+      "type": "string",
+      "description": "Unique validation request identifier"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Validation execution timestamp"
+    },
+    "mode": {
+      "type": "string",
+      "description": "Validation mode (e.g. advisory)"
+    },
+    "rulesEvaluated": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Rule IDs that were evaluated"
+    },
+    "isValid": {
+      "type": "boolean",
+      "description": "Whether validation passed (no errors)"
+    },
+    "errors": {
+      "$ref": "#/$defs/ValidationErrors"
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ValidationIssue"
+      }
+    },
+    "processingTimeMs": {
+      "type": "integer",
+      "description": "Processing time in milliseconds"
+    }
+  },
+  "$defs": {
+    "AffectedDefendant": {
+      "type": "object",
+      "description": "A defendant affected by a validation issue, including a specific message for that defendant",
+      "required": [
+        "defendantId",
+        "message"
+      ],
+      "properties": {
+        "defendantId": {
+          "type": "string",
+          "description": "Defendant identifier"
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable message describing why this defendant is affected by the validation issue"
+        }
+      }
+    },
+    "AffectedOffence": {
+      "type": "object",
+      "description": "An offence affected by a validation issue, including a specific message for that offence",
+      "required": [
+        "offenceId",
+        "message"
+      ],
+      "properties": {
+        "offenceId": {
+          "type": "string",
+          "description": "Offence identifier"
+        },
+        "offenceTitle": {
+          "type": "string",
+          "description": "Offence title"
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable message describing why this offence is affected by the validation issue"
+        }
+      }
+    },
+    "ValidationErrors": {
+      "type": "object",
+      "description": "Container for validation errors, combining human-readable messages with structured validation issues",
+      "required": [
+        "errorMessages"
+      ],
+      "properties": {
+        "errorMessages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Top-level human-readable summaries of the validation errors"
+        },
+        "validationIssues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ValidationIssue"
+          },
+          "description": "Structured validation issues with rule details and affected entities"
+        }
+      }
+    },
+    "ValidationIssue": {
+      "type": "object",
+      "description": "Represents a single validation issue raised against a hearing result. Each issue is scoped to either the OFFENCE or DEFENDANT level, indicated by validationLevel. Issues with severity ERROR must always have validationLevel OFFENCE and populate affectedOffences. Issues with severity WARNING may have validationLevel OFFENCE or DEFENDANT. When validationLevel is OFFENCE, affectedOffences lists every offence the issue applies to, each carrying its own per-offence message. When validationLevel is DEFENDANT, affectedDefendants lists every defendant the issue applies to, each carrying its own per-defendant message.\n",
+      "properties": {
+        "ruleId": {
+          "type": "string",
+          "description": "Rule identifier"
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "ERROR",
+            "WARNING"
+          ],
+          "description": "Issue severity. ERROR issues are always at OFFENCE level (validationLevel must be OFFENCE). WARNING issues may be at either OFFENCE or DEFENDANT level."
+        },
+        "affectedResultCodes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Affected result codes"
+        },
+        "affectedOffences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AffectedOffence"
+          },
+          "description": "Populated when validationLevel is OFFENCE. Each entry identifies an offence the issue applies to, with a per-offence message. Always populated for ERROR severity issues."
+        },
+        "affectedDefendants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AffectedDefendant"
+          },
+          "description": "Populated when validationLevel is DEFENDANT. Each entry identifies a defendant the issue applies to, with a per-defendant message. Only applicable to WARNING severity issues."
+        },
+        "validationLevel": {
+          "type": "string",
+          "enum": [
+            "OFFENCE",
+            "DEFENDANT"
+          ],
+          "description": "Scopes the issue to either offence or defendant level. Must be OFFENCE when severity is ERROR. Determines whether affectedOffences or affectedDefendants is populated."
+        }
+      }
+    }
+  }
+}

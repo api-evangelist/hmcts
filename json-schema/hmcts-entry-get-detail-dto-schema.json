@@ -1,0 +1,452 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/hmcts/main/json-schema/hmcts-entry-get-detail-dto-schema.json",
+  "title": "entry-get-detail-dto",
+  "description": "DTO representing a detailed Application List Entry.",
+  "x-generated": "2026-10-09",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/hmcts-applications-register-openapi.yml#/components/schemas/entry-get-detail-dto",
+  "properties": {
+    "id": {
+      "description": "Unique identifier of the Application List Entry.",
+      "format": "uuid",
+      "type": "string"
+    },
+    "listId": {
+      "description": "The Unique identifier of the Application List this Entry belongs to.",
+      "format": "uuid",
+      "type": "string"
+    },
+    "standardApplicantCode": {
+      "description": "Code that identifies the Standard Applicant.",
+      "type": "string"
+    },
+    "applicationCode": {
+      "description": "Code that identifies the Application Code.",
+      "type": "string"
+    },
+    "applicant": {
+      "$ref": "#/$defs/applicant"
+    },
+    "respondent": {
+      "$ref": "#/$defs/respondent"
+    },
+    "numberOfRespondents": {
+      "description": "Number of respondents required by the Application.",
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "wording": {
+      "$ref": "#/$defs/template-detail"
+    },
+    "feeStatuses": {
+      "items": {
+        "$ref": "#/$defs/fee-status"
+      },
+      "type": "array"
+    },
+    "hasOffsiteFee": {
+      "description": "Indicates whether an off-site fee applies.",
+      "type": "boolean"
+    },
+    "caseReference": {
+      "description": "A reference code to identify a related case (maximum 15 characters).",
+      "maxLength": 15,
+      "type": "string"
+    },
+    "accountNumber": {
+      "description": "The Applicants account number (maximum 20 characters).",
+      "maxLength": 20,
+      "type": "string"
+    },
+    "notes": {
+      "description": "Notes about the application or the hearing (maximum 4000 characters).",
+      "maxLength": 4000,
+      "type": "string"
+    },
+    "lodgementDate": {
+      "description": "The date on which the application was submitted. Will be set to current date if omitted.",
+      "format": "date",
+      "type": "string"
+    },
+    "officials": {
+      "description": "An array of Officials who will decide the outcome of the Application.",
+      "items": {
+        "$ref": "#/$defs/official"
+      },
+      "maxItems": 4,
+      "type": "array"
+    }
+  },
+  "required": [
+    "applicationCode",
+    "id",
+    "listId",
+    "lodgementDate",
+    "numberOfRespondents"
+  ],
+  "type": "object",
+  "$defs": {
+    "applicant": {
+      "additionalProperties": false,
+      "description": "The applicant making the application.\nIn application read and print responses, Standard Applicants are represented by their\nreference name in organisation.name (or their code when no reference name exists).\nTheir personal and contact values are not returned. For these read responses the\nshared input contact constraints do not apply: contact fields may be null or absent.\nOrdinary applicant input still requires the person or organisation contact details.\n",
+      "properties": {
+        "person": {
+          "$ref": "#/$defs/person"
+        },
+        "organisation": {
+          "$ref": "#/$defs/organisation"
+        }
+      },
+      "type": "object"
+    },
+    "contact-details": {
+      "additionalProperties": false,
+      "description": "A participant's contact details. Blank fields will be rejected, nulls should be used instead.",
+      "properties": {
+        "addressLine1": {
+          "description": "Line one of the participant's address.",
+          "maxLength": 35,
+          "minLength": 1,
+          "nullable": false,
+          "pattern": "^[^\\u0000-\\u001F\\u007F-\\u009F]*$",
+          "type": "string"
+        },
+        "addressLine2": {
+          "description": "Line two of the participant's address.",
+          "maxLength": 35,
+          "minLength": 1,
+          "pattern": "^[^\\u0000-\\u001F\\u007F-\\u009F]*$",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "addressLine3": {
+          "description": "Line three of the participant's address.",
+          "maxLength": 35,
+          "minLength": 1,
+          "pattern": "^[^\\u0000-\\u001F\\u007F-\\u009F]*$",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "addressLine4": {
+          "description": "Line four of the participant's address.",
+          "maxLength": 35,
+          "minLength": 1,
+          "pattern": "^[^\\u0000-\\u001F\\u007F-\\u009F]*$",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "addressLine5": {
+          "description": "Line five of the participant's address.",
+          "maxLength": 35,
+          "minLength": 1,
+          "pattern": "^[^\\u0000-\\u001F\\u007F-\\u009F]*$",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "postcode": {
+          "description": "The participant's postcode.",
+          "maxLength": 8,
+          "minLength": 1,
+          "nullable": false,
+          "pattern": "^(([A-Z]{1,2}((\\d[A-Z\\d])|(\\d)) \\d[A-Z]{2})|(GIR 0A{2}))$",
+          "type": "string"
+        },
+        "phone": {
+          "description": "The participant's home-phone number.",
+          "maxLength": 20,
+          "minLength": 10,
+          "pattern": "[0-9 \\-]*",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "mobile": {
+          "description": "The participant's mobile number.",
+          "maxLength": 20,
+          "minLength": 11,
+          "pattern": "^(?:\\+\\d{1,4}\\s*)?[0-9 \\-]*$",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "email": {
+          "description": "The participant's email address.",
+          "maxLength": 253,
+          "minLength": 1,
+          "pattern": "^((([^<>()\\[\\]\\\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,})))*$",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "addressLine1"
+      ],
+      "type": "object"
+    },
+    "fee-status": {
+      "additionalProperties": false,
+      "description": "The status of the fee linked to the application. Blank fields will be rejected, nulls should be used instead.",
+      "properties": {
+        "paymentReference": {
+          "description": "The reference code used to identify the payment.",
+          "maxLength": 15,
+          "minLength": 1,
+          "type": "string"
+        },
+        "paymentStatus": {
+          "$ref": "#/$defs/payment-status"
+        },
+        "statusDate": {
+          "description": "The date when the payment status was updated. Must be today's date or a past date.",
+          "format": "date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "paymentStatus",
+        "statusDate"
+      ],
+      "type": "object"
+    },
+    "full-name": {
+      "additionalProperties": false,
+      "description": "A persons full name. Blank fields will be rejected, nulls should be used instead.",
+      "properties": {
+        "title": {
+          "description": "Prefix before a persons name.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[^\\u0000-\\u001F\\u007F-\\u009F]*$",
+          "type": "string"
+        },
+        "firstName": {
+          "description": "The person's first name.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[^\\u0000-\\u001F\\u007F-\\u009F]*$",
+          "type": "string"
+        },
+        "middleName": {
+          "description": "The person's optional middle name or names.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[^\\u0000-\\u001F\\u007F-\\u009F]*$",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lastName": {
+          "description": "The person's family name.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[^\\u0000-\\u001F\\u007F-\\u009F]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "firstName",
+        "lastName"
+      ],
+      "type": "object"
+    },
+    "official": {
+      "additionalProperties": false,
+      "description": "The Official hearing the application. Blank fields will be rejected, nulls should be used instead.",
+      "properties": {
+        "title": {
+          "description": "Prefix before a persons name.",
+          "maxLength": 100,
+          "minLength": 1,
+          "type": "string"
+        },
+        "surname": {
+          "description": "The persons family name.",
+          "maxLength": 100,
+          "minLength": 1,
+          "type": "string"
+        },
+        "forename": {
+          "description": "The persons first name.",
+          "maxLength": 100,
+          "minLength": 1,
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/$defs/official-type"
+        }
+      },
+      "type": "object"
+    },
+    "official-type": {
+      "description": "The type of Official hearing the application.",
+      "enum": [
+        "MAGISTRATE",
+        "CLERK"
+      ],
+      "type": "string"
+    },
+    "organisation": {
+      "additionalProperties": false,
+      "description": "The organisation making, or responding to, the application. Blank fields will be rejected, nulls should be used instead.",
+      "properties": {
+        "name": {
+          "description": "The name of the organisation.",
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[^\\u0000-\\u001F\\u007F-\\u009F]*$",
+          "type": "string"
+        },
+        "contactDetails": {
+          "$ref": "#/$defs/contact-details"
+        }
+      },
+      "required": [
+        "contactDetails",
+        "name"
+      ],
+      "type": "object"
+    },
+    "payment-status": {
+      "description": "The Status of the Fee's Payment.",
+      "enum": [
+        "PAID",
+        "UNDERTAKEN",
+        "DUE",
+        "REMITTED"
+      ],
+      "type": "string"
+    },
+    "person": {
+      "additionalProperties": false,
+      "description": "The person making, or responding to, the application.",
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/full-name"
+        },
+        "contactDetails": {
+          "$ref": "#/$defs/contact-details"
+        }
+      },
+      "required": [
+        "contactDetails",
+        "name"
+      ],
+      "type": "object"
+    },
+    "respondent": {
+      "additionalProperties": false,
+      "description": "The respondent to the application.",
+      "properties": {
+        "person": {
+          "$ref": "#/$defs/respondent_person"
+        },
+        "organisation": {
+          "$ref": "#/$defs/organisation"
+        }
+      },
+      "type": "object"
+    },
+    "respondent_person": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/person"
+        },
+        {
+          "description": "Person details for a respondent (includes DOB).",
+          "properties": {
+            "dateOfBirth": {
+              "description": "Date of birth (only applicable for person respondents).",
+              "format": "date",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "template-constraint": {
+      "description": "The template field with an associated value",
+      "properties": {
+        "type": {
+          "description": "The data type of the value.",
+          "enum": [
+            "TEXT"
+          ],
+          "type": "string"
+        },
+        "length": {
+          "description": "The length of the data value.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "length",
+        "type"
+      ],
+      "type": "object"
+    },
+    "template-detail": {
+      "description": "The wording details",
+      "properties": {
+        "template": {
+          "description": "The template name. It contains the field names between curly braces.",
+          "type": "string"
+        },
+        "substitution-key-constraints": {
+          "description": "A list of fields and the associated constraints",
+          "items": {
+            "$ref": "#/$defs/template-key-with-constraint"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "template"
+      ],
+      "type": "object"
+    },
+    "template-key-with-constraint": {
+      "description": "The template field with an associated value",
+      "properties": {
+        "key": {
+          "description": "Field key for substitution into the template.",
+          "type": "string"
+        },
+        "value": {
+          "description": "The optional value for the key.",
+          "type": "string"
+        },
+        "constraint": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/template-constraint"
+            }
+          ],
+          "description": "The constraint details for the field"
+        }
+      },
+      "required": [
+        "constraint",
+        "key"
+      ],
+      "type": "object"
+    }
+  }
+}

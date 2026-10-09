@@ -1,0 +1,494 @@
+openapi: 3.2.0
+info:
+  title: Hmcts Admin API
+  version: '@version@'
+  contact:
+    name: HMCTS AppReg Team
+    url: https://github.com/hmcts/appreg-api
+  description: 'Operations tagged admin across 2 of this provider''s published API definitions: appreg-api-openapi.yaml, hmcts-applications-register-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: /
+tags:
+- description: Administrative operations such as jobs can be run from this set of endpoints.
+  name: Admin
+paths:
+  /admin/jobs/{jobType}:
+    get:
+      description: Returns the current status and details of a background job.
+      operationId: getJobStatus
+      parameters:
+      - description: The type of the job we are determining the status of.
+        in: path
+        name: jobType
+        required: true
+        schema:
+          $ref: '#/components/schemas/admin-job-type'
+      responses:
+        '200':
+          content:
+            application/vnd.hmcts.appreg.v1+json:
+              schema:
+                $ref: '#/components/schemas/admin-job-status'
+          description: Job status retrieved successfully.
+          headers:
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              example: Accept
+              schema:
+                type: string
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '409':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/conflict
+                    title: Conflict
+                    status: 409
+                    detail: The Application List could not be modified due to a conflict with its current state
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Conflict with the current state of the resource.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '404':
+          content:
+            application/problem+json:
+              examples:
+                missing:
+                  value:
+                    type: https://errors.hmcts.net/appreg/not-found
+                    title: Not Found
+                    status: 404
+                    detail: Result code with id=123 was not found
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: The requested resource was not found.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Get the status of a background job being processed in an administrative context
+      tags:
+      - Admin
+    put:
+      description: Enables or disables a database job by its name.
+      operationId: enableDisableDatabaseJobByName
+      parameters:
+      - description: The name of the database job to trigger.
+        example: APPLICATION_LISTS_DATABASE_JOB
+        in: path
+        name: jobType
+        required: true
+        schema:
+          $ref: '#/components/schemas/admin-job-type'
+      - description: Flag to enable (true) or disable (false) the database job.
+        example: true
+        in: query
+        name: enable
+        required: true
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Job enabled/disabled successfully.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '404':
+          content:
+            application/problem+json:
+              examples:
+                missing:
+                  value:
+                    type: https://errors.hmcts.net/appreg/not-found
+                    title: Not Found
+                    status: 404
+                    detail: Result code with id=123 was not found
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: The requested resource was not found.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Enable/Disable a database job by its name
+      tags:
+      - Admin
+    servers:
+    - url: /
+  /admin/jobs/{jobType}/retention-policy:
+    get:
+      description: Returns the RETENTION_PERIOD_DAYS configuration for the specified database job.
+      operationId: getDatabaseJobRetentionPeriodByName
+      parameters:
+      - description: The name of the database job to read.
+        example: APPLICATION_LISTS_DATABASE_JOB
+        in: path
+        name: jobType
+        required: true
+        schema:
+          $ref: '#/components/schemas/admin-job-type'
+      responses:
+        '200':
+          content:
+            application/vnd.hmcts.appreg.v1+json:
+              schema:
+                $ref: '#/components/schemas/job-retention-policy'
+          description: Retention period retrieved successfully.
+          headers:
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              example: Accept
+              schema:
+                type: string
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '404':
+          content:
+            application/problem+json:
+              examples:
+                missing:
+                  value:
+                    type: https://errors.hmcts.net/appreg/not-found
+                    title: Not Found
+                    status: 404
+                    detail: Result code with id=123 was not found
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: The requested resource was not found.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Get a database job retention period by its name
+      tags:
+      - Admin
+    put:
+      description: Updates the RETENTION_PERIOD_DAYS configuration for the specified database job.
+      operationId: updateDatabaseJobRetentionPeriodByName
+      parameters:
+      - description: The name of the database job to update.
+        example: APPLICATION_LISTS_DATABASE_JOB
+        in: path
+        name: jobType
+        required: true
+        schema:
+          $ref: '#/components/schemas/admin-job-type'
+      - description: Number of days to retain closed application lists before deletion.
+        example: 1825
+        in: query
+        name: retentionPeriodDays
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+      responses:
+        '200':
+          description: Retention period updated successfully.
+        '400':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Invalid request parameters.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '404':
+          content:
+            application/problem+json:
+              examples:
+                missing:
+                  value:
+                    type: https://errors.hmcts.net/appreg/not-found
+                    title: Not Found
+                    status: 404
+                    detail: Result code with id=123 was not found
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: The requested resource was not found.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Update a database job retention period by its name
+      tags:
+      - Admin
+    servers:
+    - url: /
+  /admin/csds/trigger:
+    post:
+      description: Runs all enabled CSDS ingress processors synchronously using the same retrieval and apply flow as the scheduled CSDS job. Processing continues if an individual processor fails, but the request returns an error after all processors have been attempted. Invalid record data returned by CSDS results in `502 Bad Gateway`; unexpected AppReg failures result in `500 Internal Server Error`. The endpoint does not update the scheduled-run execution log and therefore does not suppress a subsequent scheduled run. Only callers with the admin role can trigger the operation.
+      operationId: triggerCsdsIngress
+      responses:
+        '200':
+          description: All enabled CSDS ingress processors completed successfully.
+          headers:
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              example: Accept
+              schema:
+                type: string
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '423':
+          content:
+            application/problem+json:
+              examples:
+                locked:
+                  value:
+                    type: https://errors.hmcts.net/common/locked
+                    title: Locked
+                    status: 423
+                    detail: The CSDS ingest is already running
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: The requested operation could not start because the resource is locked.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+        '502':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: CSDS returned record data that is incompatible with the selected ingress processor.
+      summary: Trigger CSDS ingress on demand
+      tags:
+      - Admin
+    servers:
+    - url: /
+components:
+  schemas:
+    admin-job-status:
+      description: Details of the database job status.
+      properties:
+        lastRan:
+          description: The last time the job was run.
+          format: date-time
+          type: string
+        enabled:
+          description: Whether the job is currently enabled.
+          example: true
+          type: boolean
+      type: object
+    job-retention-policy:
+      additionalProperties: false
+      description: Retention policy configuration for an administrative background job.
+      properties:
+        retentionPeriodDays:
+          description: Number of days to retain closed application lists before deletion.
+          example: 1825
+          minimum: 1
+          type: integer
+      type: object
+    problem:
+      description: RFC 9457/7807 problem details.
+      properties:
+        type:
+          description: Problem type identifier (URI).
+          example: https://errors.hmcts.net/appreg/bad-request
+          format: uri
+          type: string
+        title:
+          description: Short, human-readable summary.
+          example: Invalid request parameters
+          type: string
+        status:
+          description: HTTP status code.
+          example: 400
+          format: int32
+          type: integer
+        detail:
+          description: Human-readable explanation specific to this occurrence.
+          example: startDateFrom must be on or before startDateTo
+          type: string
+        instance:
+          description: URI reference to the specific occurrence (if applicable).
+          example: urn:request:2f9c3d8a-1b3a-4a1e-9b7f-6b2a6a0a2b2f
+          format: uri
+          type: string
+        correlationId:
+          description: Server-side correlation ID for tracing.
+          example: 3e1a2c95a7d84a5fb3e1a2c95a7d84a5
+          type: string
+      required:
+      - status
+      - title
+      - type
+      type: object
+    admin-job-type:
+      description: The type of the administrative background job
+      enum:
+      - APPLICATION_LISTS_DATABASE_JOB
+      - REFRESH_REFERENCE_DATA
+      example: APPLICATION_LISTS_DATABASE_JOB
+      type: string
+x-refined-from:
+- appreg-api-openapi.yaml
+- hmcts-applications-register-openapi.yml

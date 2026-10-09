@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/hmcts/main/json-schema/hmcts-job-acknowledgement-schema.json",
+  "title": "job-acknowledgement",
+  "description": "Acknowledgement returned when a background job is created.",
+  "x-generated": "2026-10-09",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/hmcts-applications-register-openapi.yml#/components/schemas/job-acknowledgement",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "description": "Unique identifier for the job, in UUID v4 format.",
+      "format": "uuid",
+      "type": "string"
+    },
+    "type": {
+      "$ref": "#/$defs/job-type"
+    },
+    "status": {
+      "$ref": "#/$defs/job-status"
+    },
+    "createdCount": {
+      "description": "Number of applications imported by this job, excluding the CSV header and including subsequently soft-deleted applications. Available only when polling a completed BULK_UPLOAD_ENTRIES job; omitted from all other responses. Counted from retained job-to-application mappings, not the current list size.\n",
+      "format": "int64",
+      "minimum": 0,
+      "type": "integer",
+      "x-field-extra-annotation": "@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)"
+    },
+    "mainFeeTotal": {
+      "description": "Current main fees in GBP for non-deleted applications created by this upload, regardless of payment or remission status. Available only when polling a completed BULK_UPLOAD_ENTRIES job; zero when no applicable fees remain. Calculated on read, so later changes to applications or associated fees can change this value. Omitted from all other responses.\n",
+      "type": "number",
+      "x-field-extra-annotation": "@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)"
+    },
+    "offsiteFeeTotal": {
+      "description": "Current applicable offsite fees in GBP for non-deleted applications created by this upload, regardless of payment or remission status. Available only when polling a completed BULK_UPLOAD_ENTRIES job; zero when no applicable fees remain. Calculated on read, not an upload-time snapshot. Omitted from all other responses.\n",
+      "type": "number",
+      "x-field-extra-annotation": "@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)"
+    },
+    "totalFeeValue": {
+      "description": "Sum of mainFeeTotal and offsiteFeeTotal in GBP. Available only when polling a completed BULK_UPLOAD_ENTRIES job. Zero when no applicable fees remain; calculated on read. Omitted from all other responses.\n",
+      "type": "number",
+      "x-field-extra-annotation": "@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)"
+    },
+    "error_description": {
+      "description": "Details of a failed job. Bulk-upload validation failures may include actionable input errors; unexpected bulk-upload processing failures use a generic message and identify the job reference to quote to support.\n",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "status",
+    "type"
+  ],
+  "type": "object",
+  "$defs": {
+    "job-status": {
+      "description": "The status of the job being polled by the user.",
+      "enum": [
+        "RECEIVED",
+        "VALIDATING",
+        "PROCESSING",
+        "FAILED",
+        "COMPLETED"
+      ],
+      "type": "string"
+    },
+    "job-type": {
+      "description": "The type of the job being polled by the user.",
+      "enum": [
+        "ACTIVITY_AUDIT_REPORT",
+        "FEES_REPORT",
+        "LIST_MAINTENANCE_REPORT",
+        "SEARCH_WARRANTS_REPORT",
+        "WORKLOAD_REPORT",
+        "DURATION_REPORT",
+        "PRIVATE_PROSECUTORS_INDEX_REPORT",
+        "BULK_UPLOAD_ENTRIES"
+      ],
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,280 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Applications Register API
+  version: 1.0.0
+extends: ../openapi/_original/hmcts-applications-register-openapi.yml
+x-generated: '2026-10-09'
+x-method: generated
+actions:
+- target: $.info
+  update:
+    x-provider: HM Courts & Tribunals Service
+    x-api-evangelist:
+      aid: hmcts
+      profiled: '2026-10-09'
+      source_repo: https://github.com/api-evangelist/hmcts
+- target: $.paths['/admin/jobs/{jobType}'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/admin/jobs/{jobType}'].put
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/admin/jobs/{jobType}/retention-policy'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/admin/jobs/{jobType}/retention-policy'].put
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/admin/csds/trigger'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/application-codes'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/application-codes/{code}'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/application-lists'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/application-lists'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/application-lists/print'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/application-lists/{listId}'].delete
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: true
+- target: $.paths['/application-lists/{listId}'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/application-lists/{listId}'].put
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/application-list-entries'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/application-list-entries/bulk-action-preview'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/application-lists/{listId}/entries'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/application-lists/{listId}/entries'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/application-lists/{listId}/entries/bulk-action-preview'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/application-lists/{listId}/entries/officials'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/application-lists/{listId}/entries/fees'].put
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/application-lists/{listId}/entries/{entryId}'].delete
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: true
+- target: $.paths['/application-lists/{listId}/entries/{entryId}'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/application-lists/{listId}/entries/{entryId}'].put
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/application-lists/{listId}/entries/bulk-import'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/application-lists/entries/bulk-import/{jobId}'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/application-lists/{listId}/entries/move'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/application-lists/{listId}/entries/closed/{entryId}'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/application-lists/{listId}/entries/closed/{entryId}'].put
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/application-lists/{listId}/entries/results'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/application-lists/entries/results'].delete
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: true
+- target: $.paths['/application-lists/entries/results'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/application-lists/{listId}/entries/{entryId}/results'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/application-lists/{listId}/entries/{entryId}/results'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/application-lists/{listId}/entries/{entryId}/results/{resultId}'].put
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/court-locations'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/court-locations/{code}'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/criminal-justice-areas'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/criminal-justice-areas/{code}'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/jobs/{jobId}'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/reports/activity-audit/jobs'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/reports/fees/jobs'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/reports/list-maintenance/jobs'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/reports/search-warrants/jobs'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/reports/workload/jobs'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/reports/duration/jobs'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/reports/private-prosecutors-index/jobs'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/reports/jobs/{jobId}/download'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/result-codes'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/result-codes/{code}'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/standard-applicants'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/standard-applicants/reports/print'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/standard-applicants/{code}'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/standard-applicants/export'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false

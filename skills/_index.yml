@@ -1,0 +1,44 @@
+generated: '2026-10-09'
+method: generated
+source: Generated from operationIds verified in openapi/. No provider-published skills or AGENTS.md found (hmcts.github.io/AGENTS.md 404; GitHub code search requires auth).
+skills:
+- file: hmcts-record-application-list-entries.md
+  name: hmcts-record-application-list-entries
+  api: openapi/hmcts-applications-register-openapi.yml
+  operations:
+  - getCourtLocations
+  - getApplicationCodes
+  - getResultCodes
+  - getApplicationLists
+  - createApplicationList
+  - createApplicationListEntry
+  - getApplicationListEntries
+  - createApplicationListEntryResult
+- file: hmcts-run-applications-register-report.md
+  name: hmcts-run-applications-register-report
+  api: openapi/hmcts-applications-register-openapi.yml
+  operations:
+  - createFeesReport
+  - createWorkloadReport
+  - createDurationReport
+  - getJobStatusById
+  - downloadReport
+- file: hmcts-subscribe-to-hearing-result-documents.md
+  name: hmcts-subscribe-to-hearing-result-documents
+  api: openapi/hmcts-crime-hearing-results-document-subscription-openapi.yml
+  operations:
+  - GetEventTypes
+  - createClientSubscription
+  - getClientSubscription
+  - updateClientSubscription
+  - rotateClientSubscriptionSecret
+  - getDocument
+  - deleteClientSubscription
+- file: hmcts-validate-draft-hearing-results.md
+  name: hmcts-validate-draft-hearing-results
+  api: openapi/hmcts-results-validation-service-openapi.yml
+  operations:
+  - listValidationRules
+  - getValidationRuleById
+  - validateDraftResults
+  - updateValidationRule

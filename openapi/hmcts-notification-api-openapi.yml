@@ -1,0 +1,126 @@
+openapi: 3.2.0
+info:
+  title: Hmcts Notification API
+  version: 1.0.0
+  contact:
+    name: HMCTS API Marketplace
+    email: no-reply@hmcts.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  description: 'Operations tagged Notification across 2 of this provider''s published API definitions: api-cp-crime-hearing-results-document-subscription-openapi-spec.yml, hmcts-crime-hearing-results-document-subscription-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- description: Crime Hearing Results Document Subscription API
+  url: https://api-cp-crime-hearing-results-document-subscription.net/{version}
+  variables:
+    version:
+      default: 1.0.0
+      description: API version; matches the spec info.version
+security:
+- bearerAuth: []
+  subscriptionKey: []
+tags:
+- name: Notification
+paths:
+  /client-subscriptions/{clientSubscriptionId}/documents/{documentId}:
+    get:
+      summary: Retrieve PDF for the specified document id
+      description: Returns the PDF previously published for the given documentId.
+      operationId: getDocument
+      tags:
+      - Notification
+      parameters:
+      - name: clientSubscriptionId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Subscriber's client subscription identifier
+      - name: documentId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Public document identifier assigned to the subscriber
+      - $ref: '#/components/parameters/XCorrelationId'
+      responses:
+        '200':
+          description: PDF document (binary)
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/XCorrelationId'
+        '404':
+          description: Document not found or the client subscription is missing/inactive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/XCorrelationId'
+        '401':
+          description: Unauthorized - missing or invalid authentication credentials
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/XCorrelationId'
+        '403':
+          description: Forbidden - valid subscription key required but not subscribed to this API
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/XCorrelationId'
+    servers:
+    - description: Crime Hearing Results Document Subscription API
+      url: https://api-cp-crime-hearing-results-document-subscription.net/{version}
+      variables:
+        version:
+          default: 1.0.0
+          description: API version; matches the spec info.version
+components:
+  parameters:
+    XCorrelationId:
+      name: X-Correlation-Id
+      in: header
+      required: false
+      description: Optional correlation identifier for end-to-end tracing.
+      schema:
+        type: string
+        format: uuid
+        example: d679fd61-061f-4440-9623-36280f0807b7
+  headers:
+    XCorrelationId:
+      description: Correlation identifier for this request/response, used for end-to-end tracing.
+      schema:
+        type: string
+        format: uuid
+        example: bf931a90-3e3f-4e8e-a8e4-a4ca9ac07830
+  schemas:
+    ErrorResponse:
+      type: object
+      required:
+      - error
+      - message
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    subscriptionKey:
+      type: apiKey
+      in: header
+      name: Ocp-Apim-Subscription-Key
+      description: Subscription key for API access
+x-refined-from:
+- api-cp-crime-hearing-results-document-subscription-openapi-spec.yml
+- hmcts-crime-hearing-results-document-subscription-openapi.yml

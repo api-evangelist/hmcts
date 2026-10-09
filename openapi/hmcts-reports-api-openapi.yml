@@ -1,0 +1,1075 @@
+openapi: 3.2.0
+info:
+  title: Hmcts Reports API
+  version: '@version@'
+  contact:
+    name: HMCTS AppReg Team
+    url: https://github.com/hmcts/appreg-api
+  description: 'Operations tagged reports across 2 of this provider''s published API definitions: appreg-api-openapi.yaml, hmcts-applications-register-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: /
+tags:
+- description: Endpoints to generate and retrieve CSV reports asynchronously.
+  name: Reports
+paths:
+  /reports/activity-audit/jobs:
+    post:
+      description: Creates an asynchronous job to produce a CSV report detailing user activity within the application register, filtered by date range, username, and activity type. Returns an acknowledgement containing the job ID that can be used to track progress and download the report once complete. The CSV output is capped by server configuration, defaulting to 100,000 rows.
+      operationId: createActivityAuditReport
+      requestBody:
+        content:
+          application/vnd.hmcts.appreg.v1+json:
+            schema:
+              $ref: '#/components/schemas/activity-audit-filter-dto'
+        required: true
+      responses:
+        '202':
+          content:
+            application/vnd.hmcts.appreg.v1+json:
+              schema:
+                $ref: '#/components/schemas/job-acknowledgement'
+          description: Report job accepted for asynchronous processing.
+          headers:
+            Location:
+              description: URL to poll the report job status.
+              schema:
+                example: /jobs/job_12345
+                type: string
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+        '400':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Invalid request parameters.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Generate an Activity Audit report of user actions within the application…
+      tags:
+      - Reports
+    servers:
+    - url: /
+  /reports/fees/jobs:
+    post:
+      description: Creates an asynchronous job to produce a CSV report of applications that incur a fee, filtered by date range and location. Returns an acknowledgement containing the job ID for tracking progress. The CSV output is capped by server configuration, defaulting to 100,000 rows.
+      operationId: createFeesReport
+      requestBody:
+        content:
+          application/vnd.hmcts.appreg.v1+json:
+            schema:
+              $ref: '#/components/schemas/fees-report-filter-dto'
+        required: true
+      responses:
+        '202':
+          content:
+            application/vnd.hmcts.appreg.v1+json:
+              schema:
+                $ref: '#/components/schemas/job-acknowledgement'
+          description: Report job accepted for asynchronous processing.
+          headers:
+            Location:
+              description: URL to poll the report job status.
+              schema:
+                example: /jobs/job_12345
+                type: string
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+        '400':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Invalid request parameters.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Generate a Fees report for applications that include a fee
+      tags:
+      - Reports
+    servers:
+    - url: /
+  /reports/list-maintenance/jobs:
+    post:
+      description: Creates an asynchronous job to produce a CSV report of open application lists matching the specified inclusive date range, optional list description, and optional legacy location filters. Returns an acknowledgement containing the job ID that can be used to track progress and download the report once complete. The CSV output is capped by server configuration, defaulting to 100,000 rows.
+      operationId: createListMaintenanceReport
+      requestBody:
+        content:
+          application/vnd.hmcts.appreg.v1+json:
+            schema:
+              $ref: '#/components/schemas/list-maintenance-filter-dto'
+        required: true
+      responses:
+        '202':
+          content:
+            application/vnd.hmcts.appreg.v1+json:
+              schema:
+                $ref: '#/components/schemas/job-acknowledgement'
+          description: Report job accepted for asynchronous processing.
+          headers:
+            Location:
+              description: URL to poll the report job status.
+              schema:
+                example: /jobs/job_12345
+                type: string
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+        '400':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Invalid request parameters.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Generate a List Maintenance report of open application lists by date range
+      tags:
+      - Reports
+    servers:
+    - url: /
+  /reports/search-warrants/jobs:
+    post:
+      description: Creates an asynchronous job to produce a CSV report listing search warrants, filtered by date range and court location. Returns an acknowledgement containing the job ID that can be used to track progress and download the report once complete. The CSV output is capped by server configuration, defaulting to 100,000 rows.
+      operationId: createSearchWarrantsReport
+      requestBody:
+        content:
+          application/vnd.hmcts.appreg.v1+json:
+            schema:
+              $ref: '#/components/schemas/search-warrants-report-filter-dto'
+        required: true
+      responses:
+        '202':
+          content:
+            application/vnd.hmcts.appreg.v1+json:
+              schema:
+                $ref: '#/components/schemas/job-acknowledgement'
+          description: Report job accepted for asynchronous processing.
+          headers:
+            Location:
+              description: URL to poll the report job status.
+              schema:
+                example: /jobs/job_12345
+                type: string
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+        '400':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Invalid request parameters.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Generate a Search Warrants report by date and location
+      tags:
+      - Reports
+    servers:
+    - url: /
+  /reports/workload/jobs:
+    post:
+      description: Creates an asynchronous job to produce a CSV report summarising applications that have been processed within closed application lists, filtered by date range and court location. Returns an acknowledgement containing the job ID that can be used to track progress and download the report once complete. The CSV output is capped by server configuration, defaulting to 100,000 rows.
+      operationId: createWorkloadReport
+      requestBody:
+        content:
+          application/vnd.hmcts.appreg.v1+json:
+            schema:
+              $ref: '#/components/schemas/workload-filter-dto'
+        required: true
+      responses:
+        '202':
+          content:
+            application/vnd.hmcts.appreg.v1+json:
+              schema:
+                $ref: '#/components/schemas/job-acknowledgement'
+          description: Report job accepted for asynchronous processing.
+          headers:
+            Location:
+              description: URL to poll the report job status.
+              schema:
+                example: /jobs/job_12345
+                type: string
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+        '400':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Invalid request parameters.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Generate a Workload report of processed applications
+      tags:
+      - Reports
+    servers:
+    - url: /
+  /reports/duration/jobs:
+    post:
+      description: Initiates an asynchronous job to create a CSV report of closed application lists within the specified date range. Duration values are the recorded duration hours and minutes on the application list. Returns an acknowledgement containing the job ID for tracking progress. The CSV output is capped by server configuration, defaulting to 100,000 rows.
+      operationId: createDurationReport
+      requestBody:
+        content:
+          application/vnd.hmcts.appreg.v1+json:
+            schema:
+              $ref: '#/components/schemas/duration-filter-dto'
+        required: true
+      responses:
+        '202':
+          content:
+            application/vnd.hmcts.appreg.v1+json:
+              schema:
+                $ref: '#/components/schemas/job-acknowledgement'
+          description: Report job accepted for asynchronous processing.
+          headers:
+            Location:
+              description: URL to poll the report job status.
+              schema:
+                example: /jobs/job_12345
+                type: string
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+        '400':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Invalid request parameters.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Generate a Duration report of closed application lists
+      tags:
+      - Reports
+    servers:
+    - url: /
+  /reports/private-prosecutors-index/jobs:
+    post:
+      description: Creates an asynchronous job to produce a CSV report listing all applications to commence a private prosecution recorded under code MX99010, filtered by date range and legacy report location semantics. Returns an acknowledgement containing the job ID that can be used to track progress and download the report once complete. The CSV output is capped by server configuration, defaulting to 100,000 rows.
+      operationId: createPrivateProsecutorsIndexReport
+      requestBody:
+        content:
+          application/vnd.hmcts.appreg.v1+json:
+            schema:
+              $ref: '#/components/schemas/private-prosecutors-index-filter-dto'
+        required: true
+      responses:
+        '202':
+          content:
+            application/vnd.hmcts.appreg.v1+json:
+              schema:
+                $ref: '#/components/schemas/job-acknowledgement'
+          description: Report job accepted for asynchronous processing.
+          headers:
+            Location:
+              description: URL to poll the report job status.
+              schema:
+                example: /jobs/job_12345
+                type: string
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+        '400':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Invalid request parameters.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Generate a Private Prosecutors Index report
+      tags:
+      - Reports
+    servers:
+    - url: /
+  /reports/jobs/{jobId}/download:
+    get:
+      description: Streams the generated CSV from the database for the specified job. The job must be in the `completed` state.
+      operationId: downloadReport
+      parameters:
+      - description: The unique identifier of the report job.
+        example: 9f7b2a35-57ac-4a1c-9c41-83b6c8157af4
+        in: path
+        name: jobId
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            text/csv:
+              schema:
+                format: binary
+                type: string
+          description: The generated CSV report.
+          headers:
+            Content-Disposition:
+              description: Suggested filename for the downloaded CSV.
+              schema:
+                example: attachment; filename="report.csv"
+                type: string
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '404':
+          content:
+            application/problem+json:
+              examples:
+                missing:
+                  value:
+                    type: https://errors.hmcts.net/appreg/not-found
+                    title: Not Found
+                    status: 404
+                    detail: Result code with id=123 was not found
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: The requested resource was not found.
+        '409':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/conflict
+                    title: Conflict
+                    status: 409
+                    detail: The Application List could not be modified due to a conflict with its current state
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Conflict with the current state of the resource.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Download the generated CSV for a completed report job
+      tags:
+      - Reports
+    servers:
+    - url: /
+components:
+  schemas:
+    activity-type:
+      description: Type of user activity recorded in the audit log.
+      enum:
+      - ADD_APPLICATION
+      - BULK_APPLICATION_UPLOAD
+      - BULK_UPDATE_FEE_STATUS
+      - BULK_UPDATE_OFFICIALS
+      - CREATE_APPLICATION_LIST
+      - DELETE_APPLICATION_ENTRY
+      - DELETE_APPLICATION_LIST
+      - DELETE_RESULT_APPLICATION
+      - DELETE_RESULT_LIST
+      - DELETE_RESULT_MULTIPLE_APPLICATIONS
+      - MOVE_APPLICATION
+      - REPORT_CREATED
+      - REPORT_DOWNLOADED
+      - REPORT_STATUS_TRANSITION
+      - RESULT_APPLICATION
+      - RESULT_LIST
+      - RESULT_MULTIPLE_APPLICATIONS
+      - UPDATE_APPLICATION
+      - UPDATE_APPLICATION_LIST
+      - UPDATE_RESULT_APPLICATION
+      - UPDATE_RESULT_LIST
+      - UPDATE_RESULT_MULTIPLE_APPLICATIONS
+      example: UPDATE_APPLICATION
+      title: ActivityType
+      type: string
+    job-acknowledgement:
+      additionalProperties: false
+      description: Acknowledgement returned when a background job is created.
+      properties:
+        id:
+          description: Unique identifier for the job, in UUID v4 format.
+          example: 9f7b2a35-57ac-4a1c-9c41-83b6c8157af4
+          format: uuid
+          type: string
+        type:
+          $ref: '#/components/schemas/job-type'
+        status:
+          $ref: '#/components/schemas/job-status'
+        createdCount:
+          description: 'Number of applications imported by this job, excluding the CSV header and including subsequently soft-deleted applications. Available only when polling a completed BULK_UPLOAD_ENTRIES job; omitted from all other responses. Counted from retained job-to-application mappings, not the current list size.
+
+            '
+          example: 12
+          format: int64
+          minimum: 0
+          type: integer
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
+        mainFeeTotal:
+          description: 'Current main fees in GBP for non-deleted applications created by this upload, regardless of payment or remission status. Available only when polling a completed BULK_UPLOAD_ENTRIES job; zero when no applicable fees remain. Calculated on read, so later changes to applications or associated fees can change this value. Omitted from all other responses.
+
+            '
+          example: 120.5
+          type: number
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
+        offsiteFeeTotal:
+          description: 'Current applicable offsite fees in GBP for non-deleted applications created by this upload, regardless of payment or remission status. Available only when polling a completed BULK_UPLOAD_ENTRIES job; zero when no applicable fees remain. Calculated on read, not an upload-time snapshot. Omitted from all other responses.
+
+            '
+          example: 30.25
+          type: number
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
+        totalFeeValue:
+          description: 'Sum of mainFeeTotal and offsiteFeeTotal in GBP. Available only when polling a completed BULK_UPLOAD_ENTRIES job. Zero when no applicable fees remain; calculated on read. Omitted from all other responses.
+
+            '
+          example: 150.75
+          type: number
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
+        error_description:
+          description: 'Details of a failed job. Bulk-upload validation failures may include actionable input errors; unexpected bulk-upload processing failures use a generic message and identify the job reference to quote to support.
+
+            '
+          type: string
+      required:
+      - id
+      - status
+      - type
+      type: object
+    job-type:
+      description: The type of the job being polled by the user.
+      enum:
+      - ACTIVITY_AUDIT_REPORT
+      - FEES_REPORT
+      - LIST_MAINTENANCE_REPORT
+      - SEARCH_WARRANTS_REPORT
+      - WORKLOAD_REPORT
+      - DURATION_REPORT
+      - PRIVATE_PROSECUTORS_INDEX_REPORT
+      - BULK_UPLOAD_ENTRIES
+      example: FEES_REPORT
+      type: string
+    duration-filter-dto:
+      additionalProperties: false
+      description: 'Filter criteria for POST /reports/duration/jobs. Both dateFrom and dateTo are required inclusive bounds. If dateFrom is later than dateTo, the API treats the earlier date as the inclusive start and the later date as the inclusive end. Location is optional. When provided, use courtLocationCode on its own, cjaCode on its own, otherLocationDescription on its own, or cjaCode and otherLocationDescription together. When supplied, cjaCode must match an existing Criminal Justice Area and courtLocationCode must match an active Court. Blank fields will be rejected; use null instead.
+
+        '
+      properties:
+        dateFrom:
+          description: Inclusive start date (YYYY-MM-DD).
+          example: 2025-10-01
+          format: date
+          type: string
+        dateTo:
+          description: Inclusive end date (YYYY-MM-DD).
+          example: 2025-10-31
+          format: date
+          type: string
+        location:
+          $ref: '#/components/schemas/legacy-report-location'
+      required:
+      - dateFrom
+      - dateTo
+      type: object
+    search-warrants-report-filter-dto:
+      additionalProperties: false
+      description: 'Filter criteria for POST /reports/search-warrants/jobs. Both dateFrom and dateTo are required and are treated as inclusive bounds.
+
+        '
+      properties:
+        dateFrom:
+          description: Inclusive start date (YYYY-MM-DD).
+          example: 2025-10-01
+          format: date
+          type: string
+        dateTo:
+          description: Inclusive end date (YYYY-MM-DD).
+          example: 2025-10-31
+          format: date
+          type: string
+        location:
+          $ref: '#/components/schemas/legacy-report-location'
+      required:
+      - dateFrom
+      - dateTo
+      type: object
+    workload-filter-dto:
+      additionalProperties: false
+      description: 'Filter criteria for POST /reports/workload/jobs. Both dateFrom and dateTo are required and are treated as inclusive bounds.
+
+        '
+      properties:
+        dateFrom:
+          description: Inclusive start date (YYYY-MM-DD).
+          example: 2025-10-01
+          format: date
+          type: string
+        dateTo:
+          description: Inclusive end date (YYYY-MM-DD).
+          example: 2025-10-31
+          format: date
+          type: string
+        location:
+          $ref: '#/components/schemas/legacy-report-location'
+      required:
+      - dateFrom
+      - dateTo
+      type: object
+    legacy-report-location:
+      additionalProperties: false
+      description: 'Location filters for legacy MIS reports. Blank fields will be rejected, nulls should be used instead. Location filters are optional. Use courtLocationCode on its own, cjaCode on its own, otherLocationDescription on its own, or cjaCode and otherLocationDescription together. courtLocationCode is mutually exclusive with cjaCode and otherLocationDescription.
+
+        '
+      properties:
+        courtLocationCode:
+          description: Court location code (case-insensitive contains match).
+          example: LOC123
+          maxLength: 10
+          minLength: 1
+          pattern: .*\S.*
+          type: string
+        otherLocationDescription:
+          description: Other location description (case-insensitive contains match).
+          example: town hall
+          maxLength: 200
+          minLength: 1
+          pattern: .*\S.*
+          type: string
+        cjaCode:
+          description: 'Criminal Justice Area code. Can be supplied on its own or with otherLocationDescription.
+
+            '
+          example: '52'
+          maxLength: 2
+          minLength: 1
+          pattern: .*\S.*
+          type: string
+      title: LegacyReportLocation
+      type: object
+    activity-audit-filter-dto:
+      additionalProperties: false
+      description: 'Filter criteria for POST /reports/activity-audit/jobs. Both dateFrom and dateTo are required and are treated as inclusive bounds. If dateFrom is later than dateTo, the API treats the earlier date as the inclusive start and the later date as the inclusive end. The username must match exactly. Blank fields will be rejected, nulls should be used instead.
+
+        '
+      properties:
+        dateFrom:
+          description: Inclusive start date (YYYY-MM-DD).
+          example: 2025-10-01
+          format: date
+          type: string
+        dateTo:
+          description: Inclusive end date (YYYY-MM-DD).
+          example: 2025-10-31
+          format: date
+          type: string
+        username:
+          description: Exact display username to audit, normally the user's email address.
+          example: jsmith@example.com
+          maxLength: 250
+          minLength: 1
+          pattern: .*\S.*
+          type: string
+        activityTypes:
+          description: 'One or more activity types to include in the audit report. Must contain at least one value.
+
+            '
+          items:
+            $ref: '#/components/schemas/activity-type'
+          minItems: 1
+          type: array
+      required:
+      - activityTypes
+      - dateFrom
+      - dateTo
+      type: object
+    fees-report-filter-dto:
+      additionalProperties: false
+      description: 'Filter criteria for POST /reports/fees/jobs. Both dateFrom and dateTo are required and are treated as inclusive bounds. If dateFrom is later than dateTo, the API treats the earlier date as the inclusive start and the later date as the inclusive end. Location is optional. When provided, use courtLocationCode on its own, cjaCode on its own, otherLocationDescription on its own, or cjaCode and otherLocationDescription together. When supplied, cjaCode must match an existing Criminal Justice Area and courtLocationCode must match an active Court.
+
+        '
+      properties:
+        dateFrom:
+          description: Inclusive start date (YYYY-MM-DD).
+          example: 2025-10-01
+          format: date
+          type: string
+        dateTo:
+          description: Inclusive end date (YYYY-MM-DD).
+          example: 2025-10-31
+          format: date
+          type: string
+        standardApplicantCode:
+          description: Standard applicant code (case-insensitive contains match).
+          example: STD-00123
+          maxLength: 10
+          minLength: 1
+          pattern: .*\S.*
+          type: string
+        applicantName:
+          description: Applicant name, surname, or organisation name (case-insensitive contains match).
+          example: john smith
+          maxLength: 100
+          minLength: 1
+          pattern: .*\S.*
+          type: string
+        location:
+          $ref: '#/components/schemas/legacy-report-location'
+      required:
+      - dateFrom
+      - dateTo
+      type: object
+    job-status:
+      description: The status of the job being polled by the user.
+      enum:
+      - RECEIVED
+      - VALIDATING
+      - PROCESSING
+      - FAILED
+      - COMPLETED
+      example: RECEIVED
+      type: string
+    problem:
+      description: RFC 9457/7807 problem details.
+      properties:
+        type:
+          description: Problem type identifier (URI).
+          example: https://errors.hmcts.net/appreg/bad-request
+          format: uri
+          type: string
+        title:
+          description: Short, human-readable summary.
+          example: Invalid request parameters
+          type: string
+        status:
+          description: HTTP status code.
+          example: 400
+          format: int32
+          type: integer
+        detail:
+          description: Human-readable explanation specific to this occurrence.
+          example: startDateFrom must be on or before startDateTo
+          type: string
+        instance:
+          description: URI reference to the specific occurrence (if applicable).
+          example: urn:request:2f9c3d8a-1b3a-4a1e-9b7f-6b2a6a0a2b2f
+          format: uri
+          type: string
+        correlationId:
+          description: Server-side correlation ID for tracing.
+          example: 3e1a2c95a7d84a5fb3e1a2c95a7d84a5
+          type: string
+      required:
+      - status
+      - title
+      - type
+      type: object
+    list-maintenance-filter-dto:
+      additionalProperties: false
+      description: 'Filter criteria for POST /reports/list-maintenance/jobs. Both dateFrom and dateTo are required and are treated as inclusive bounds. Blank fields will be rejected, nulls should be used instead.
+
+        '
+      properties:
+        dateFrom:
+          description: Inclusive start date (YYYY-MM-DD).
+          example: 2025-10-01
+          format: date
+          type: string
+        dateTo:
+          description: Inclusive end date (YYYY-MM-DD).
+          example: 2025-10-31
+          format: date
+          type: string
+        listDescription:
+          description: Case-insensitive contains match on the Application List description.
+          example: morning session
+          maxLength: 200
+          minLength: 1
+          pattern: .*\S.*
+          type: string
+        location:
+          $ref: '#/components/schemas/legacy-report-location'
+      required:
+      - dateFrom
+      - dateTo
+      type: object
+    private-prosecutors-index-filter-dto:
+      additionalProperties: false
+      description: 'Filter criteria for POST /reports/private-prosecutors-index/jobs. Both dateFrom and dateTo are required and are treated as inclusive bounds. Blank fields will be rejected, nulls should be used instead.
+
+        '
+      properties:
+        dateFrom:
+          description: Inclusive start date (YYYY-MM-DD).
+          example: 2025-10-01
+          format: date
+          type: string
+        dateTo:
+          description: Inclusive end date (YYYY-MM-DD).
+          example: 2025-10-31
+          format: date
+          type: string
+        location:
+          $ref: '#/components/schemas/legacy-report-location'
+        applicantSurname:
+          description: Applicant surname (case-insensitive contains match).
+          example: Smith
+          maxLength: 100
+          minLength: 1
+          pattern: .*\S.*
+          type: string
+        applicantFirstName:
+          description: Applicant first name (case-insensitive contains match).
+          example: John
+          maxLength: 100
+          minLength: 1
+          pattern: .*\S.*
+          type: string
+        applicantOrganisationName:
+          description: Applicant organisation name (case-insensitive contains match).
+          example: Acme Corp
+          maxLength: 100
+          minLength: 1
+          pattern: .*\S.*
+          type: string
+        standardApplicantName:
+          description: Standard applicant name (case-insensitive contains match).
+          example: Crown Prosecution Service
+          maxLength: 100
+          minLength: 1
+          pattern: .*\S.*
+          type: string
+        respondentSurname:
+          description: Respondent surname (case-insensitive contains match).
+          example: Doe
+          maxLength: 100
+          minLength: 1
+          pattern: .*\S.*
+          type: string
+        respondentFirstName:
+          description: Respondent first name (case-insensitive contains match).
+          example: Jane
+          maxLength: 100
+          minLength: 1
+          pattern: .*\S.*
+          type: string
+        respondentOrganisationName:
+          description: Respondent organisation name (case-insensitive contains match).
+          example: XYZ Ltd
+          maxLength: 100
+          minLength: 1
+          pattern: .*\S.*
+          type: string
+      required:
+      - dateFrom
+      - dateTo
+      type: object
+x-refined-from:
+- appreg-api-openapi.yaml
+- hmcts-applications-register-openapi.yml

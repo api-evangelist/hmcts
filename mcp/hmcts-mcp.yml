@@ -1,0 +1,218 @@
+name: HM Courts & Tribunals Service MCP Server (candidate)
+type: MCPServer
+generated: '2026-10-09'
+method: derived
+status: candidate
+source: Derived from operationIds in openapi/ (Applications Register, Crime Hearing Results Document Subscription, Results
+  Validation Service). Core Case Data specs (Swagger 2.0) carry no operationIds and were not mapped.
+deployment:
+  mode: none
+  auth: unknown
+  verified: derived
+description: 'No HMCTS-published MCP server fronts these APIs. Searched 2026-10-09: GitHub org search "mcp org:hmcts" returned
+  5 repos, all developer tooling unrelated to these REST APIs (see related_provider_mcp_repos); probed https://hmcts.github.io/.well-known/mcp.json
+  -> 404. The tool list below is a CANDIDATE derived 1:1 from real operationIds.'
+related_provider_mcp_repos:
+- repo: https://github.com/hmcts/crime-frontend-developer-mcp
+  note: Self-hosted SSE MCP server (status beta, v0.1.0-beta.0) exposing 18 tools over the Crime Platform Design Kit source
+    (e.g. pdk_list_components, pdk_get_component, gate_intake). Runs locally (http://127.0.0.1:3000/sse) per README; no public
+    hosted endpoint. Not backed by the OpenAPI operations here.
+- repo: https://github.com/hmcts/ai-in-sdlc-smart-prompts-mcp
+  note: Fork of prompts-mcp-server for prompt management (7 tools); developer tooling.
+- repo: https://github.com/hmcts/ai-in-sdlc-mcp-proxy
+  note: Proxy to run STDIO MCP services remotely.
+- repo: https://github.com/hmcts/crime-mcp-register
+  note: Runtime plumbing (SSE transport, OAuth proxy) for HMCTS Crime MCP servers.
+- repo: https://github.com/hmcts/cp-agentic-access
+  note: 'Design repo: "AI-agent access to the Common Platform: WebMCP, remote MCP via the API Marketplace". Design intent
+    only; README is one line, no endpoint published.'
+tools:
+- name: get_event_types
+  description: Get list of valid event types for subscription service
+  operationId: GetEventTypes
+  method: GET
+  path: /event-types
+  api: openapi/hmcts-crime-hearing-results-document-subscription-openapi.yml
+  readOnly: true
+- name: create_client_subscription
+  description: Create a new client subscription
+  operationId: createClientSubscription
+  method: POST
+  path: /client-subscriptions
+  api: openapi/hmcts-crime-hearing-results-document-subscription-openapi.yml
+  readOnly: false
+- name: get_client_subscription
+  description: Retrieve a client subscription by ID
+  operationId: getClientSubscription
+  method: GET
+  path: /client-subscriptions/{clientSubscriptionId}
+  api: openapi/hmcts-crime-hearing-results-document-subscription-openapi.yml
+  readOnly: true
+- name: update_client_subscription
+  description: Strict update of a client subscription
+  operationId: updateClientSubscription
+  method: PUT
+  path: /client-subscriptions/{clientSubscriptionId}
+  api: openapi/hmcts-crime-hearing-results-document-subscription-openapi.yml
+  readOnly: false
+- name: delete_client_subscription
+  description: Delete a subscription by ID
+  operationId: deleteClientSubscription
+  method: DELETE
+  path: /client-subscriptions/{clientSubscriptionId}
+  api: openapi/hmcts-crime-hearing-results-document-subscription-openapi.yml
+  readOnly: false
+- name: create_notification
+  description: Create a client notification.
+  operationId: createNotification
+  method: POST
+  path: /notifications
+  api: openapi/hmcts-crime-hearing-results-document-subscription-openapi.yml
+  readOnly: false
+- name: rotate_client_subscription_secret
+  description: Rotate the HMAC signing secret for a subscription
+  operationId: rotateClientSubscriptionSecret
+  method: POST
+  path: /client-subscriptions/{clientSubscriptionId}/secret/rotate
+  api: openapi/hmcts-crime-hearing-results-document-subscription-openapi.yml
+  readOnly: false
+- name: get_document
+  description: Retrieve PDF for the specified document id
+  operationId: getDocument
+  method: GET
+  path: /client-subscriptions/{clientSubscriptionId}/documents/{documentId}
+  api: openapi/hmcts-crime-hearing-results-document-subscription-openapi.yml
+  readOnly: true
+- name: validate_draft_results
+  description: Validate draft hearing results
+  operationId: validateDraftResults
+  method: POST
+  path: /api/validation/validate
+  api: openapi/hmcts-results-validation-service-openapi.yml
+  readOnly: false
+- name: list_validation_rules
+  description: List all validation rules
+  operationId: listValidationRules
+  method: GET
+  path: /api/validation/rules
+  api: openapi/hmcts-results-validation-service-openapi.yml
+  readOnly: true
+- name: get_validation_rule_by_id
+  description: Get a validation rule by ID
+  operationId: getValidationRuleById
+  method: GET
+  path: /api/validation/rules/{ruleId}
+  api: openapi/hmcts-results-validation-service-openapi.yml
+  readOnly: true
+- name: update_validation_rule
+  description: Enable or disable a validation rule
+  operationId: updateValidationRule
+  method: PATCH
+  path: /api/validation/rules/{ruleId}
+  api: openapi/hmcts-results-validation-service-openapi.yml
+  readOnly: false
+- name: get_application_codes
+  description: Get Application Codes (paginated, filterable)
+  operationId: getApplicationCodes
+  method: GET
+  path: /application-codes
+  api: openapi/hmcts-applications-register-openapi.yml
+  readOnly: true
+- name: get_application_lists
+  description: Get Application Lists (paginated, filterable)
+  operationId: getApplicationLists
+  method: GET
+  path: /application-lists
+  api: openapi/hmcts-applications-register-openapi.yml
+  readOnly: true
+- name: create_application_list
+  description: Create an Application List
+  operationId: createApplicationList
+  method: POST
+  path: /application-lists
+  api: openapi/hmcts-applications-register-openapi.yml
+  readOnly: false
+- name: get_application_list
+  description: Get an Application List by id
+  operationId: getApplicationList
+  method: GET
+  path: /application-lists/{listId}
+  api: openapi/hmcts-applications-register-openapi.yml
+  readOnly: true
+- name: get_application_list_entries
+  description: Get Application List Entries (paginated, filterable)
+  operationId: getApplicationListEntries
+  method: GET
+  path: /application-lists/{listId}/entries
+  api: openapi/hmcts-applications-register-openapi.yml
+  readOnly: true
+- name: create_application_list_entry
+  description: Create an Application List Entry
+  operationId: createApplicationListEntry
+  method: POST
+  path: /application-lists/{listId}/entries
+  api: openapi/hmcts-applications-register-openapi.yml
+  readOnly: false
+- name: get_application_list_entry
+  description: Get an Application List Entry by id
+  operationId: getApplicationListEntry
+  method: GET
+  path: /application-lists/{listId}/entries/{entryId}
+  api: openapi/hmcts-applications-register-openapi.yml
+  readOnly: true
+- name: create_application_list_entry_result
+  description: Create an Application List Entry Result
+  operationId: createApplicationListEntryResult
+  method: POST
+  path: /application-lists/{listId}/entries/{entryId}/results
+  api: openapi/hmcts-applications-register-openapi.yml
+  readOnly: false
+- name: get_court_locations
+  description: Get Court Locations (paginated, filterable)
+  operationId: getCourtLocations
+  method: GET
+  path: /court-locations
+  api: openapi/hmcts-applications-register-openapi.yml
+  readOnly: true
+- name: get_criminal_justice_areas
+  description: Get Criminal Justice Areas (paginated, filterable)
+  operationId: getCriminalJusticeAreas
+  method: GET
+  path: /criminal-justice-areas
+  api: openapi/hmcts-applications-register-openapi.yml
+  readOnly: true
+- name: get_job_status_by_id
+  description: Get the status of a background job.
+  operationId: getJobStatusById
+  method: GET
+  path: /jobs/{jobId}
+  api: openapi/hmcts-applications-register-openapi.yml
+  readOnly: true
+- name: create_fees_report
+  description: Generate a Fees report for applications that include a fee.
+  operationId: createFeesReport
+  method: POST
+  path: /reports/fees/jobs
+  api: openapi/hmcts-applications-register-openapi.yml
+  readOnly: false
+- name: download_report
+  description: Download the generated CSV for a completed report job.
+  operationId: downloadReport
+  method: GET
+  path: /reports/jobs/{jobId}/download
+  api: openapi/hmcts-applications-register-openapi.yml
+  readOnly: true
+- name: get_result_codes
+  description: Get Result Codes (paginated, filterable)
+  operationId: getResultCodes
+  method: GET
+  path: /result-codes
+  api: openapi/hmcts-applications-register-openapi.yml
+  readOnly: true
+- name: get_standard_applicants
+  description: Get Standard Applicants (paginated, filterable)
+  operationId: getStandardApplicants
+  method: GET
+  path: /standard-applicants
+  api: openapi/hmcts-applications-register-openapi.yml
+  readOnly: true

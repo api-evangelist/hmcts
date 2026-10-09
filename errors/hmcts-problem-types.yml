@@ -1,0 +1,108 @@
+generated: '2026-10-09'
+method: derived
+generator: derive-problem-types.py
+source:
+- openapi/hmcts-applications-register-openapi.yml
+- openapi/hmcts-core-case-data-aggregated-openapi.yml
+- openapi/hmcts-core-case-data-definition-openapi.yml
+- openapi/hmcts-crime-hearing-results-document-subscription-openapi.yml
+- openapi/hmcts-results-validation-service-openapi.yml
+format: rfc9457
+envelope:
+  media_type: application/problem+json
+  schema: problem
+coverage:
+  operations: 78
+  statuses_declared: 13
+problems:
+- status: 400
+  title: Bad Request
+  description: Invalid request parameters.
+  operations: 51
+  media_types:
+  - application/problem+json
+  - application/json
+  schema: problem
+- status: 401
+  title: Unauthorized
+  description: Authentication required or token invalid.
+  operations: 61
+  media_types:
+  - application/problem+json
+  schema: problem
+- status: 403
+  title: Forbidden
+  description: Authenticated but not permitted to perform this action.
+  operations: 61
+  media_types:
+  - application/problem+json
+  schema: problem
+- status: 404
+  title: Not Found
+  description: The requested resource was not found.
+  operations: 42
+  media_types:
+  - application/problem+json
+  - application/json
+  schema: problem
+- status: 406
+  title: Not Acceptable
+  description: Requested media type/version not acceptable.
+  operations: 18
+  media_types:
+  - application/problem+json
+  schema: problem
+- status: 409
+  title: Conflict
+  description: Conflict with the current state of the resource.
+  operations: 20
+  media_types:
+  - application/problem+json
+  schema: problem
+- status: 413
+  title: Content Too Large
+  description: Request entity is too large to be processed.
+  operations: 3
+  media_types:
+  - application/problem+json
+  schema: problem
+- status: 415
+  title: Unsupported Media Type
+  description: The server does not support the media type of the request.
+  operations: 1
+  media_types:
+  - application/problem+json
+  schema: problem
+- status: 422
+  title: Unprocessable Content
+  description: Invalid pre-state condition.
+  operations: 1
+  media_types: []
+  schema: Error
+- status: 423
+  title: Locked
+  description: The requested operation could not start because the resource is locked.
+  operations: 1
+  media_types:
+  - application/problem+json
+  schema: problem
+- status: 500
+  title: Internal Server Error
+  description: Unexpected server error.
+  operations: 53
+  media_types:
+  - application/problem+json
+  schema: problem
+- status: 502
+  title: Bad Gateway
+  description: CSDS returned record data that is incompatible with the selected ingress processor.
+  operations: 1
+  media_types:
+  - application/problem+json
+  schema: problem
+- status: default
+  title: null
+  description: Unexpected error
+  operations: 9
+  media_types: []
+  schema: Error

@@ -1,0 +1,439 @@
+generated: '2026-10-09'
+method: derived
+generator: derive-vocabulary.py
+source:
+- openapi/hmcts-applications-register-openapi.yml
+- openapi/hmcts-core-case-data-aggregated-openapi.yml
+- openapi/hmcts-core-case-data-definition-openapi.yml
+- openapi/hmcts-crime-hearing-results-document-subscription-openapi.yml
+- openapi/hmcts-results-validation-service-openapi.yml
+vocabulary:
+  name: HM Courts & Tribunals Service Domain Vocabulary
+  description: 'Terms declared by HM Courts & Tribunals Service''s own API contract: its resource groups, objects and enumerations, with the contract''s
+    definitions. Derived, not authored.'
+  version: '2026-10-09'
+  terms:
+  - term: admin
+    definition: Administrative operations such as jobs can be run from this set of endpoints.
+    tags:
+    - Resource Group
+    source: openapi/hmcts-applications-register-openapi.yml
+  - term: application-codes
+    definition: Application Codes are reference data, not managed in App Reg. They are required to provide a set repeatable data that can be used
+      by Application List Entries, such as the title, wording or whether an application has an associated fee.
+    tags:
+    - Resource Group
+    source: openapi/hmcts-applications-register-openapi.yml
+  - term: application-lists
+    definition: An Application List records the date, time and location at which one or more Applications is to be considered by a magistrate
+      or delegated authority.
+    tags:
+    - Resource Group
+    source: openapi/hmcts-applications-register-openapi.yml
+  - term: application-list-entries
+    definition: An Application List Entry records all details of an individual Application. This will always belong to an Application List.
+    tags:
+    - Resource Group
+    source: openapi/hmcts-applications-register-openapi.yml
+  - term: application-list-entry-results
+    definition: An Application List Entry Result records the result of an individual Application. Each Application can have multiple child Results
+      and Results cannot exist without a parent Application.
+    tags:
+    - Resource Group
+    source: openapi/hmcts-applications-register-openapi.yml
+  - term: court-locations
+    definition: Court Locations are reference data, not managed in App Reg. They are a consolidation of both crown and magistrates courts where
+      an application will be heard and resulted.
+    tags:
+    - Resource Group
+    source: openapi/hmcts-applications-register-openapi.yml
+  - term: criminal-justice-areas
+    definition: Criminal Justice Areas are reference data, not managed in App Reg. They are officially recognized justice regions and used to
+      classify records by jurisdiction.
+    tags:
+    - Resource Group
+    source: openapi/hmcts-applications-register-openapi.yml
+  - term: jobs
+    definition: Background job operations for asynchronous tasks (polling status across all job types).
+    tags:
+    - Resource Group
+    source: openapi/hmcts-applications-register-openapi.yml
+  - term: reports
+    definition: Endpoints to generate and retrieve CSV reports asynchronously.
+    tags:
+    - Resource Group
+    source: openapi/hmcts-applications-register-openapi.yml
+  - term: result-codes
+    definition: Result codes are reference data, not managed in App Reg. They are required to provide a set of ways an Application List Entry
+      can be resulted. e.g. Approved/Denied.
+    tags:
+    - Resource Group
+    source: openapi/hmcts-applications-register-openapi.yml
+  - term: standard-applicants
+    definition: Standard Applicants are reference data, not managed in App Reg. Only code, name and usage dates are exposed by reference-data
+      endpoints and exports. Personal and contact details are excluded, including when Standard Applicants appear in application responses and
+      reports. Ordinary applicants and respondents are unaffected.
+    tags:
+    - Resource Group
+    source: openapi/hmcts-applications-register-openapi.yml
+  - term: admin-job-type
+    definition: The type of the administrative background job
+    tags:
+    - Enumeration
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/admin-job-type
+  - term: admin-job-status
+    definition: Details of the database job status.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/admin-job-status
+  - term: problem
+    definition: RFC 9457/7807 problem details.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/problem
+  - term: job-retention-policy
+    definition: Retention policy configuration for an administrative background job.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/job-retention-policy
+  - term: application-code-get-detail-dto
+    definition: Immutable DTO representing a detailed Application Code.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/application-code-get-detail-dto
+  - term: application-list-get-filter-dto
+    definition: Filter criteria for GET /application-lists.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/application-list-get-filter-dto
+  - term: application-list-create-dto
+    definition: Request payload to create an Application List. Blank fields will be rejected, nulls should be used instead.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/application-list-create-dto
+  - term: application-list-get-detail-dto
+    definition: Immutable DTO representing a detailed Application List.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/application-list-get-detail-dto
+  - term: bulk-get-application-list-entries-request-dto
+    definition: 'Object declared by the contract with fields: listIds, entryIds.'
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/bulk-get-application-list-entries-request-dto
+  - term: application-list-get-print-dto
+    definition: Immutable DTO representing a detailed Application List.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/application-list-get-print-dto
+  - term: application-list-update-dto
+    definition: Request payload to fully replace an existing Application List. Blank fields will be rejected, nulls should be used instead.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/application-list-update-dto
+  - term: entry-get-filter-dto
+    definition: Filter criteria for retrieving Application List Entries.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/entry-get-filter-dto
+  - term: bulk-action-preview-request-dto
+    definition: Request to resolve a global bulk action selection into IDs and row context.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/bulk-action-preview-request-dto
+  - term: bulk-action-preview-response-dto
+    definition: Resolved preview for a global bulk action selection.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/bulk-action-preview-response-dto
+  - term: entry-application-list-get-filter-dto
+    definition: Filter criteria for retrieving Application List Entries for an Application List.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/entry-application-list-get-filter-dto
+  - term: entry-create-dto
+    definition: Request payload to create an Application List Entry. Blank fields will be rejected, nulls should be used instead.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/entry-create-dto
+  - term: entry-get-detail-dto
+    definition: DTO representing a detailed Application List Entry.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/entry-get-detail-dto
+  - term: application-list-entry-bulk-action-preview-request-dto
+    definition: Request to resolve a single-list bulk action selection into IDs and row context.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/application-list-entry-bulk-action-preview-request-dto
+  - term: bulk-officials-update-dto
+    definition: Replace officials for multiple Application List Entries in one atomic operation.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/bulk-officials-update-dto
+  - term: bulk-fees-update-dto
+    definition: Append fee-status rows for multiple Application List Entries in one atomic operation.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/bulk-fees-update-dto
+  - term: bulk-update-response-dto
+    definition: Result of a bulk update operation.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/bulk-update-response-dto
+  - term: entry-get-detail-dto_1
+    definition: DTO representing a detailed Application List Entry.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/entry-get-detail-dto_1
+  - term: entry-update-dto
+    definition: Request payload to update an Application List Entry. Note, this is a PUT operation so the whole object is replaced. When `feeStatuses`
+      is supplied it replaces the existing fee-status rows for the entry. When `feeStatuses` is `null`, fee-status rows are left unchanged. Blank
+      fields will be rejected, nulls should be used instead.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/entry-update-dto
+  - term: job-acknowledgement
+    definition: Acknowledgement returned when a background job is created.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/job-acknowledgement
+  - term: move-entries-dto
+    definition: Parameters to move entries from one Application List to another.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/move-entries-dto
+  - term: entry_update_closed_dto
+    definition: Request payload to update notes for an Application List Entry whose Application List is closed.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/entry_update_closed_dto
+  - term: bulk-result-dto
+    definition: Create the same Result for multiple entries (atomic operation).
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/bulk-result-dto
+  - term: result-get-dto
+    definition: Response payload to get an Application List Entry Result.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/result-get-dto
+  - term: bulk-delete-results-dto
+    definition: Delete multiple Application List Entry Results atomically.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/bulk-delete-results-dto
+  - term: result-create-dto
+    definition: Request payload to create an Application List Entry Result. Blank fields will be rejected, nulls should be used instead.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/result-create-dto
+  - term: result-update-dto
+    definition: Request payload to update an Application List Entry Result. Blank fields will be rejected, nulls should be used instead.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/result-update-dto
+  - term: court-location-get-detail-dto
+    definition: Immutable DTO representing a detailed Court Location.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/court-location-get-detail-dto
+  - term: criminal-justice-area-get-dto
+    definition: Immutable DTO representing a Criminal Justice Area.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/criminal-justice-area-get-dto
+  - term: activity-audit-filter-dto
+    definition: Filter criteria for POST /reports/activity-audit/jobs. Both dateFrom and dateTo are required and are treated as inclusive bounds.
+      If dateFrom is later than dateTo, the API treats the earlier date as the inclusive start and the later date as the inclusive end. The username
+      must match exactly. Blank fields will be rejected, nulls should be used instead.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/activity-audit-filter-dto
+  - term: fees-report-filter-dto
+    definition: Filter criteria for POST /reports/fees/jobs. Both dateFrom and dateTo are required and are treated as inclusive bounds. If dateFrom
+      is later than dateTo, the API treats the earlier date as the inclusive start and the later date as the inclusive end. Location is optional.
+      When provided, use courtLocationCode on its own, cjaCode on its own, otherLocationDescription on its own, or cjaCode and otherLo
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/fees-report-filter-dto
+  - term: list-maintenance-filter-dto
+    definition: Filter criteria for POST /reports/list-maintenance/jobs. Both dateFrom and dateTo are required and are treated as inclusive bounds.
+      Blank fields will be rejected, nulls should be used instead.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/list-maintenance-filter-dto
+  - term: search-warrants-report-filter-dto
+    definition: Filter criteria for POST /reports/search-warrants/jobs. Both dateFrom and dateTo are required and are treated as inclusive bounds.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/search-warrants-report-filter-dto
+  - term: workload-filter-dto
+    definition: Filter criteria for POST /reports/workload/jobs. Both dateFrom and dateTo are required and are treated as inclusive bounds.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/workload-filter-dto
+  - term: duration-filter-dto
+    definition: Filter criteria for POST /reports/duration/jobs. Both dateFrom and dateTo are required inclusive bounds. If dateFrom is later
+      than dateTo, the API treats the earlier date as the inclusive start and the later date as the inclusive end. Location is optional. When
+      provided, use courtLocationCode on its own, cjaCode on its own, otherLocationDescription on its own, or cjaCode and otherLocationDescripti
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/duration-filter-dto
+  - term: private-prosecutors-index-filter-dto
+    definition: Filter criteria for POST /reports/private-prosecutors-index/jobs. Both dateFrom and dateTo are required and are treated as inclusive
+      bounds. Blank fields will be rejected, nulls should be used instead.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/private-prosecutors-index-filter-dto
+  - term: result-code-get-detail-dto
+    definition: Immutable DTO representing a detailed Result Code.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/result-code-get-detail-dto
+  - term: standard-applicant-print-dto
+    definition: Print-ready Standard Applicans report payload.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/standard-applicant-print-dto
+  - term: standard-applicant-get-detail-dto
+    definition: Standard Applicant reference data. Only code, name and usage dates are exposed; personal and contact details are excluded.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/standard-applicant-get-detail-dto
+  - term: page
+    definition: Generic Spring Data page.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/page
+  - term: application-code-get-summary-dto
+    definition: Lightweight DTO for Application Codes, used in list/search views.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/application-code-get-summary-dto
+  - term: template-detail
+    definition: The wording details
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/template-detail
+  - term: application-list-status
+    definition: Status of the Application List.
+    tags:
+    - Enumeration
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/application-list-status
+  - term: application-list-get-summary-dto
+    definition: Lightweight DTO for Application Lists, used in list/search views.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/application-list-get-summary-dto
+  - term: entry-get-print-dto
+    definition: An application view, used specifically for printing.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/entry-get-print-dto
+  - term: entry-get-summary-dto
+    definition: Lightweight DTO for Application Lists Entries, not retrieved through a parent list. Used in list/search views.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/entry-get-summary-dto
+  - term: bulk-action-type
+    definition: Supported bulk action types.
+    tags:
+    - Enumeration
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/bulk-action-type
+  - term: bulk-action-selection-dto
+    definition: Selection criteria for a global bulk action preview. When selectionType is IDS, entryIds must contain at least one non-null entry
+      ID. When selectionType is FILTER, filter, sort, and excludedEntryIds describe the select-all-matching selection.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/bulk-action-selection-dto
+  - term: applicant
+    definition: 'The applicant making the application. In application read and print responses, Standard Applicants are represented by their reference
+      name in organisation.name (or their code when no reference name exists). Their personal and contact values are not returned. For these read
+      responses the shared input contact constraints do not apply: contact fields may be null or absent. Ordinary applicant input st'
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/applicant
+  - term: respondent
+    definition: The respondent to the application.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/respondent
+  - term: template-substitution
+    definition: The template field with the associated value to substitute. Blank fields will be rejected, nulls should be used instead.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/template-substitution
+  - term: fee-status
+    definition: The status of the fee linked to the application. Blank fields will be rejected, nulls should be used instead.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/fee-status
+  - term: official
+    definition: The Official hearing the application. Blank fields will be rejected, nulls should be used instead.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/official
+  - term: application-list-entry-bulk-action-selection-dto
+    definition: Selection criteria for a single Application List bulk action preview. When selectionType is IDS, entryIds must contain at least
+      one non-null entry ID. When selectionType is FILTER, filter, sort, and excludedEntryIds describe the select-all-matching selection.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/application-list-entry-bulk-action-selection-dto
+  - term: bulk-fee-details-dto
+    definition: One fee detail row to apply to every selected Application List Entry.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/bulk-fee-details-dto
+  - term: job-type
+    definition: The type of the job being polled by the user.
+    tags:
+    - Enumeration
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/job-type
+  - term: job-status
+    definition: The status of the job being polled by the user.
+    tags:
+    - Enumeration
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/job-status
+  - term: bulk-delete-result-item-dto
+    definition: 'Object declared by the contract with fields: listId, entryId, resultId.'
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/bulk-delete-result-item-dto
+  - term: court-location-get-summary-dto
+    definition: Lightweight DTO for Court Locations, used in list/search views.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/court-location-get-summary-dto
+  - term: ActivityType
+    definition: Type of user activity recorded in the audit log.
+    tags:
+    - Enumeration
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/activity-type
+  - term: LegacyReportLocation
+    definition: Location filters for legacy MIS reports. Blank fields will be rejected, nulls should be used instead. Location filters are optional.
+      Use courtLocationCode on its own, cjaCode on its own, otherLocationDescription on its own, or cjaCode and otherLocationDescription together.
+      courtLocationCode is mutually exclusive with cjaCode and otherLocationDescription.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/legacy-report-location
+  - term: result-code-get-summary-dto
+    definition: Lightweight DTO used in list/search views.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/result-code-get-summary-dto
+  - term: standard-applicant-get-summary-dto
+    definition: Standard Applicant reference data. Only code, name and usage dates are exposed; personal and contact details are excluded.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/standard-applicant-get-summary-dto
+  - term: standard-applicant-print-search-criteria-dto
+    definition: Search criteria used for the Standard Applicants print report.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/standard-applicant-print-search-criteria-dto
+  - term: standard-applicant-print-row-dto
+    definition: Standard Applicant print row containing only code, name and usage dates. Personal and contact details are excluded.
+    tags:
+    - Object
+    source: openapi/hmcts-applications-register-openapi.yml#/components/schemas/standard-applicant-print-row-dto

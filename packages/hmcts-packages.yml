@@ -1,0 +1,80 @@
+generated: '2026-10-09'
+method: searched
+source: https://registry.npmjs.org/-/v1/search?text=%40hmcts
+name: HM Courts & Tribunals Service Packages
+note: First-party packages published by HMCTS under the @hmcts npm scope and the HMCTS Azure DevOps Artifacts Maven feed. Maven Central (search.maven.org,
+  query "hmcts") and PyPI returned no HMCTS packages. The @hmcts npm scope holds 66 packages, most of them internal frontend/tooling libraries;
+  only API clients and API-backed UI libraries are listed here.
+packages:
+- name: com.github.hmcts:core-case-data-store-client
+  registry: maven (Azure DevOps Artifacts, hmcts-lib feed)
+  url: https://github.com/hmcts/ccd-client
+  language: java
+  official: true
+  version: 6.1.0
+  published: '2026-08-07'
+  note: Client for the Core Case Data data store API. Feed https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1 maven-metadata.xml
+    reports release 6.1.0 (latest 6.2.0-rc1); date is the GitHub release 6.1.0 published_at.
+- name: '@hmcts/ccd-case-ui-toolkit'
+  registry: npm
+  url: https://www.npmjs.com/package/@hmcts/ccd-case-ui-toolkit
+  language: typescript
+  official: false
+  version: 7.4.9-fprel
+  published: '2026-10-09'
+  note: Case UI Toolkit (Angular) for Core Case Data; dist-tag latest.
+  ownership_audit: 'registry has no such package: official downgraded (harvest-packages.py --audit)'
+- name: '@hmcts/cui-client'
+  registry: npm
+  url: https://www.npmjs.com/package/@hmcts/cui-client
+  language: javascript
+  official: false
+  version: 1.0.1
+  published: '2026-07-01'
+  note: Reusable HMCTS CUI API client.
+  ownership_audit: 'registry metadata names neither the provider''s domain nor its GitHub org: official downgraded (harvest-packages.py --audit)'
+- name: '@hmcts/prd-client'
+  registry: npm
+  url: https://www.npmjs.com/package/@hmcts/prd-client
+  language: javascript
+  official: false
+  version: 0.0.8
+  published: '2021-03-09'
+  note: Client library to access Professional Reference Data.
+  ownership_audit: 'registry metadata names neither the provider''s domain nor its GitHub org: official downgraded (harvest-packages.py --audit)'
+- name: '@hmcts/court-finder-service-client'
+  registry: npm
+  url: https://www.npmjs.com/package/@hmcts/court-finder-service-client
+  language: javascript
+  official: false
+  version: 1.0.1
+  published: '2020-01-09'
+  note: Court and tribunal finder service client.
+  ownership_audit: 'registry metadata names neither the provider''s domain nor its GitHub org: official downgraded (harvest-packages.py --audit)'
+- name: '@hmcts/div-pay-client'
+  registry: npm
+  url: https://www.npmjs.com/package/@hmcts/div-pay-client
+  language: javascript
+  official: false
+  version: 7.0.6
+  published: '2021-05-11'
+  note: Wrapper for payment-api calls.
+  ownership_audit: 'registry metadata names neither the provider''s domain nor its GitHub org: official downgraded (harvest-packages.py --audit)'
+- name: '@hmcts/div-service-auth-provider-client'
+  registry: npm
+  url: https://www.npmjs.com/package/@hmcts/div-service-auth-provider-client
+  language: javascript
+  official: false
+  version: 3.0.1
+  published: '2018-09-24'
+  note: Client to obtain tokens for service to service calls.
+  ownership_audit: 'registry metadata names neither the provider''s domain nor its GitHub org: official downgraded (harvest-packages.py --audit)'
+- name: '@hmcts/draft-store-client'
+  registry: npm
+  url: https://www.npmjs.com/package/@hmcts/draft-store-client
+  language: javascript
+  official: false
+  version: 1.2.1
+  published: '2017-10-27'
+  note: JavaScript client for draft store.
+  ownership_audit: 'registry metadata names neither the provider''s domain nor its GitHub org: official downgraded (harvest-packages.py --audit)'

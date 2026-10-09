@@ -1,0 +1,78 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Core Case Data Definition API
+  version: 1.0.0
+extends: ../openapi/_original/hmcts-core-case-data-definition-openapi.yml
+x-generated: '2026-10-09'
+x-method: generated
+actions:
+- target: $.info
+  update:
+    x-provider: HM Courts & Tribunals Service
+    x-api-evangelist:
+      aid: hmcts
+      profiled: '2026-10-09'
+      source_repo: https://github.com/api-evangelist/hmcts
+- target: $.paths['/display/tab-structure/{id}'].get
+  description: Spec has no operationId; add a deterministic one derived from method + path (our suggestion, not provider-published).
+  update:
+    x-suggested-operationId: getDisplayTabStructure
+- target: $.paths['/display/tab-structure/{id}'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/display/work-basket-definition/{id}'].get
+  description: Spec has no operationId; add a deterministic one derived from method + path (our suggestion, not provider-published).
+  update:
+    x-suggested-operationId: getDisplayWorkBasketDefinition
+- target: $.paths['/display/work-basket-definition/{id}'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/display/search-input-definition/{id}'].get
+  description: Spec has no operationId; add a deterministic one derived from method + path (our suggestion, not provider-published).
+  update:
+    x-suggested-operationId: getDisplaySearchInputDefinition
+- target: $.paths['/display/search-input-definition/{id}'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/display/search-result-definition/{id}'].get
+  description: Spec has no operationId; add a deterministic one derived from method + path (our suggestion, not provider-published).
+  update:
+    x-suggested-operationId: getDisplaySearchResultDefinition
+- target: $.paths['/display/search-result-definition/{id}'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/data/case-type/{id}'].get
+  description: Spec has no operationId; add a deterministic one derived from method + path (our suggestion, not provider-published).
+  update:
+    x-suggested-operationId: getDataCaseType
+- target: $.paths['/data/case-type/{id}'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/data/jurisdictions/{jurisdiction_id}/case-type'].get
+  description: Spec has no operationId; add a deterministic one derived from method + path (our suggestion, not provider-published).
+  update:
+    x-suggested-operationId: getDataJurisdictionsCaseType
+- target: $.paths['/data/jurisdictions/{jurisdiction_id}/case-type'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/data/jurisdictions/{jurisdiction_id}/case-type'].post
+  description: Spec has no operationId; add a deterministic one derived from method + path (our suggestion, not provider-published).
+  update:
+    x-suggested-operationId: postDataJurisdictionsCaseType
+- target: $.paths['/data/jurisdictions/{jurisdiction_id}/case-type'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false

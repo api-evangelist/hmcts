@@ -1,0 +1,19 @@
+generated: '2026-10-09'
+method: derived
+generator: derive-webhooks.py
+source:
+- openapi/hmcts-crime-hearing-results-document-subscription-openapi.yml
+description: 'Event surface derived from the provider''s own OpenAPI: callbacks. No AsyncAPI document is published by the provider; this catalog
+  lists the events the contract names.'
+management_operations:
+- createClientSubscription
+- getClientSubscription
+- updateClientSubscription
+- deleteClientSubscription
+- createNotification
+- rotateClientSubscriptionSecret
+- getDocument
+events:
+- event: onEvent
+  description: callback declared on createClientSubscription
+  declared_in: callbacks

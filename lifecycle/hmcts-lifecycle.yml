@@ -1,0 +1,17 @@
+generated: '2026-10-09'
+method: searched
+source: https://hmcts.github.io/standards/practices/apis.html
+name: HM Courts & Tribunals Service API Lifecycle
+versioning: 'Use content type negotiation or endpoint naming to version the API. Do not make backward incompatible changes to existing endpoints. (HMCTS engineering standard; also defers to the official guidance in the TGL.)'
+deprecation: No deprecation or sunset policy published; no operation in the saved contracts is marked deprecated.
+deprecated_operations: []
+status_page: null
+sla: null
+observed_versions:
+- api: Crime Hearing Results Document Subscription API
+  version: 1.0.0
+- api: Results Validation Service API
+  version: 0.1.0
+- api: Applications Register API
+  version: '@version@'
+  note: info.version is an unfilled build placeholder in the published openapi.yaml.

@@ -1,0 +1,43 @@
+generated: '2026-10-09'
+method: searched
+source: https://hmcts.github.io/standards/practices/apis.html
+standards:
+- id: zalando-restful-api-guidelines
+  conforms: claimed
+  evidence: '"Use the Zalando RESTful API Guidelines as the reference standard for API design." (https://hmcts.github.io/standards/practices/apis.html);
+    HMCTS fork published at https://hmcts.github.io/restful-api-standards/ (https://hmcts.github.io/cloud-native-platform/standards/apis.html).
+    Engineering standard, not a per-API attestation.'
+- id: openapi
+  conforms: true
+  evidence: '"Use OpenAPI for API documentation." (https://hmcts.github.io/standards/practices/apis.html); "All teams building APIs should be
+    automatically publishing their documentation using the OpenAPI Specification 3.0." (https://hmcts.github.io/cloud-native-platform/api-docs/).
+    Saved contracts are OpenAPI 3.0.4, 3.1.0, 3.0.0 and Swagger 2.0.'
+- id: oidc
+  conforms: claimed
+  evidence: '"CFT services should use OpenID Connect with CFT IDAM for user authentication." and "Use PKCE where the client stack supports it."
+    (https://hmcts.github.io/standards/standards/authentication-and-authorization.html). No saved contract declares an openIdConnect securityScheme.'
+- id: webhook-hmac-signature
+  conforms: true
+  evidence: 'openapi/hmcts-crime-hearing-results-document-subscription-openapi.yml callbacks carry required X-Key-Id and X-Signature headers:
+    "HMAC-SHA256 signature of the callback request using the subscription''s shared secret."'
+- id: openapi-3.0
+  conforms: true
+  evidence: the document declares 3.0.0
+- id: openapi-3.0
+  conforms: true
+  evidence: the document declares 3.0.4
+- id: openapi-3.1
+  conforms: true
+  evidence: the document declares 3.1.0
+- id: swagger-2.0
+  conforms: true
+  evidence: the document declares swagger-2.0
+- id: oauth2
+  conforms: false
+  evidence: 'securitySchemes: bearerAuth (http), subscriptionKey (apiKey)'
+- id: rfc9457
+  conforms: true
+  evidence: application/problem+json on 284 response(s), e.g. GET /admin/jobs/{jobType} 401
+- id: idempotency
+  conforms: false
+  evidence: no idempotency key parameter on mutating operations

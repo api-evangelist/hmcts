@@ -1,0 +1,3019 @@
+openapi: 3.2.0
+info:
+  title: Hmcts Application List Entries API
+  version: '@version@'
+  contact:
+    name: HMCTS AppReg Team
+    url: https://github.com/hmcts/appreg-api
+  description: 'Operations tagged application-list-entries across 2 of this provider''s published API definitions: appreg-api-openapi.yaml, hmcts-applications-register-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: /
+tags:
+- description: An Application List Entry records all details of an individual Application. This will always belong to an Application List.
+  name: application-list-entries
+paths:
+  /application-list-entries:
+    get:
+      description: Returns a paginated list of Application Lists Entries that match the search filters, without using an Application List ID .
+      operationId: getEntries
+      parameters:
+      - description: Filter criteria for Application Lists Entries.
+        explode: true
+        in: query
+        name: filter
+        required: false
+        schema:
+          $ref: '#/components/schemas/entry-get-filter-dto'
+        style: form
+      - in: query
+        name: pageNumber
+        schema:
+          default: 0
+          minimum: 0
+          type: integer
+      - in: query
+        name: pageSize
+        schema:
+          default: 10
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: 'Sort order. A single value is currently supported. Format: `property,(asc|desc)`.
+
+          Supported properties are date, applicantName, respondentName, applicationTitle,
+
+          feeRequired, resulted, isResulted, and status. resulted sorts by the result code;
+
+          isResulted sorts by whether the entry has been resulted.
+
+          '
+        explode: true
+        in: query
+        name: sort
+        schema:
+          example:
+          - date,desc
+          items:
+            type: string
+          type: array
+        style: form
+      responses:
+        '200':
+          content:
+            application/vnd.hmcts.appreg.v1+json:
+              schema:
+                $ref: '#/components/schemas/entry-page'
+          description: Page of Application List Entries
+          headers:
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+        '400':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Invalid request parameters.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '406':
+          content:
+            application/problem+json:
+              examples:
+                notAcceptable:
+                  value:
+                    type: https://errors.hmcts.net/common/not-acceptable
+                    title: Not Acceptable
+                    status: 406
+                    detail: Requested media type/version not acceptable
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Requested media type/version not acceptable.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Get all Entries (paginated, filterable)
+      tags:
+      - application-list-entries
+    servers:
+    - url: /
+  /application-list-entries/bulk-action-preview:
+    post:
+      description: Resolves the current global Application List Entry selection into entry IDs and row context for the next bulk action page, enforcing the configured global bulk action limit.
+      operationId: bulkActionPreview
+      requestBody:
+        content:
+          application/vnd.hmcts.appreg.v1+json:
+            schema:
+              $ref: '#/components/schemas/bulk-action-preview-request-dto'
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.hmcts.appreg.v1+json:
+              schema:
+                $ref: '#/components/schemas/bulk-action-preview-response-dto'
+          description: Bulk action preview for the resolved selection.
+          headers:
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+        '400':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Invalid request parameters.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '406':
+          content:
+            application/problem+json:
+              examples:
+                notAcceptable:
+                  value:
+                    type: https://errors.hmcts.net/common/not-acceptable
+                    title: Not Acceptable
+                    status: 406
+                    detail: Requested media type/version not acceptable
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Requested media type/version not acceptable.
+        '413':
+          content:
+            application/problem+json:
+              examples:
+                payload-too-large:
+                  value:
+                    type: https://errors.hmcts.net/common/payload-too-large
+                    title: Payload Too Large
+                    status: 413
+                    detail: Uploaded file must not be larger than 5MB
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Request entity is too large to be processed.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Resolve global bulk action selection preview
+      tags:
+      - application-list-entries
+    servers:
+    - url: /
+  /application-lists/{listId}/entries:
+    get:
+      description: Returns a paginated list of Application List Entries linked to a specific Application List.
+      operationId: getApplicationListEntries
+      parameters:
+      - description: Public identifier of the Application List.
+        example: 123e4567-e89b-12d3-a456-426655440000
+        in: path
+        name: listId
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Filter criteria for Application List Entries.
+        explode: true
+        in: query
+        name: filter
+        required: false
+        schema:
+          $ref: '#/components/schemas/entry-application-list-get-filter-dto'
+        style: form
+      - in: query
+        name: pageNumber
+        schema:
+          default: 0
+          minimum: 0
+          type: integer
+      - in: query
+        name: pageSize
+        schema:
+          default: 10
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: 'Sort order. A single value is currently supported. Format: `property,(asc|desc)`. Supported properties are sequenceNumber, applicationTitle, applicantName, respondentName, respondentPostcode, accountReference, feeRequired, and resulted. applicantName sorts by organisation name for organisation applicants, otherwise by first name and last name.
+
+          '
+        explode: true
+        in: query
+        name: sort
+        schema:
+          example:
+          - applicantName,asc
+          items:
+            type: string
+          type: array
+        style: form
+      responses:
+        '200':
+          content:
+            application/vnd.hmcts.appreg.v1+json:
+              schema:
+                $ref: '#/components/schemas/entry-page_1'
+          description: Page of Application List Entries
+          headers:
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+        '400':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Invalid request parameters.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '404':
+          content:
+            application/problem+json:
+              examples:
+                missing:
+                  value:
+                    type: https://errors.hmcts.net/appreg/not-found
+                    title: Not Found
+                    status: 404
+                    detail: Result code with id=123 was not found
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: The requested resource was not found.
+        '406':
+          content:
+            application/problem+json:
+              examples:
+                notAcceptable:
+                  value:
+                    type: https://errors.hmcts.net/common/not-acceptable
+                    title: Not Acceptable
+                    status: 406
+                    detail: Requested media type/version not acceptable
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Requested media type/version not acceptable.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Get Application List Entries (paginated, filterable)
+      tags:
+      - application-list-entries
+    post:
+      description: Creates a new Application List Entry within the Application List identified by `listId`.
+      operationId: createApplicationListEntry
+      parameters:
+      - description: Public identifier of the Application List.
+        example: 123e4567-e89b-12d3-a456-426655440000
+        in: path
+        name: listId
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/vnd.hmcts.appreg.v1+json:
+            schema:
+              $ref: '#/components/schemas/entry-create-dto'
+        required: true
+      responses:
+        '201':
+          content:
+            application/vnd.hmcts.appreg.v1+json:
+              schema:
+                $ref: '#/components/schemas/entry-get-detail-dto'
+          description: Returns the created Application List Entry
+          headers:
+            Location:
+              description: URL of the created Application List Entry
+              schema:
+                type: string
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+        '400':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Invalid request parameters.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '404':
+          content:
+            application/problem+json:
+              examples:
+                missing:
+                  value:
+                    type: https://errors.hmcts.net/appreg/not-found
+                    title: Not Found
+                    status: 404
+                    detail: Result code with id=123 was not found
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: The requested resource was not found.
+        '409':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/conflict
+                    title: Conflict
+                    status: 409
+                    detail: The Application List could not be modified due to a conflict with its current state
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Conflict with the current state of the resource.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Create an Application List Entry
+      tags:
+      - application-list-entries
+    servers:
+    - url: /
+  /application-lists/{listId}/entries/bulk-action-preview:
+    post:
+      description: Resolves a selection within a single Application List into entry IDs and row context, enforcing the configured single-list bulk action limit.
+      operationId: applicationListEntryBulkActionPreview
+      parameters:
+      - description: Public identifier of the Application List.
+        example: 123e4567-e89b-12d3-a456-426655440000
+        in: path
+        name: listId
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/vnd.hmcts.appreg.v1+json:
+            schema:
+              $ref: '#/components/schemas/application-list-entry-bulk-action-preview-request-dto'
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.hmcts.appreg.v1+json:
+              schema:
+                $ref: '#/components/schemas/bulk-action-preview-response-dto'
+          description: Bulk action preview for the resolved Application List selection.
+          headers:
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+        '400':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Invalid request parameters.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '404':
+          content:
+            application/problem+json:
+              examples:
+                missing:
+                  value:
+                    type: https://errors.hmcts.net/appreg/not-found
+                    title: Not Found
+                    status: 404
+                    detail: Result code with id=123 was not found
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: The requested resource was not found.
+        '406':
+          content:
+            application/problem+json:
+              examples:
+                notAcceptable:
+                  value:
+                    type: https://errors.hmcts.net/common/not-acceptable
+                    title: Not Acceptable
+                    status: 406
+                    detail: Requested media type/version not acceptable
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Requested media type/version not acceptable.
+        '413':
+          content:
+            application/problem+json:
+              examples:
+                payload-too-large:
+                  value:
+                    type: https://errors.hmcts.net/common/payload-too-large
+                    title: Payload Too Large
+                    status: 413
+                    detail: Uploaded file must not be larger than 5MB
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Request entity is too large to be processed.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Resolve Application List bulk action selection preview
+      tags:
+      - application-list-entries
+    servers:
+    - url: /
+  /application-lists/{listId}/entries/officials:
+    post:
+      description: 'Atomically replaces the full officials array for each specified entry in the source list (path `listId`). If any entry cannot be updated, no officials are changed. NOTE: Duplicate entryIds will result in an error'
+      operationId: replaceApplicationListEntryOfficials
+      parameters:
+      - description: ID of the Application List that owns the entries whose officials will be replaced.
+        example: 9f7b2a35-57ac-4a1c-9c41-83b6c8157af4
+        in: path
+        name: listId
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/vnd.hmcts.appreg.v1+json:
+            schema:
+              $ref: '#/components/schemas/bulk-officials-update-dto'
+        required: true
+      responses:
+        '204':
+          description: Officials replaced for all entries. No response body.
+          headers:
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+        '400':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Invalid request parameters.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '404':
+          content:
+            application/problem+json:
+              examples:
+                missing:
+                  value:
+                    type: https://errors.hmcts.net/appreg/not-found
+                    title: Not Found
+                    status: 404
+                    detail: Result code with id=123 was not found
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: The requested resource was not found.
+        '409':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/conflict
+                    title: Conflict
+                    status: 409
+                    detail: The Application List could not be modified due to a conflict with its current state
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Conflict with the current state of the resource.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Replace officials for multiple Application List Entries
+      tags:
+      - application-list-entries
+    servers:
+    - url: /
+  /application-lists/{listId}/entries/fees:
+    put:
+      description: Atomically appends the supplied fee status rows to each specified entry in the source list (path `listId`). Existing fee status rows are preserved to retain fee-status history. If any supplied fee detail has `hasOffsiteFee=true`, the selected entries will be ensured to have an off-site fee mapping. `hasOffsiteFee=false` does not remove an existing off-site fee mapping. If any entry cannot be updated, no fee status rows are changed.
+      operationId: bulkUpdateApplicationListEntryFees
+      parameters:
+      - description: ID of the Application List that owns the entries whose fee details will be updated.
+        example: 9f7b2a35-57ac-4a1c-9c41-83b6c8157af4
+        in: path
+        name: listId
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/vnd.hmcts.appreg.v1+json:
+            schema:
+              $ref: '#/components/schemas/bulk-fees-update-dto'
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.hmcts.appreg.v1+json:
+              schema:
+                $ref: '#/components/schemas/bulk-update-response-dto'
+          description: Fee status rows appended for all entries.
+          headers:
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+        '400':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Invalid request parameters.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '404':
+          content:
+            application/problem+json:
+              examples:
+                missing:
+                  value:
+                    type: https://errors.hmcts.net/appreg/not-found
+                    title: Not Found
+                    status: 404
+                    detail: Result code with id=123 was not found
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: The requested resource was not found.
+        '409':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/conflict
+                    title: Conflict
+                    status: 409
+                    detail: The Application List could not be modified due to a conflict with its current state
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Conflict with the current state of the resource.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Bulk append fee status rows for multiple Application List Entries
+      tags:
+      - application-list-entries
+    servers:
+    - url: /
+  /application-lists/{listId}/entries/{entryId}:
+    delete:
+      description: Permanently deletes the Application List Entry identified by `entryId`.
+      operationId: deleteApplicationListEntry
+      parameters:
+      - description: Public identifier of the Application List.
+        example: 123e4567-e89b-12d3-a456-426655440000
+        in: path
+        name: listId
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Public identifier of the Application List Entry.
+        example: 123e4567-e89b-12d3-a456-426655440000
+        in: path
+        name: entryId
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '204':
+          description: Application List Entry deleted (no content returned)
+          headers:
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+        '400':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Invalid request parameters.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '404':
+          content:
+            application/problem+json:
+              examples:
+                missing:
+                  value:
+                    type: https://errors.hmcts.net/appreg/not-found
+                    title: Not Found
+                    status: 404
+                    detail: Result code with id=123 was not found
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: The requested resource was not found.
+        '409':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/conflict
+                    title: Conflict
+                    status: 409
+                    detail: The Application List could not be modified due to a conflict with its current state
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Conflict with the current state of the resource.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Delete an Application List Entry
+      tags:
+      - application-list-entries
+    get:
+      description: Returns a detailed Application List Entry while the parent Application List is in a state that permits standard entry access. Closed lists must be updated via the dedicated closed-entry endpoint and may reject this standard detail endpoint with 409 Conflict.
+      operationId: getApplicationListEntry
+      parameters:
+      - description: Public identifier of the Application List.
+        example: 123e4567-e89b-12d3-a456-426655440000
+        in: path
+        name: listId
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Public identifier of the Application List Entry.
+        example: 123e4567-e89b-12d3-a456-426655440000
+        in: path
+        name: entryId
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.hmcts.appreg.v1+json:
+              schema:
+                $ref: '#/components/schemas/entry-get-detail-dto_1'
+          description: Returns a detailed Application List Entry
+          headers:
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+        '400':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Invalid request parameters.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '404':
+          content:
+            application/problem+json:
+              examples:
+                missing:
+                  value:
+                    type: https://errors.hmcts.net/appreg/not-found
+                    title: Not Found
+                    status: 404
+                    detail: Result code with id=123 was not found
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: The requested resource was not found.
+        '409':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/conflict
+                    title: Conflict
+                    status: 409
+                    detail: The Application List could not be modified due to a conflict with its current state
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Conflict with the current state of the resource.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Get an Application List Entry by id
+      tags:
+      - application-list-entries
+    put:
+      description: Full replacement (PUT) of an existing Application List Entry. When `feeStatuses` is supplied, the existing fee-status rows for the entry are replaced by the provided list. When `feeStatuses` is `null`, fee-status rows are left unchanged.
+      operationId: updateApplicationListEntry
+      parameters:
+      - description: Public identifier of the Application List.
+        example: 123e4567-e89b-12d3-a456-426655440000
+        in: path
+        name: listId
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Public identifier of the Application List Entry.
+        example: 123e4567-e89b-12d3-a456-426655440000
+        in: path
+        name: entryId
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/vnd.hmcts.appreg.v1+json:
+            schema:
+              $ref: '#/components/schemas/entry-update-dto'
+        required: true
+      responses:
+        '200':
+          content:
+            application/vnd.hmcts.appreg.v1+json:
+              schema:
+                $ref: '#/components/schemas/entry-get-detail-dto_1'
+          description: Returns the updated Application List Entry
+          headers:
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+        '400':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Invalid request parameters.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '404':
+          content:
+            application/problem+json:
+              examples:
+                missing:
+                  value:
+                    type: https://errors.hmcts.net/appreg/not-found
+                    title: Not Found
+                    status: 404
+                    detail: Result code with id=123 was not found
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: The requested resource was not found.
+        '409':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/conflict
+                    title: Conflict
+                    status: 409
+                    detail: The Application List could not be modified due to a conflict with its current state
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Conflict with the current state of the resource.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Update an Application List Entry
+      tags:
+      - application-list-entries
+    servers:
+    - url: /
+  /application-lists/{listId}/entries/bulk-import:
+    post:
+      description: Validates the target application list and CSV structure up front, then enqueues a background job that validates the uploaded rows and, if valid, automatically inserts all rows in a single transaction. If row validation or commit fails, the entire transaction is rolled back and the job ends in `FAILED`. Row-validation failures provide actionable input feedback; unexpected processing failures return only a generic message and the job reference to quote to support. Files must not exceed 5MB or contain more than 1,050 application entries (excluding the header). Either limit is rejected with HTTP 413 before a background job is created. Split larger uploads into smaller files.
+      operationId: bulkUploadApplicationListEntries
+      parameters:
+      - description: ID of the Application List receiving the uploaded entries.
+        example: 9f7b2a35-57ac-4a1c-9c41-83b6c8157af4
+        in: path
+        name: listId
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/bulkUploadApplicationListEntries_request'
+        required: true
+      responses:
+        '202':
+          content:
+            application/vnd.hmcts.appreg.v1+json:
+              schema:
+                $ref: '#/components/schemas/job-acknowledgement'
+          description: Job accepted. Poll the URL in the Location header for status.
+          headers:
+            Location:
+              description: Polling URL for the created job.
+              schema:
+                type: string
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+        '400':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Invalid request parameters.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '404':
+          content:
+            application/problem+json:
+              examples:
+                missing:
+                  value:
+                    type: https://errors.hmcts.net/appreg/not-found
+                    title: Not Found
+                    status: 404
+                    detail: Result code with id=123 was not found
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: The requested resource was not found.
+        '409':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/conflict
+                    title: Conflict
+                    status: 409
+                    detail: The Application List could not be modified due to a conflict with its current state
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Conflict with the current state of the resource.
+        '413':
+          content:
+            application/problem+json:
+              examples:
+                payload-too-large:
+                  value:
+                    type: https://errors.hmcts.net/common/payload-too-large
+                    title: Payload Too Large
+                    status: 413
+                    detail: Uploaded file must not be larger than 5MB
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Request entity is too large to be processed.
+        '415':
+          content:
+            application/problem+json:
+              examples:
+                unsupported-media-type:
+                  value:
+                    type: https://errors.hmcts.net/common/unsupported-media-type
+                    title: Unsupported Media Type
+                    status: 415
+                    detail: The content type 'application/xml' is not supported. Expected 'text/csv' or 'multipart/form-data'.
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: The server does not support the media type of the request.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Start an asynchronous bulk upload of entries via CSV
+      tags:
+      - application-list-entries
+    servers:
+    - url: /
+  /application-lists/entries/bulk-import/{jobId}:
+    get:
+      description: Fetches the application list entries that have been inserted via the bulk upload endpoint.
+      operationId: getBulkResultApplicationListEntriesByJobId
+      parameters:
+      - description: ID of the bulk result job that created the entries.
+        example: 9f7b2a35-57ac-4a1c-9c41-83b6c8157af4
+        in: path
+        name: jobId
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.hmcts.appreg.v1+json:
+              schema:
+                items:
+                  description: list of application list entry IDs created by the bulk upload job.
+                  format: uuid
+                  type: string
+                type: array
+          description: Application list entries created by the bulk upload job.
+          headers:
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '404':
+          content:
+            application/problem+json:
+              examples:
+                missing:
+                  value:
+                    type: https://errors.hmcts.net/appreg/not-found
+                    title: Not Found
+                    status: 404
+                    detail: Result code with id=123 was not found
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: The requested resource was not found.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Fetches the application list entries that have been inserted via the bulk…
+      tags:
+      - application-list-entries
+    servers:
+    - url: /
+  /application-lists/{listId}/entries/move:
+    post:
+      description: 'Moves the specified entries from the **source** list (path `listId`) to a single **destination** list. Each moved entry has a note appended containing its previous list details. If appending the note would make an entry''s notes exceed 4000 characters, that entry is not moved. Other eligible entries are still moved and committed, then the request returns `400 Bad Request` with the skipped entry IDs in the format `Could not move ALEs: , `.'
+      operationId: moveApplicationListEntries
+      parameters:
+      - description: ID of the source Application List that currently owns the entries.
+        example: 9f7b2a35-57ac-4a1c-9c41-83b6c8157af4
+        in: path
+        name: listId
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/vnd.hmcts.appreg.v1+json:
+            schema:
+              $ref: '#/components/schemas/move-entries-dto'
+        required: true
+      responses:
+        '200':
+          description: All entries successfully moved. No response body.
+          headers:
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+        '400':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Invalid request parameters.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '404':
+          content:
+            application/problem+json:
+              examples:
+                missing:
+                  value:
+                    type: https://errors.hmcts.net/appreg/not-found
+                    title: Not Found
+                    status: 404
+                    detail: Result code with id=123 was not found
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: The requested resource was not found.
+        '409':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/conflict
+                    title: Conflict
+                    status: 409
+                    detail: The Application List could not be modified due to a conflict with its current state
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Conflict with the current state of the resource.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Move entries from one Application List to another
+      tags:
+      - application-list-entries
+    servers:
+    - url: /
+  /application-lists/{listId}/entries/closed/{entryId}:
+    get:
+      description: Returns the selected Application List Entry details and existing notes when the parent Application List is closed.
+      operationId: getApplicationListEntryFromClosedList
+      parameters:
+      - description: Public identifier of the Application List.
+        example: 123e4567-e89b-12d3-a456-426655440000
+        in: path
+        name: listId
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Public identifier of the Application List Entry.
+        example: 123e4567-e89b-12d3-a456-426655440000
+        in: path
+        name: entryId
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/vnd.hmcts.appreg.v1+json:
+              schema:
+                $ref: '#/components/schemas/entry-get-detail-dto_1'
+          description: Returns a detailed Application List Entry whose parent Application List is closed
+          headers:
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+            ETag:
+              description: Entity tag for optimistic concurrency in the follow-on update flow.
+              schema:
+                example: '"9f2d6d4f4f2d6d4f4f2d6d4f4f2d6d4f"'
+                type: string
+        '400':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Invalid request parameters.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '404':
+          content:
+            application/problem+json:
+              examples:
+                missing:
+                  value:
+                    type: https://errors.hmcts.net/appreg/not-found
+                    title: Not Found
+                    status: 404
+                    detail: Result code with id=123 was not found
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: The requested resource was not found.
+        '409':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/conflict
+                    title: Conflict
+                    status: 409
+                    detail: The Application List could not be modified due to a conflict with its current state
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Conflict with the current state of the resource.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Get an Application List Entry whose Application List is closed
+      tags:
+      - application-list-entries
+    put:
+      description: Appends additional notes to an Application List Entry after its parent Application List has been closed. Empty additional notes are accepted and leave existing notes unchanged. This is a command-style update and does not return an entry representation.
+      operationId: updateClosedApplicationListEntry
+      parameters:
+      - description: Public identifier of the Application List.
+        example: 123e4567-e89b-12d3-a456-426655440000
+        in: path
+        name: listId
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - description: Public identifier of the Application List Entry.
+        example: 123e4567-e89b-12d3-a456-426655440000
+        in: path
+        name: entryId
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/vnd.hmcts.appreg.v1+json:
+            schema:
+              $ref: '#/components/schemas/entry_update_closed_dto'
+        required: true
+      responses:
+        '204':
+          description: Closed Application List Entry updated successfully (no content returned)
+          headers:
+            Vary:
+              description: Response varies by Accept for media-type versioning.
+              schema:
+                example: Accept
+                type: string
+        '400':
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Invalid request parameters.
+        '401':
+          content:
+            application/problem+json:
+              examples:
+                unauthenticated:
+                  value:
+                    type: https://errors.hmcts.net/common/unauthorized
+                    title: Unauthorized
+                    status: 401
+                    detail: Missing or invalid credentials
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authentication required or token invalid.
+        '403':
+          content:
+            application/problem+json:
+              examples:
+                forbidden:
+                  value:
+                    type: https://errors.hmcts.net/common/forbidden
+                    title: Forbidden
+                    status: 403
+                    detail: You do not have permission to access this resource
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Authenticated but not permitted to perform this action.
+        '404':
+          content:
+            application/problem+json:
+              examples:
+                missing:
+                  value:
+                    type: https://errors.hmcts.net/appreg/not-found
+                    title: Not Found
+                    status: 404
+                    detail: Result code with id=123 was not found
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: The requested resource was not found.
+        '409':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/conflict
+                    title: Conflict
+                    status: 409
+                    detail: The Application List could not be modified due to a conflict with its current state
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Conflict with the current state of the resource.
+        '500':
+          content:
+            application/problem+json:
+              examples:
+                generic:
+                  value:
+                    type: https://errors.hmcts.net/common/internal-error
+                    title: Internal Server Error
+                    status: 500
+                    detail: An unexpected error occurred
+              schema:
+                $ref: '#/components/schemas/problem'
+          description: Unexpected server error.
+      summary: Update notes for an Application List Entry whose Application List is closed
+      tags:
+      - application-list-entries
+    servers:
+    - url: /
+components:
+  schemas:
+    applicant:
+      additionalProperties: false
+      description: 'The applicant making the application.
+
+        In application read and print responses, Standard Applicants are represented by their
+
+        reference name in organisation.name (or their code when no reference name exists).
+
+        Their personal and contact values are not returned. For these read responses the
+
+        shared input contact constraints do not apply: contact fields may be null or absent.
+
+        Ordinary applicant input still requires the person or organisation contact details.
+
+        '
+      properties:
+        person:
+          $ref: '#/components/schemas/person'
+        organisation:
+          $ref: '#/components/schemas/organisation'
+      type: object
+    bulkUploadApplicationListEntries_request:
+      properties:
+        file:
+          format: binary
+          type: string
+      type: object
+    entry-page_1:
+      allOf:
+      - $ref: '#/components/schemas/page'
+      - properties:
+          content:
+            items:
+              $ref: '#/components/schemas/entry-get-summary-dto'
+            type: array
+        type: object
+    entry-page:
+      allOf:
+      - $ref: '#/components/schemas/page'
+      - properties:
+          content:
+            items:
+              $ref: '#/components/schemas/entry-get-summary-dto'
+            type: array
+        type: object
+    bulk-fees-update-dto:
+      additionalProperties: false
+      description: Append fee-status rows for multiple Application List Entries in one atomic operation.
+      properties:
+        entryIds:
+          description: 'Array of entry IDs whose fee-status history should be appended to. All must belong to the list in the path. Requests with more than 1050 entry IDs are rejected with 400 Bad Request.
+
+            '
+          example:
+          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          - 3fa85f64-5717-4562-b3fc-2c963f66afa7
+          items:
+            format: uuid
+            type: string
+          maxItems: 1050
+          minItems: 1
+          type: array
+          uniqueItems: true
+        feeDetails:
+          description: 'Array of fee-status rows to append to every selected Application List Entry. Fee details is optional, but if provided, there must be at least a row.
+
+            '
+          items:
+            $ref: '#/components/schemas/bulk-fee-details-dto'
+          type:
+          - array
+          - 'null'
+        hasOffsiteFee:
+          default: false
+          description: 'If true, ensures that all selected entries have an off-site fee mapping. If false, it will remove the offsite fee. If not provided, the offsite fee will not be changed.
+
+            '
+          type:
+          - boolean
+          - 'null'
+      required:
+      - entryIds
+      type: object
+    sort_orders_inner:
+      properties:
+        property:
+          description: Property name used for sorting.
+          example: title
+          type: string
+        direction:
+          description: Sort direction.
+          enum:
+          - asc
+          - desc
+          example: asc
+          type: string
+      required:
+      - direction
+      - property
+      type: object
+    bulk-action-selection-dto:
+      additionalProperties: false
+      description: 'Selection criteria for a global bulk action preview. When selectionType is IDS, entryIds must contain at least one non-null entry ID. When selectionType is FILTER, filter, sort, and excludedEntryIds describe the select-all-matching selection.
+
+        '
+      properties:
+        selectionType:
+          $ref: '#/components/schemas/bulk-action-selection-type'
+        filter:
+          $ref: '#/components/schemas/entry-get-filter-dto'
+        sort:
+          description: 'Sort order for the resolved selection. A single value is currently supported. Format: `property,(asc|desc)`.
+
+            '
+          example:
+          - date,desc
+          items:
+            type: string
+          type: array
+        entryIds:
+          description: Explicitly selected Application List Entry IDs.
+          items:
+            format: uuid
+            type: string
+          minItems: 1
+          type: array
+        excludedEntryIds:
+          description: Entry IDs excluded from a select-all-matching filter selection.
+          items:
+            format: uuid
+            type: string
+          type: array
+      required:
+      - selectionType
+      type: object
+    problem:
+      description: RFC 9457/7807 problem details.
+      properties:
+        type:
+          description: Problem type identifier (URI).
+          example: https://errors.hmcts.net/appreg/bad-request
+          format: uri
+          type: string
+        title:
+          description: Short, human-readable summary.
+          example: Invalid request parameters
+          type: string
+        status:
+          description: HTTP status code.
+          example: 400
+          format: int32
+          type: integer
+        detail:
+          description: Human-readable explanation specific to this occurrence.
+          example: startDateFrom must be on or before startDateTo
+          type: string
+        instance:
+          description: URI reference to the specific occurrence (if applicable).
+          example: urn:request:2f9c3d8a-1b3a-4a1e-9b7f-6b2a6a0a2b2f
+          format: uri
+          type: string
+        correlationId:
+          description: Server-side correlation ID for tracing.
+          example: 3e1a2c95a7d84a5fb3e1a2c95a7d84a5
+          type: string
+      required:
+      - status
+      - title
+      - type
+      type: object
+    entry-get-summary-dto:
+      description: Lightweight DTO for Application Lists Entries, not retrieved through a parent list. Used in list/search views.
+      properties:
+        id:
+          description: Unique identifier of the Application List Entry.
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          format: uuid
+          type: string
+        applicant:
+          $ref: '#/components/schemas/applicant'
+        respondent:
+          $ref: '#/components/schemas/respondent'
+        applicationTitle:
+          description: Descriptive title of the application.
+          example: Application to Crown Court
+          type: string
+        legislation:
+          description: Legislation under which the application is made.
+          example: Application to Crown Court
+          type: string
+        isFeeRequired:
+          description: True if submitting the application incurs a charge.
+          type: boolean
+        isResulted:
+          description: True if this application list entry has been resulted.
+          type: boolean
+        listId:
+          description: Unique Identifier of the Application List to which this entry belongs.
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          format: uuid
+          type: string
+        date:
+          description: Single date of the Application List.
+          example: 2025-10-07
+          format: date
+          type: string
+        sequenceNumber:
+          description: The sequence number of the application in the list.
+          example: 1
+          type: integer
+        resulted:
+          description: List of result codes applied to this application list entry.
+          items:
+            $ref: '#/components/schemas/result-code-get-summary-dto'
+          type: array
+        status:
+          $ref: '#/components/schemas/application-list-status'
+        accountNumber:
+          example: ACC-001
+          maxLength: 20
+          type:
+          - string
+          - 'null'
+      required:
+      - applicantName
+      - applicationTitle
+      - id
+      - isFeeRequired
+      - isResulted
+      - status
+      type: object
+    organisation:
+      additionalProperties: false
+      description: The organisation making, or responding to, the application. Blank fields will be rejected, nulls should be used instead.
+      properties:
+        name:
+          description: The name of the organisation.
+          example: ACME Industries LTD
+          maxLength: 100
+          minLength: 1
+          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
+          type: string
+        contactDetails:
+          $ref: '#/components/schemas/contact-details'
+      required:
+      - contactDetails
+      - name
+      type: object
+    job-acknowledgement:
+      additionalProperties: false
+      description: Acknowledgement returned when a background job is created.
+      properties:
+        id:
+          description: Unique identifier for the job, in UUID v4 format.
+          example: 9f7b2a35-57ac-4a1c-9c41-83b6c8157af4
+          format: uuid
+          type: string
+        type:
+          $ref: '#/components/schemas/job-type'
+        status:
+          $ref: '#/components/schemas/job-status'
+        createdCount:
+          description: 'Number of applications imported by this job, excluding the CSV header and including subsequently soft-deleted applications. Available only when polling a completed BULK_UPLOAD_ENTRIES job; omitted from all other responses. Counted from retained job-to-application mappings, not the current list size.
+
+            '
+          example: 12
+          format: int64
+          minimum: 0
+          type: integer
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
+        mainFeeTotal:
+          description: 'Current main fees in GBP for non-deleted applications created by this upload, regardless of payment or remission status. Available only when polling a completed BULK_UPLOAD_ENTRIES job; zero when no applicable fees remain. Calculated on read, so later changes to applications or associated fees can change this value. Omitted from all other responses.
+
+            '
+          example: 120.5
+          type: number
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
+        offsiteFeeTotal:
+          description: 'Current applicable offsite fees in GBP for non-deleted applications created by this upload, regardless of payment or remission status. Available only when polling a completed BULK_UPLOAD_ENTRIES job; zero when no applicable fees remain. Calculated on read, not an upload-time snapshot. Omitted from all other responses.
+
+            '
+          example: 30.25
+          type: number
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
+        totalFeeValue:
+          description: 'Sum of mainFeeTotal and offsiteFeeTotal in GBP. Available only when polling a completed BULK_UPLOAD_ENTRIES job. Zero when no applicable fees remain; calculated on read. Omitted from all other responses.
+
+            '
+          example: 150.75
+          type: number
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
+        error_description:
+          description: 'Details of a failed job. Bulk-upload validation failures may include actionable input errors; unexpected bulk-upload processing failures use a generic message and identify the job reference to quote to support.
+
+            '
+          type: string
+      required:
+      - id
+      - status
+      - type
+      type: object
+    entry-update-dto:
+      additionalProperties: false
+      description: 'Request payload to update an Application List Entry. Note, this is a PUT operation so the whole object is replaced. When `feeStatuses` is supplied it replaces the existing fee-status rows for the entry. When `feeStatuses` is `null`, fee-status rows are left unchanged. Blank fields will be rejected, nulls should be used instead.
+
+        '
+      properties:
+        standardApplicantCode:
+          description: Code that identifies the Standard Applicant.
+          example: APP001
+          maxLength: 10
+          minLength: 1
+          type: string
+        applicationCode:
+          description: Code that identifies the Application Code.
+          example: APP001
+          maxLength: 10
+          minLength: 1
+          type: string
+        applicant:
+          $ref: '#/components/schemas/applicant'
+        respondent:
+          $ref: '#/components/schemas/respondent'
+        numberOfRespondents:
+          description: Number of respondents required by the Application.
+          example: 0
+          format: int16
+          type: integer
+        wordingFields:
+          description: An array of user-provided values used to populate placeholders in the entry wording template, applied in the order they are provided.
+          items:
+            $ref: '#/components/schemas/template-substitution'
+          type: array
+        feeStatuses:
+          description: 'Fee-status rows to persist for the entry. Providing a list replaces the existing fee-status rows. `null` means the existing fee-status rows are left unchanged. For application codes that do not require a fee, this operation allows existing historical fee-status rows to be retained unchanged, but rejects new, changed, or cleared fee-status rows.
+
+            '
+          items:
+            $ref: '#/components/schemas/fee-status'
+          type: array
+        hasOffsiteFee:
+          description: Indicates whether an off-site fee applies.
+          example: true
+          type: boolean
+        caseReference:
+          description: A reference code to identify a related case (maximum 15 characters).
+          example: CASE-001
+          maxLength: 15
+          minLength: 1
+          type: string
+        accountNumber:
+          description: The Applicant's account number (maximum 20 characters). Required when the Application Code starts with EF.
+          example: ACC-001
+          maxLength: 20
+          minLength: 1
+          type: string
+        notes:
+          description: Notes about the application or the hearing (maximum 4000 characters).
+          example: Time is 10:31, we have convened to talk about Application...
+          maxLength: 4000
+          minLength: 1
+          type: string
+        officials:
+          description: An array of Officials who will decide the outcome of the Application. A maximum of 4 officials may be supplied, with no more than 3 MAGISTRATE entries and no more than 1 CLERK entry.
+          items:
+            $ref: '#/components/schemas/official'
+          maxItems: 4
+          type: array
+      required:
+      - applicationCode
+      type: object
+    official-type:
+      description: The type of Official hearing the application.
+      enum:
+      - MAGISTRATE
+      - CLERK
+      example: MAGISTRATE
+      type: string
+    application-list-entry-bulk-action-selection-dto:
+      additionalProperties: false
+      description: 'Selection criteria for a single Application List bulk action preview. When selectionType is IDS, entryIds must contain at least one non-null entry ID. When selectionType is FILTER, filter, sort, and excludedEntryIds describe the select-all-matching selection.
+
+        '
+      properties:
+        selectionType:
+          $ref: '#/components/schemas/bulk-action-selection-type'
+        filter:
+          $ref: '#/components/schemas/entry-application-list-get-filter-dto'
+        sort:
+          description: 'Sort order for the resolved selection. A single value is currently supported. Format: `property,(asc|desc)`.
+
+            '
+          example:
+          - sequenceNumber,asc
+          items:
+            type: string
+          type: array
+        entryIds:
+          description: Explicitly selected Application List Entry IDs.
+          items:
+            format: uuid
+            type: string
+          minItems: 1
+          type: array
+        excludedEntryIds:
+          description: Entry IDs excluded from a select-all-matching filter selection.
+          items:
+            format: uuid
+            type: string
+          type: array
+      required:
+      - selectionType
+      type: object
+    template-detail:
+      description: The wording details
+      properties:
+        template:
+          description: The template name. It contains the field names between curly braces.
+          example: This is a test {{Applicant number}} with a date
+          type: string
+        substitution-key-constraints:
+          description: A list of fields and the associated constraints
+          items:
+            $ref: '#/components/schemas/template-key-with-constraint'
+          type: array
+      required:
+      - template
+      type: object
+    entry-get-detail-dto_1:
+      description: DTO representing a detailed Application List Entry.
+      properties:
+        id:
+          description: Unique identifier of the Application List Entry.
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          format: uuid
+          type: string
+        listId:
+          description: The Unique identifier of the Application List this Entry belongs to.
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          format: uuid
+          type: string
+        standardApplicantCode:
+          description: Code that identifies the Standard Applicant.
+          example: APP001
+          type: string
+        applicationCode:
+          description: Code that identifies the Application Code.
+          example: APP001
+          type: string
+        applicant:
+          $ref: '#/components/schemas/applicant'
+        respondent:
+          $ref: '#/components/schemas/respondent'
+        numberOfRespondents:
+          description: Number of respondents required by the Application.
+          example: 0
+          type:
+          - integer
+          - 'null'
+        wording:
+          $ref: '#/components/schemas/template-detail'
+        feeStatuses:
+          items:
+            $ref: '#/components/schemas/fee-status'
+          type: array
+        hasOffsiteFee:
+          description: Indicates whether an off-site fee applies.
+          example: true
+          type: boolean
+        caseReference:
+          description: A reference code to identify a related case (maximum 15 characters).
+          example: CASE-001
+          maxLength: 15
+          type: string
+        accountNumber:
+          description: The Applicants account number (maximum 20 characters).
+          example: ACC-001
+          maxLength: 20
+          type: string
+        notes:
+          description: Notes about the application or the hearing (maximum 4000 characters).
+          example: Time is 10:31, we have convened to talk about Application...
+          maxLength: 4000
+          type: string
+        lodgementDate:
+          description: The date on which the application was submitted. Will be set to current date if omitted.
+          example: 2025-12-01
+          format: date
+          type: string
+        officials:
+          description: An array of Officials who will decide the outcome of the Application.
+          items:
+            $ref: '#/components/schemas/official'
+          maxItems: 4
+          type: array
+      required:
+      - applicationCode
+      - id
+      - listId
+      - lodgementDate
+      - numberOfRespondents
+      type: object
+    page:
+      description: Generic Spring Data page.
+      properties:
+        pageNumber:
+          description: Zero-based page index.
+          format: int32
+          type: integer
+        pageSize:
+          description: Page size.
+          format: int32
+          type: integer
+        totalElements:
+          description: Total number of elements across all pages.
+          format: int64
+          type: integer
+        totalPages:
+          description: Total number of pages.
+          format: int32
+          type: integer
+        sort:
+          $ref: '#/components/schemas/sort'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        elementsOnPage:
+          description: Total number of elements in the current page.
+          format: int32
+          type: integer
+      required:
+      - content
+      - elementsOnPage
+      - pageNumber
+      - pageSize
+      - totalElements
+      type: object
+    move-entries-dto:
+      additionalProperties: false
+      description: Parameters to move entries from one Application List to another.
+      properties:
+        targetListId:
+          description: ID of the **destination** Application List (must differ from the source `listId` in the path).
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          format: uuid
+          type: string
+        entryIds:
+          description: Array of entry IDs to move. All must currently belong to the source list.
+          example:
+          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          - 3fa85f64-5717-4562-b3fc-2c963f66afa7
+          items:
+            format: uuid
+            type: string
+          minItems: 1
+          type: array
+          uniqueItems: true
+      required:
+      - entryIds
+      - targetListId
+      type: object
+    contact-details:
+      additionalProperties: false
+      description: A participant's contact details. Blank fields will be rejected, nulls should be used instead.
+      properties:
+        addressLine1:
+          description: Line one of the participant's address.
+          example: 10 Downing Street
+          maxLength: 35
+          minLength: 1
+          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
+          type: string
+        addressLine2:
+          description: Line two of the participant's address.
+          example: Westminster
+          maxLength: 35
+          minLength: 1
+          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
+          type:
+          - string
+          - 'null'
+        addressLine3:
+          description: Line three of the participant's address.
+          example: London
+          maxLength: 35
+          minLength: 1
+          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
+          type:
+          - string
+          - 'null'
+        addressLine4:
+          description: Line four of the participant's address.
+          example: Greater London
+          maxLength: 35
+          minLength: 1
+          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
+          type:
+          - string
+          - 'null'
+        addressLine5:
+          description: Line five of the participant's address.
+          example: United Kingdom
+          maxLength: 35
+          minLength: 1
+          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
+          type:
+          - string
+          - 'null'
+        postcode:
+          description: The participant's postcode.
+          example: SW1A 2AA
+          maxLength: 8
+          minLength: 1
+          pattern: ^(([A-Z]{1,2}((\d[A-Z\d])|(\d)) \d[A-Z]{2})|(GIR 0A{2}))$
+          type: string
+        phone:
+          description: The participant's home-phone number.
+          example: 01225 123456
+          maxLength: 20
+          minLength: 10
+          pattern: '[0-9 \-]*'
+          type:
+          - string
+          - 'null'
+        mobile:
+          description: The participant's mobile number.
+          example: 07123456789
+          maxLength: 20
+          minLength: 11
+          pattern: ^(?:\+\d{1,4}\s*)?[0-9 \-]*$
+          type:
+          - string
+          - 'null'
+        email:
+          description: The participant's email address.
+          example: john-doe@gmail.com
+          maxLength: 253
+          minLength: 1
+          pattern: ^((([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,})))*$
+          type:
+          - string
+          - 'null'
+      required:
+      - addressLine1
+      type: object
+    entry-create-dto:
+      additionalProperties: false
+      description: Request payload to create an Application List Entry. Blank fields will be rejected, nulls should be used instead.
+      properties:
+        standardApplicantCode:
+          description: Code that identifies the Standard Applicant.
+          example: APP001
+          maxLength: 10
+          minLength: 1
+          type: string
+        applicationCode:
+          description: Code that identifies the Application Code.
+          example: APP001
+          maxLength: 10
+          minLength: 1
+          type: string
+        applicant:
+          $ref: '#/components/schemas/applicant'
+        respondent:
+          $ref: '#/components/schemas/respondent'
+        numberOfRespondents:
+          description: Number of respondents required by the Application.
+          example: 0
+          format: int16
+          type: integer
+        wordingFields:
+          description: 'An array of user-provided values used to populate placeholders in the ''wording''. The wording is a field belonging to the linked Application Code. Each string is applied to the wording in the order they are provided.
+
+            '
+          items:
+            $ref: '#/components/schemas/template-substitution'
+          type: array
+        feeStatuses:
+          description: Fee-status rows for the entry. Must only be supplied when the selected application code requires a fee.
+          items:
+            $ref: '#/components/schemas/fee-status'
+          type: array
+        hasOffsiteFee:
+          description: Indicates whether an off-site fee applies.
+          example: true
+          type: boolean
+        caseReference:
+          description: A reference code to identify a related case (maximum 15 characters).
+          example: CASE-001
+          maxLength: 15
+          minLength: 1
+          type: string
+        accountNumber:
+          description: The Applicant's account number (maximum 20 characters). Required when the Application Code starts with EF.
+          example: APP-001
+          maxLength: 20
+          minLength: 1
+          type: string
+        notes:
+          description: Notes about the application or the hearing (maximum 4000 characters).
+          example: Time is 10:31, we have convened to talk about Application...
+          maxLength: 4000
+          minLength: 1
+          type: string
+        lodgementDate:
+          description: The date on which the application was submitted. Will be set to current date if omitted.
+          example: 2025-12-01
+          format: date
+          type: string
+        officials:
+          description: An array of Officials who will decide the outcome of the Application. A maximum of 4 officials may be supplied, with no more than 3 MAGISTRATE entries and no more than 1 CLERK entry.
+          items:
+            $ref: '#/components/schemas/official'
+          maxItems: 4
+          type: array
+      required:
+      - applicationCode
+      type: object
+    entry_update_closed_dto:
+      additionalProperties: false
+      description: 'Request payload to update notes for an Application List Entry whose Application List is closed.
+
+        '
+      properties:
+        additionalNotes:
+          description: 'The additional notes to append to the Application List Entry. Empty values are accepted and leave existing notes unchanged.
+
+            '
+          example: Additional notes
+          maxLength: 4000
+          minLength: 0
+          type: string
+      required:
+      - additionalNotes
+      type: object
+    entry-get-detail-dto:
+      description: DTO representing a detailed Application List Entry.
+      properties:
+        id:
+          description: Unique identifier of the Application List Entry.
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          format: uuid
+          type: string
+        listId:
+          description: The Unique identifier of the Application List this Entry belongs to.
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          format: uuid
+          type: string
+        standardApplicantCode:
+          description: Code that identifies the Standard Applicant.
+          example: APP001
+          type: string
+        applicationCode:
+          description: Code that identifies the Application Code.
+          example: APP001
+          type: string
+        applicant:
+          $ref: '#/components/schemas/applicant'
+        respondent:
+          $ref: '#/components/schemas/respondent'
+        numberOfRespondents:
+          description: Number of respondents required by the Application.
+          example: 0
+          type:
+          - integer
+          - 'null'
+        wording:
+          $ref: '#/components/schemas/template-detail'
+        feeStatuses:
+          items:
+            $ref: '#/components/schemas/fee-status'
+          type: array
+        hasOffsiteFee:
+          description: Indicates whether an off-site fee applies.
+          example: true
+          type: boolean
+        caseReference:
+          description: A reference code to identify a related case (maximum 15 characters).
+          example: CASE-001
+          maxLength: 15
+          type: string
+        accountNumber:
+          description: The Applicants account number (maximum 20 characters).
+          example: ACC-001
+          maxLength: 20
+          type: string
+        notes:
+          description: Notes about the application or the hearing (maximum 4000 characters).
+          example: Time is 10:31, we have convened to talk about Application...
+          maxLength: 4000
+          type: string
+        lodgementDate:
+          description: The date on which the application was submitted. Will be set to current date if omitted.
+          example: 2025-12-01
+          format: date
+          type: string
+        officials:
+          description: An array of Officials who will decide the outcome of the Application.
+          items:
+            $ref: '#/components/schemas/official'
+          maxItems: 4
+          type: array
+      required:
+      - applicationCode
+      - id
+      - listId
+      - lodgementDate
+      - numberOfRespondents
+      type: object
+    respondent_person:
+      allOf:
+      - $ref: '#/components/schemas/person'
+      - description: Person details for a respondent (includes DOB).
+        properties:
+          dateOfBirth:
+            description: Date of birth (only applicable for person respondents).
+            example: 1990-01-01
+            format: date
+            type: string
+        type: object
+    application-list-status:
+      description: Status of the Application List.
+      enum:
+      - OPEN
+      - CLOSED
+      example: OPEN
+      type: string
+    bulk-action-preview-response-dto:
+      additionalProperties: false
+      description: Resolved preview for a global bulk action selection.
+      properties:
+        action:
+          $ref: '#/components/schemas/bulk-action-type'
+        limit:
+          example: 2000
+          format: int32
+          type: integer
+        selectedCount:
+          example: 25
+          format: int32
+          type: integer
+        eligibleCount:
+          example: 22
+          format: int32
+          type: integer
+        ineligibleCount:
+          example: 3
+          format: int32
+          type: integer
+        entryIds:
+          items:
+            format: uuid
+            type: string
+          type: array
+        entries:
+          items:
+            $ref: '#/components/schemas/entry-get-summary-dto'
+          type: array
+      required:
+      - action
+      - eligibleCount
+      - entries
+      - entryIds
+      - ineligibleCount
+      - limit
+      - selectedCount
+      type: object
+    fee-status:
+      additionalProperties: false
+      description: The status of the fee linked to the application. Blank fields will be rejected, nulls should be used instead.
+      properties:
+        paymentReference:
+          description: The reference code used to identify the payment.
+          example: PAY-001
+          maxLength: 15
+          minLength: 1
+          type: string
+        paymentStatus:
+          $ref: '#/components/schemas/payment-status'
+        statusDate:
+          description: The date when the payment status was updated. Must be today's date or a past date.
+          example: 2025-12-01
+          format: date
+          type: string
+      required:
+      - paymentStatus
+      - statusDate
+      type: object
+    bulk-officials-update-dto:
+      additionalProperties: false
+      description: Replace officials for multiple Application List Entries in one atomic operation.
+      properties:
+        entryIds:
+          description: Array of entry IDs whose officials should be replaced. All must belong to the list in the path.
+          example:
+          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          - 3fa85f64-5717-4562-b3fc-2c963f66afa7
+          items:
+            format: uuid
+            type: string
+          minItems: 1
+          type: array
+        officials:
+          description: An array of Officials who will decide the outcome of each selected Application. A maximum of 4 officials may be supplied, with no more than 3 MAGISTRATE entries and no more than 1 CLERK entry.
+          items:
+            $ref: '#/components/schemas/official'
+          maxItems: 4
+          type: array
+      required:
+      - entryIds
+      - officials
+      type: object
+    full-name:
+      additionalProperties: false
+      description: A persons full name. Blank fields will be rejected, nulls should be used instead.
+      properties:
+        title:
+          description: Prefix before a persons name.
+          example: Mr, Mrs
+          maxLength: 100
+          minLength: 1
+          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
+          type: string
+        firstName:
+          description: The person's first name.
+          example: John
+          maxLength: 100
+          minLength: 1
+          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
+          type: string
+        middleName:
+          description: The person's optional middle name or names.
+          example: James
+          maxLength: 100
+          minLength: 1
+          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
+          type:
+          - string
+          - 'null'
+        lastName:
+          description: The person's family name.
+          example: Smith
+          maxLength: 100
+          minLength: 1
+          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
+          type: string
+      required:
+      - firstName
+      - lastName
+      type: object
+    respondent:
+      additionalProperties: false
+      description: The respondent to the application.
+      properties:
+        person:
+          $ref: '#/components/schemas/respondent_person'
+        organisation:
+          $ref: '#/components/schemas/organisation'
+      type: object
+    template-substitution:
+      additionalProperties: false
+      description: The template field with the associated value to substitute. Blank fields will be rejected, nulls should be used instead.
+      properties:
+        key:
+          description: Field key for substitution into the template.
+          example: account-number
+          minLength: 1
+          type: string
+        value:
+          description: The field value to substitute into the template key. Braces and line breaks are not permitted.
+          example: '1234'
+          minLength: 1
+          type: string
+      required:
+      - key
+      - value
+      type: object
+    bulk-action-type:
+      description: Supported bulk action types.
+      enum:
+      - RESULT_SELECTED
+      - UPDATE_NOTES
+      - MOVE_ENTRIES
+      - UPDATE_OFFICIALS
+      - UPDATE_FEE_DETAILS
+      - PRINT_CONTINUOUS
+      - PRINT_PAGE
+      type: string
+    sort:
+      description: Sorting state for the returned page.
+      example:
+        orders:
+        - property: title
+          direction: asc
+        - property: code
+          direction: desc
+      properties:
+        orders:
+          description: Active sort orders in priority order.
+          items:
+            $ref: '#/components/schemas/sort_orders_inner'
+          type: array
+      type: object
+    job-status:
+      description: The status of the job being polled by the user.
+      enum:
+      - RECEIVED
+      - VALIDATING
+      - PROCESSING
+      - FAILED
+      - COMPLETED
+      example: RECEIVED
+      type: string
+    entry-application-list-get-filter-dto:
+      description: Filter criteria for retrieving Application List Entries for an Application List.
+      properties:
+        sequenceNumber:
+          description: The sequence number of the application in the list. This has to be Exact.
+          example: 1
+          type: integer
+        applicationTitle:
+          description: The title of the application. This can be Partial.
+          example: Smith vs Jones
+          maxLength: 500
+          pattern: ^[a-zA-Z0-9\-\+\.,£@\?'\(\)/%_ &!:]*$
+          type: string
+        applicantName:
+          description: The applicant display name. For people this uses the format "firstName lastName"; for organisations this uses the organisation name. This can be Partial.
+          example: John Turner
+          maxLength: 300
+          pattern: ^[a-zA-Z0-9\-\+\.,£@\?'\(\)/%_ &!:]*$
+          type: string
+        respondentName:
+          description: The respondent display name. For people this uses the format "firstName lastName"; for organisations this uses the organisation name. This can be Partial.
+          example: Sarah Johnson
+          maxLength: 300
+          pattern: ^[a-zA-Z0-9\-\+\.,£@\?'\(\)/%_ &!:]*$
+          type: string
+        respondentPostcode:
+          description: The postcode associated with the respondent’s address. This can be Partial.
+          example: SW1A 1AA
+          maxLength: 8
+          pattern: ^[a-zA-Z0-9 ]*$
+          type: string
+        accountReference:
+          description: Reference code identifying the applicant’s account. This can be Partial.
+          maxLength: 20
+          type: string
+        feeRequired:
+          description: Whether a fee is required for the application. This has to be Exact.
+          example: true
+          type: boolean
+        resulted:
+          description: The application resolution code. This can be Partial.
+          example: APPC
+          type: string
+      type: object
+    application-list-entry-bulk-action-preview-request-dto:
+      additionalProperties: false
+      description: Request to resolve a single-list bulk action selection into IDs and row context.
+      properties:
+        action:
+          $ref: '#/components/schemas/bulk-action-type'
+        selection:
+          $ref: '#/components/schemas/application-list-entry-bulk-action-selection-dto'
+      required:
+      - action
+      - selection
+      type: object
+    template-key-with-constraint:
+      description: The template field with an associated value
+      properties:
+        key:
+          description: Field key for substitution into the template.
+          example: account-number
+          type: string
+        value:
+          description: The optional value for the key.
+          example: '12345678'
+          type: string
+        constraint:
+          allOf:
+          - $ref: '#/components/schemas/template-constraint'
+          description: The constraint details for the field
+      required:
+      - constraint
+      - key
+      type: object
+    payment-status:
+      description: The Status of the Fee's Payment.
+      enum:
+      - PAID
+      - UNDERTAKEN
+      - DUE
+      - REMITTED
+      example: PAID
+      type: string
+    bulk-action-preview-request-dto:
+      additionalProperties: false
+      description: Request to resolve a global bulk action selection into IDs and row context.
+      properties:
+        action:
+          $ref: '#/components/schemas/bulk-action-type'
+        selection:
+          $ref: '#/components/schemas/bulk-action-selection-dto'
+      required:
+      - action
+      - selection
+      type: object
+    job-type:
+      description: The type of the job being polled by the user.
+      enum:
+      - ACTIVITY_AUDIT_REPORT
+      - FEES_REPORT
+      - LIST_MAINTENANCE_REPORT
+      - SEARCH_WARRANTS_REPORT
+      - WORKLOAD_REPORT
+      - DURATION_REPORT
+      - PRIVATE_PROSECUTORS_INDEX_REPORT
+      - BULK_UPLOAD_ENTRIES
+      example: FEES_REPORT
+      type: string
+    official:
+      additionalProperties: false
+      description: The Official hearing the application. Blank fields will be rejected, nulls should be used instead.
+      properties:
+        title:
+          description: Prefix before a persons name.
+          example: Mr, Mrs
+          maxLength: 100
+          minLength: 1
+          type: string
+        surname:
+          description: The persons family name.
+          example: Smith
+          maxLength: 100
+          minLength: 1
+          type: string
+        forename:
+          description: The persons first name.
+          example: John
+          maxLength: 100
+          minLength: 1
+          type: string
+        type:
+          $ref: '#/components/schemas/official-type'
+      type: object
+    bulk-fee-details-dto:
+      additionalProperties: false
+      description: One fee detail row to apply to every selected Application List Entry.
+      properties:
+        paymentStatus:
+          $ref: '#/components/schemas/payment-status'
+        statusDate:
+          description: The date when the fee status was updated. Must not be in the future.
+          example: 2025-12-01
+          format: date
+          type: string
+        paymentReference:
+          description: Optional reference used to identify the payment.
+          example: PAY-001
+          maxLength: 15
+          minLength: 1
+          type: string
+      required:
+      - paymentStatus
+      - statusDate
+      type: object
+    template-constraint:
+      description: The template field with an associated value
+      properties:
+        type:
+          description: The data type of the value.
+          enum:
+          - TEXT
+          example: TEXT
+          type: string
+        length:
+          description: The length of the data value.
+          example: 1234
+          type: integer
+      required:
+      - length
+      - type
+      type: object
+    bulk-update-response-dto:
+      description: Result of a bulk update operation.
+      properties:
+        totalCount:
+          description: Total number of records requested for update.
+          example: 2
+          format: int32
+          minimum: 0
+          type: integer
+        updatedCount:
+          description: Number of records updated.
+          example: 2
+          format: int32
+          minimum: 0
+          type: integer
+        status:
+          description: Overall status of the bulk update operation.
+          enum:
+          - SUCCEEDED
+          - FAILED
+          example: SUCCEEDED
+          type: string
+      required:
+      - status
+      - totalCount
+      - updatedCount
+      type: object
+    result-code-get-summary-dto:
+      description: Lightweight DTO used in list/search views.
+      properties:
+        resultCode:
+          description: Code that identifies the result.
+          example: RC-001
+          type: string
+        title:
+          description: Human-readable title.
+          example: Application List Entry Fee Status
+          type: string
+      required:
+      - resultCode
+      - title
+      type: object
+    bulk-action-selection-type:
+      description: How the global bulk action selection should be resolved.
+      enum:
+      - FILTER
+      - IDS
+      type: string
+    entry-get-filter-dto:
+      description: Filter criteria for retrieving Application List Entries.
+      properties:
+        date:
+          description: The date on which the application's hearing is scheduled. This has to be Exact.
+          example: 2025-10-07
+          format: date
+          type: string
+        courtCode:
+          description: Name of the court or session where the application is being heard. This has to be Exact.
+          example: LOC123
+          maxLength: 10
+          type: string
+        otherLocationDescription:
+          description: Description of an alternative location for the hearing. This can be Partial.
+          example: Bradford scout hut
+          maxLength: 200
+          type: string
+        cjaCode:
+          description: The Criminal Justice Area (CJA) associated with the application. This has to be Exact.
+          example: '52'
+          maxLength: 2
+          type: string
+        applicantOrganisation:
+          description: The name of the organisation submitting the application. This can be Partial.
+          example: Smith Legal Services Ltd
+          maxLength: 100
+          type: string
+        applicantSurname:
+          description: The surname of the applicant if the applicant is an individual. This can be Partial.
+          example: Smith
+          maxLength: 100
+          type: string
+        standardApplicantCode:
+          description: Unique code identifying the standard applicant. This can be Partial.
+          example: APP001
+          maxLength: 10
+          type: string
+        status:
+          $ref: '#/components/schemas/application-list-status'
+        respondentOrganisation:
+          description: The name of the organisation responding to the application.
+          example: Jones Consulting Group
+          maxLength: 100
+          type: string
+        respondentSurname:
+          description: The surname of the respondent if the respondent is an individual.
+          example: Jones
+          maxLength: 100
+          type: string
+        respondentPostcode:
+          description: The postcode associated with the respondent’s address. This can be Partial.
+          example: SW1A 1AA
+          maxLength: 8
+          pattern: ^[a-zA-Z0-9 ]*$
+          type: string
+        accountReference:
+          description: Reference code identifying the applicant’s account. This can be Partial.
+          maxLength: 15
+          type: string
+        applicationTitle:
+          description: The title of the application. This can be Partial.
+          example: Smith vs Jones
+          maxLength: 500
+          pattern: ^[a-zA-Z0-9\-\+\.,£@\?'\(\)/%_ &!:]*$
+          type: string
+        applicantName:
+          description: The applicant display name. For people this uses the format "firstName lastName"; for organisations this uses the organisation name. This can be Partial.
+          example: John Turner
+          maxLength: 300
+          type: string
+        respondentName:
+          description: The respondent display name. For people this uses the format "firstName lastName"; for organisations this uses the organisation name. This can be Partial.
+          example: Sarah Johnson
+          maxLength: 300
+          type: string
+      type: object
+    person:
+      additionalProperties: false
+      description: The person making, or responding to, the application.
+      properties:
+        name:
+          $ref: '#/components/schemas/full-name'
+        contactDetails:
+          $ref: '#/components/schemas/contact-details'
+      required:
+      - contactDetails
+      - name
+      type: object
+x-refined-from:
+- appreg-api-openapi.yaml
+- hmcts-applications-register-openapi.yml

@@ -1,0 +1,974 @@
+generated: '2026-10-09'
+method: derived
+generator: derive-data-model.py
+source:
+- openapi/hmcts-applications-register-openapi.yml
+- openapi/hmcts-core-case-data-aggregated-openapi.yml
+- openapi/hmcts-core-case-data-definition-openapi.yml
+- openapi/hmcts-crime-hearing-results-document-subscription-openapi.yml
+- openapi/hmcts-results-validation-service-openapi.yml
+notation: has_one = property $ref; has_many = array of $ref; belongs_to = <entity>_id field
+summary:
+  entities: 151
+  entities_in_spec: 151
+  relationships: 138
+entities:
+- name: AffectedDefendant
+  fields: 2
+  description: A defendant affected by a validation issue, including a specific message for that defendant
+- name: AffectedOffence
+  fields: 3
+  description: An offence affected by a validation issue, including a specific message for that offence
+- name: CaseEventField
+  fields: 2
+- name: CaseEventTrigger
+  fields: 5
+- name: CaseEventTriggerField
+  fields: 8
+- name: CaseEvents
+  fields: 6
+- name: CaseField
+  fields: 10
+- name: CaseState
+  fields: 3
+- name: CaseTabCollection
+  fields: 3
+- name: CaseType
+  fields: 7
+- name: CaseTypeTab
+  fields: 4
+- name: CaseTypeTabField
+  fields: 2
+- name: CaseView
+  fields: 7
+- name: CaseViewEvent
+  fields: 9
+- name: CaseViewField
+  fields: 9
+- name: CaseViewJurisdiction
+  fields: 3
+- name: CaseViewTab
+  fields: 4
+- name: CaseViewTrigger
+  fields: 4
+- name: CaseViewType
+  fields: 4
+- name: ClientSubscription
+  fields: 6
+- name: ClientSubscriptionRequest
+  fields: 2
+- name: DefendantDto
+  fields: 5
+- name: DraftValidationRequest
+  fields: 7
+- name: DraftValidationResponse
+  fields: 8
+- name: Error
+  fields: 3
+- name: ErrorResponse
+  fields: 2
+- name: EventNotificationPayload
+  fields: 8
+  description: Callback payload delivered to the subscriber.
+- name: EventPayload
+  fields: 7
+  description: Payload representing a stored PCR/Nows document event with defendant and case details.
+- name: EventTypePayload
+  fields: 3
+- name: EventTypeResponse
+  fields: 1
+- name: FieldType
+  fields: 7
+- name: FixedListField
+  fields: 2
+- name: FixedListItem
+  fields: 2
+- name: FixedListWithOtherField
+  fields: 2
+- name: HmacCredentials
+  fields: 2
+  description: HMAC credentials issued at subscription creation for signing outbound callbacks.
+- name: Jurisdiction
+  fields: 5
+- name: NotificationEndpoint
+  fields: 1
+- name: OffenceDto
+  fields: 8
+- name: Profile
+  fields: 4
+- name: ProfileCaseState
+  fields: 3
+- name: ProfileCaseType
+  fields: 4
+- name: ProfileDefault
+  fields: 1
+- name: ProfileDefaultWorkbasket
+  fields: 3
+- name: ProfileIdam
+  fields: 5
+- name: ProfileJurisdiction
+  fields: 4
+- name: ProfileUser
+  fields: 1
+- name: Prompt
+  fields: 2
+- name: ResultLineDto
+  fields: 9
+- name: RotateSecretRequest
+  fields: 1
+- name: RuleDetailResponse
+  fields: 6
+- name: RuleListResponse
+  fields: 3
+- name: SearchInput
+  fields: 3
+- name: SearchInputDefinition
+  fields: 1
+- name: SearchInputFields
+  fields: 4
+- name: SearchResultDefinition
+  fields: 1
+- name: SearchResultView
+  fields: 2
+- name: SearchResultViewColumn
+  fields: 4
+- name: SearchResultViewItem
+  fields: 2
+- name: SearchResultsFields
+  fields: 4
+- name: TableField
+  fields: 1
+- name: TableFieldHeader
+  fields: 3
+- name: UpdateRuleRequest
+  fields: 2
+  description: At least one field must be provided. Only supplied fields are updated; omitted fields are left unchanged.
+- name: ValidationErrors
+  fields: 2
+  description: Container for validation errors, combining human-readable messages with structured validation issues
+- name: ValidationIssue
+  fields: 6
+  description: Represents a single validation issue raised against a hearing result. Each issue is scoped to either
+    the OFFENCE or DEFENDANT level, indicated by validationLevel. Issues with severity ERROR must alway
+- name: Version
+  fields: 3
+- name: WorkBasketResult
+  fields: 1
+- name: WorkBasketResultFields
+  fields: 4
+- name: activity-audit-filter-dto
+  fields: 4
+  description: Filter criteria for POST /reports/activity-audit/jobs. Both dateFrom and dateTo are required and
+    are treated as inclusive bounds. If dateFrom is later than dateTo, the API treats the earlier date as t
+- name: admin-job-status
+  fields: 2
+  description: Details of the database job status.
+- name: applicant
+  fields: 2
+  description: The applicant making the application.
+- name: application-code-get-detail-dto
+  fields: 14
+  description: Immutable DTO representing a detailed Application Code.
+- name: application-code-get-summary-dto
+  fields: 12
+  description: Lightweight DTO for Application Codes, used in list/search views.
+- name: application-code-page
+  fields: 0
+- name: application-list-create-dto
+  fields: 9
+  description: Request payload to create an Application List. Blank fields will be rejected, nulls should be used
+    instead.
+- name: application-list-entry-bulk-action-preview-request-dto
+  fields: 2
+  description: Request to resolve a single-list bulk action selection into IDs and row context.
+- name: application-list-entry-bulk-action-selection-dto
+  fields: 5
+  description: Selection criteria for a single Application List bulk action preview. When selectionType is IDS,
+    entryIds must contain at least one non-null entry ID. When selectionType is FILTER, filter, sort, and e
+- name: application-list-get-detail-dto
+  fields: 13
+  description: Immutable DTO representing a detailed Application List.
+- name: application-list-get-filter-dto
+  fields: 8
+  description: Filter criteria for GET /application-lists.
+- name: application-list-get-print-dto
+  fields: 7
+  description: Immutable DTO representing a detailed Application List.
+- name: application-list-get-summary-dto
+  fields: 7
+  description: Lightweight DTO for Application Lists, used in list/search views.
+- name: application-list-page
+  fields: 0
+- name: application-list-update-dto
+  fields: 9
+  description: Request payload to fully replace an existing Application List. Blank fields will be rejected, nulls
+    should be used instead.
+- name: application_code_get_detail_dto_feeAmount
+  fields: 2
+  description: Fee amount for this Application Code, expressed in pence (GBP minor units). Always use integer values;
+    1 GBP = 100 pence.
+- name: application_code_get_detail_dto_offsiteFeeAmount
+  fields: 2
+  description: Offsite Fee amount for this Application Code, expressed in pence (GBP minor units). Always use integer
+    values; 1 GBP = 100 pence.
+- name: bulk-action-preview-request-dto
+  fields: 2
+  description: Request to resolve a global bulk action selection into IDs and row context.
+- name: bulk-action-preview-response-dto
+  fields: 7
+  description: Resolved preview for a global bulk action selection.
+- name: bulk-action-selection-dto
+  fields: 5
+  description: Selection criteria for a global bulk action preview. When selectionType is IDS, entryIds must contain
+    at least one non-null entry ID. When selectionType is FILTER, filter, sort, and excludedEntryIds d
+- name: bulk-delete-result-item-dto
+  fields: 3
+- name: bulk-delete-results-dto
+  fields: 1
+  description: Delete multiple Application List Entry Results atomically.
+- name: bulk-fee-details-dto
+  fields: 3
+  description: One fee detail row to apply to every selected Application List Entry.
+- name: bulk-fees-update-dto
+  fields: 3
+  description: Append fee-status rows for multiple Application List Entries in one atomic operation.
+- name: bulk-get-application-list-entries-request-dto
+  fields: 2
+- name: bulk-officials-update-dto
+  fields: 2
+  description: Replace officials for multiple Application List Entries in one atomic operation.
+- name: bulk-result-dto
+  fields: 2
+  description: Create the same Result for multiple entries (atomic operation).
+- name: bulk-update-response-dto
+  fields: 3
+  description: Result of a bulk update operation.
+- name: bulkUploadApplicationListEntries_request
+  fields: 1
+- name: contact-details
+  fields: 9
+  description: A participant's contact details. Blank fields will be rejected, nulls should be used instead.
+- name: court-location-get-detail-dto
+  fields: 4
+  description: Immutable DTO representing a detailed Court Location.
+- name: court-location-get-summary-dto
+  fields: 2
+  description: Lightweight DTO for Court Locations, used in list/search views.
+- name: court-location-page
+  fields: 0
+- name: criminal-justice-area-get-dto
+  fields: 2
+  description: Immutable DTO representing a Criminal Justice Area.
+- name: criminal-justice-area-page
+  fields: 0
+- name: duration-filter-dto
+  fields: 3
+  description: Filter criteria for POST /reports/duration/jobs. Both dateFrom and dateTo are required inclusive
+    bounds. If dateFrom is later than dateTo, the API treats the earlier date as the inclusive start and th
+- name: entry-application-list-get-filter-dto
+  fields: 8
+  description: Filter criteria for retrieving Application List Entries for an Application List.
+- name: entry-create-dto
+  fields: 13
+  description: Request payload to create an Application List Entry. Blank fields will be rejected, nulls should
+    be used instead.
+- name: entry-get-detail-dto
+  fields: 15
+  description: DTO representing a detailed Application List Entry.
+- name: entry-get-detail-dto_1
+  fields: 15
+  description: DTO representing a detailed Application List Entry.
+- name: entry-get-filter-dto
+  fields: 15
+  description: Filter criteria for retrieving Application List Entries.
+- name: entry-get-print-dto
+  fields: 11
+  description: An application view, used specifically for printing.
+- name: entry-get-summary-dto
+  fields: 13
+  description: Lightweight DTO for Application Lists Entries, not retrieved through a parent list. Used in list/search
+    views.
+- name: entry-page
+  fields: 0
+- name: entry-page_1
+  fields: 0
+- name: entry-update-dto
+  fields: 12
+  description: Request payload to update an Application List Entry. Note, this is a PUT operation so the whole object
+    is replaced. When `feeStatuses` is supplied it replaces the existing fee-status rows for the entr
+- name: entry_update_closed_dto
+  fields: 1
+  description: Request payload to update notes for an Application List Entry whose Application List is closed.
+- name: fee-status
+  fields: 3
+  description: The status of the fee linked to the application. Blank fields will be rejected, nulls should be used
+    instead.
+- name: fees-report-filter-dto
+  fields: 5
+  description: Filter criteria for POST /reports/fees/jobs. Both dateFrom and dateTo are required and are treated
+    as inclusive bounds. If dateFrom is later than dateTo, the API treats the earlier date as the inclusi
+- name: full-name
+  fields: 4
+  description: A persons full name. Blank fields will be rejected, nulls should be used instead.
+- name: job-acknowledgement
+  fields: 8
+  description: Acknowledgement returned when a background job is created.
+- name: job-retention-policy
+  fields: 1
+  description: Retention policy configuration for an administrative background job.
+- name: legacy-report-location
+  fields: 3
+  description: Location filters for legacy MIS reports. Blank fields will be rejected, nulls should be used instead.
+    Location filters are optional. Use courtLocationCode on its own, cjaCode on its own, otherLocation
+- name: list-maintenance-filter-dto
+  fields: 4
+  description: Filter criteria for POST /reports/list-maintenance/jobs. Both dateFrom and dateTo are required and
+    are treated as inclusive bounds. Blank fields will be rejected, nulls should be used instead.
+- name: move-entries-dto
+  fields: 2
+  description: Parameters to move entries from one Application List to another.
+- name: official
+  fields: 4
+  description: The Official hearing the application. Blank fields will be rejected, nulls should be used instead.
+- name: organisation
+  fields: 2
+  description: The organisation making, or responding to, the application. Blank fields will be rejected, nulls
+    should be used instead.
+- name: page
+  fields: 8
+  description: Generic Spring Data page.
+- name: person
+  fields: 2
+  description: The person making, or responding to, the application.
+- name: private-prosecutors-index-filter-dto
+  fields: 10
+  description: Filter criteria for POST /reports/private-prosecutors-index/jobs. Both dateFrom and dateTo are required
+    and are treated as inclusive bounds. Blank fields will be rejected, nulls should be used instead
+- name: problem
+  fields: 6
+  description: RFC 9457/7807 problem details.
+- name: respondent
+  fields: 2
+  description: The respondent to the application.
+- name: respondent_person
+  fields: 0
+- name: result-code-get-detail-dto
+  fields: 5
+  description: Immutable DTO representing a detailed Result Code.
+- name: result-code-get-summary-dto
+  fields: 2
+  description: Lightweight DTO used in list/search views.
+- name: result-code-page
+  fields: 0
+- name: result-create-dto
+  fields: 2
+  description: Request payload to create an Application List Entry Result. Blank fields will be rejected, nulls
+    should be used instead.
+- name: result-get-dto
+  fields: 5
+  description: Response payload to get an Application List Entry Result.
+- name: result-page
+  fields: 0
+- name: result-update-dto
+  fields: 2
+  description: Request payload to update an Application List Entry Result. Blank fields will be rejected, nulls
+    should be used instead.
+- name: search-warrants-report-filter-dto
+  fields: 3
+  description: Filter criteria for POST /reports/search-warrants/jobs. Both dateFrom and dateTo are required and
+    are treated as inclusive bounds.
+- name: sort
+  fields: 1
+  description: Sorting state for the returned page.
+- name: sort_orders_inner
+  fields: 2
+- name: standard-applicant-get-detail-dto
+  fields: 4
+  description: Standard Applicant reference data. Only code, name and usage dates are exposed; personal and contact
+    details are excluded.
+- name: standard-applicant-get-summary-dto
+  fields: 4
+  description: Standard Applicant reference data. Only code, name and usage dates are exposed; personal and contact
+    details are excluded.
+- name: standard-applicant-page
+  fields: 0
+- name: standard-applicant-print-dto
+  fields: 5
+  description: Print-ready Standard Applicans report payload.
+- name: standard-applicant-print-row-dto
+  fields: 4
+  description: Standard Applicant print row containing only code, name and usage dates. Personal and contact details
+    are excluded.
+- name: standard-applicant-print-search-criteria-dto
+  fields: 4
+  description: Search criteria used for the Standard Applicants print report.
+- name: template-constraint
+  fields: 2
+  description: The template field with an associated value
+- name: template-detail
+  fields: 2
+  description: The wording details
+- name: template-key-with-constraint
+  fields: 3
+  description: The template field with an associated value
+- name: template-substitution
+  fields: 2
+  description: The template field with the associated value to substitute. Blank fields will be rejected, nulls
+    should be used instead.
+- name: workload-filter-dto
+  fields: 3
+  description: Filter criteria for POST /reports/workload/jobs. Both dateFrom and dateTo are required and are treated
+    as inclusive bounds.
+relationships:
+- from: application-code-page
+  to: application-code-get-summary-dto
+  type: has_many
+  via: content
+- from: application-code-get-detail-dto
+  to: template-detail
+  type: has_one
+  via: wording
+- from: application-code-get-detail-dto
+  to: application_code_get_detail_dto_feeAmount
+  type: has_one
+  via: feeAmount
+- from: application-code-get-detail-dto
+  to: application_code_get_detail_dto_offsiteFeeAmount
+  type: has_one
+  via: offsiteFeeAmount
+- from: application-list-page
+  to: application-list-get-summary-dto
+  type: has_many
+  via: content
+- from: application-list-get-print-dto
+  to: entry-get-print-dto
+  type: has_many
+  via: entries
+- from: entry-page
+  to: entry-get-summary-dto
+  type: has_many
+  via: content
+- from: bulk-action-preview-request-dto
+  to: bulk-action-selection-dto
+  type: has_one
+  via: selection
+- from: bulk-action-preview-response-dto
+  to: entry-get-summary-dto
+  type: has_many
+  via: entries
+- from: entry-page_1
+  to: entry-get-summary-dto
+  type: has_many
+  via: content
+- from: entry-create-dto
+  to: applicant
+  type: has_one
+  via: applicant
+- from: entry-create-dto
+  to: respondent
+  type: has_one
+  via: respondent
+- from: entry-create-dto
+  to: template-substitution
+  type: has_many
+  via: wordingFields
+- from: entry-create-dto
+  to: fee-status
+  type: has_many
+  via: feeStatuses
+- from: entry-create-dto
+  to: official
+  type: has_many
+  via: officials
+- from: entry-get-detail-dto
+  to: applicant
+  type: has_one
+  via: applicant
+- from: entry-get-detail-dto
+  to: respondent
+  type: has_one
+  via: respondent
+- from: entry-get-detail-dto
+  to: template-detail
+  type: has_one
+  via: wording
+- from: entry-get-detail-dto
+  to: fee-status
+  type: has_many
+  via: feeStatuses
+- from: entry-get-detail-dto
+  to: official
+  type: has_many
+  via: officials
+- from: application-list-entry-bulk-action-preview-request-dto
+  to: application-list-entry-bulk-action-selection-dto
+  type: has_one
+  via: selection
+- from: bulk-officials-update-dto
+  to: official
+  type: has_many
+  via: officials
+- from: bulk-fees-update-dto
+  to: bulk-fee-details-dto
+  type: has_many
+  via: feeDetails
+- from: entry-get-detail-dto_1
+  to: applicant
+  type: has_one
+  via: applicant
+- from: entry-get-detail-dto_1
+  to: respondent
+  type: has_one
+  via: respondent
+- from: entry-get-detail-dto_1
+  to: template-detail
+  type: has_one
+  via: wording
+- from: entry-get-detail-dto_1
+  to: fee-status
+  type: has_many
+  via: feeStatuses
+- from: entry-get-detail-dto_1
+  to: official
+  type: has_many
+  via: officials
+- from: entry-update-dto
+  to: applicant
+  type: has_one
+  via: applicant
+- from: entry-update-dto
+  to: respondent
+  type: has_one
+  via: respondent
+- from: entry-update-dto
+  to: template-substitution
+  type: has_many
+  via: wordingFields
+- from: entry-update-dto
+  to: fee-status
+  type: has_many
+  via: feeStatuses
+- from: entry-update-dto
+  to: official
+  type: has_many
+  via: officials
+- from: bulk-result-dto
+  to: result-create-dto
+  type: has_one
+  via: result
+- from: result-get-dto
+  to: template-detail
+  type: has_one
+  via: wording
+- from: bulk-delete-results-dto
+  to: bulk-delete-result-item-dto
+  type: has_many
+  via: results
+- from: result-page
+  to: result-get-dto
+  type: has_many
+  via: content
+- from: result-create-dto
+  to: template-substitution
+  type: has_many
+  via: wordingFields
+- from: result-update-dto
+  to: template-substitution
+  type: has_many
+  via: wordingFields
+- from: court-location-page
+  to: court-location-get-summary-dto
+  type: has_many
+  via: content
+- from: criminal-justice-area-page
+  to: criminal-justice-area-get-dto
+  type: has_many
+  via: content
+- from: fees-report-filter-dto
+  to: legacy-report-location
+  type: has_one
+  via: location
+- from: list-maintenance-filter-dto
+  to: legacy-report-location
+  type: has_one
+  via: location
+- from: search-warrants-report-filter-dto
+  to: legacy-report-location
+  type: has_one
+  via: location
+- from: workload-filter-dto
+  to: legacy-report-location
+  type: has_one
+  via: location
+- from: duration-filter-dto
+  to: legacy-report-location
+  type: has_one
+  via: location
+- from: private-prosecutors-index-filter-dto
+  to: legacy-report-location
+  type: has_one
+  via: location
+- from: result-code-page
+  to: result-code-get-summary-dto
+  type: has_many
+  via: content
+- from: result-code-get-detail-dto
+  to: template-detail
+  type: has_one
+  via: wording
+- from: standard-applicant-page
+  to: standard-applicant-get-summary-dto
+  type: has_many
+  via: content
+- from: standard-applicant-print-dto
+  to: standard-applicant-print-search-criteria-dto
+  type: has_one
+  via: searchCriteria
+- from: standard-applicant-print-dto
+  to: standard-applicant-print-row-dto
+  type: has_many
+  via: applicants
+- from: page
+  to: sort
+  type: has_one
+  via: sort
+- from: application-code-get-summary-dto
+  to: template-detail
+  type: has_one
+  via: wording
+- from: application-code-get-summary-dto
+  to: application_code_get_detail_dto_feeAmount
+  type: has_one
+  via: feeAmount
+- from: application-code-get-summary-dto
+  to: application_code_get_detail_dto_offsiteFeeAmount
+  type: has_one
+  via: offsiteFeeAmount
+- from: template-detail
+  to: template-key-with-constraint
+  type: has_many
+  via: substitution-key-constraints
+- from: entry-get-print-dto
+  to: applicant
+  type: has_one
+  via: applicant
+- from: entry-get-print-dto
+  to: respondent
+  type: has_one
+  via: respondent
+- from: entry-get-print-dto
+  to: official
+  type: has_many
+  via: officials
+- from: entry-get-summary-dto
+  to: applicant
+  type: has_one
+  via: applicant
+- from: entry-get-summary-dto
+  to: respondent
+  type: has_one
+  via: respondent
+- from: entry-get-summary-dto
+  to: result-code-get-summary-dto
+  type: has_many
+  via: resulted
+- from: bulk-action-selection-dto
+  to: entry-get-filter-dto
+  type: has_one
+  via: filter
+- from: applicant
+  to: person
+  type: has_one
+  via: person
+- from: applicant
+  to: organisation
+  type: has_one
+  via: organisation
+- from: respondent
+  to: respondent_person
+  type: has_one
+  via: person
+- from: respondent
+  to: organisation
+  type: has_one
+  via: organisation
+- from: application-list-entry-bulk-action-selection-dto
+  to: entry-application-list-get-filter-dto
+  type: has_one
+  via: filter
+- from: sort
+  to: sort_orders_inner
+  type: has_many
+  via: orders
+- from: template-key-with-constraint
+  to: template-constraint
+  type: has_one
+  via: constraint
+- from: person
+  to: full-name
+  type: has_one
+  via: name
+- from: person
+  to: contact-details
+  type: has_one
+  via: contactDetails
+- from: organisation
+  to: contact-details
+  type: has_one
+  via: contactDetails
+- from: Profile
+  to: ProfileUser
+  type: has_one
+  via: user
+- from: Profile
+  to: ProfileJurisdiction
+  type: has_many
+  via: jurisdictions
+- from: Profile
+  to: ProfileDefault
+  type: has_one
+  via: default
+- from: ProfileUser
+  to: ProfileIdam
+  type: has_one
+  via: idam
+- from: ProfileJurisdiction
+  to: ProfileCaseType
+  type: has_many
+  via: case_types
+- from: ProfileCaseType
+  to: ProfileCaseState
+  type: has_many
+  via: states
+- from: ProfileDefault
+  to: ProfileDefaultWorkbasket
+  type: has_one
+  via: workbasket
+- from: ProfileDefaultWorkbasket
+  to: Jurisdiction
+  type: belongs_to
+  via: jurisdiction_id
+- from: ProfileDefaultWorkbasket
+  to: CaseType
+  type: belongs_to
+  via: case_type_id
+- from: SearchResultView
+  to: SearchResultViewColumn
+  type: has_many
+  via: columns
+- from: SearchResultView
+  to: SearchResultViewItem
+  type: has_many
+  via: results
+- from: SearchResultViewColumn
+  to: CaseField
+  type: belongs_to
+  via: case_field_id
+- from: CaseView
+  to: CaseViewType
+  type: has_one
+  via: case_type
+- from: CaseView
+  to: ProfileCaseState
+  type: has_one
+  via: state
+- from: CaseView
+  to: CaseViewTab
+  type: has_many
+  via: tabs
+- from: CaseView
+  to: CaseViewTrigger
+  type: has_many
+  via: triggers
+- from: CaseView
+  to: CaseViewEvent
+  type: has_many
+  via: events
+- from: CaseViewType
+  to: CaseViewJurisdiction
+  type: has_one
+  via: jurisdiction
+- from: CaseViewTab
+  to: CaseViewField
+  type: has_many
+  via: fields
+- from: CaseViewField
+  to: FieldType
+  type: has_one
+  via: field_type
+- from: FieldType
+  to: FixedListItem
+  type: has_many
+  via: fixed_list_items
+- from: FieldType
+  to: CaseViewField
+  type: has_many
+  via: complex_fields
+- from: CaseEventTrigger
+  to: CaseEventTriggerField
+  type: has_many
+  via: case_fields
+- from: CaseEventTriggerField
+  to: FieldType
+  type: has_one
+  via: field_type
+- from: CaseTabCollection
+  to: CaseType
+  type: belongs_to
+  via: case_type_id
+- from: CaseTabCollection
+  to: CaseTypeTab
+  type: has_many
+  via: tabs
+- from: CaseTypeTab
+  to: CaseTypeTabField
+  type: has_many
+  via: tab_fields
+- from: CaseTypeTabField
+  to: CaseField
+  type: has_one
+  via: case_field
+- from: WorkBasketResult
+  to: WorkBasketResultFields
+  type: has_many
+  via: fields
+- from: WorkBasketResultFields
+  to: CaseType
+  type: belongs_to
+  via: case_type_id
+- from: WorkBasketResultFields
+  to: CaseField
+  type: belongs_to
+  via: case_field_id
+- from: SearchInputDefinition
+  to: SearchInputFields
+  type: has_many
+  via: fields
+- from: SearchInputFields
+  to: CaseType
+  type: belongs_to
+  via: case_type_id
+- from: SearchInputFields
+  to: CaseField
+  type: belongs_to
+  via: case_field_id
+- from: SearchResultDefinition
+  to: SearchResultsFields
+  type: has_many
+  via: fields
+- from: SearchResultsFields
+  to: CaseType
+  type: belongs_to
+  via: case_type_id
+- from: SearchResultsFields
+  to: CaseField
+  type: belongs_to
+  via: case_field_id
+- from: CaseType
+  to: Version
+  type: has_one
+  via: version
+- from: CaseType
+  to: Jurisdiction
+  type: has_one
+  via: jurisdiction
+- from: CaseType
+  to: CaseEvents
+  type: has_many
+  via: events
+- from: CaseType
+  to: CaseState
+  type: has_many
+  via: states
+- from: CaseType
+  to: CaseField
+  type: has_many
+  via: case_fields
+- from: CaseEvents
+  to: CaseEventField
+  type: has_many
+  via: case_fields
+- from: CaseEventField
+  to: CaseField
+  type: belongs_to
+  via: case_field_id
+- from: CaseField
+  to: CaseType
+  type: belongs_to
+  via: case_type_id
+- from: CaseField
+  to: FieldType
+  type: has_one
+  via: field_type
+- from: FixedListField
+  to: FieldType
+  type: has_one
+  via: field_type
+- from: FixedListWithOtherField
+  to: FieldType
+  type: has_one
+  via: field_type
+- from: TableField
+  to: TableFieldHeader
+  type: has_many
+  via: headers
+- from: TableFieldHeader
+  to: FieldType
+  type: has_one
+  via: field_type
+- from: EventTypeResponse
+  to: EventTypePayload
+  type: has_many
+  via: events
+- from: ClientSubscriptionRequest
+  to: NotificationEndpoint
+  type: has_one
+  via: notificationEndpoint
+- from: ClientSubscription
+  to: NotificationEndpoint
+  type: has_one
+  via: notificationEndpoint
+- from: ClientSubscription
+  to: HmacCredentials
+  type: has_one
+  via: hmac
+- from: DraftValidationRequest
+  to: ResultLineDto
+  type: has_many
+  via: resultLines
+- from: DraftValidationRequest
+  to: DefendantDto
+  type: has_many
+  via: defendants
+- from: DraftValidationRequest
+  to: OffenceDto
+  type: has_many
+  via: offences
+- from: ResultLineDto
+  to: Prompt
+  type: has_many
+  via: prompts
+- from: DraftValidationResponse
+  to: ValidationErrors
+  type: has_one
+  via: errors
+- from: DraftValidationResponse
+  to: ValidationIssue
+  type: has_many
+  via: warnings
+- from: ValidationErrors
+  to: ValidationIssue
+  type: has_many
+  via: validationIssues
+- from: ValidationIssue
+  to: AffectedOffence
+  type: has_many
+  via: affectedOffences
+- from: ValidationIssue
+  to: AffectedDefendant
+  type: has_many
+  via: affectedDefendants
+- from: RuleListResponse
+  to: RuleDetailResponse
+  type: has_many
+  via: rules

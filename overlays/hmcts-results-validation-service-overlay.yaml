@@ -1,0 +1,40 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Results Validation Service API
+  version: 1.0.0
+extends: ../openapi/_original/hmcts-results-validation-service-openapi.yml
+x-generated: '2026-10-09'
+x-method: generated
+actions:
+- target: $.info
+  update:
+    x-provider: HM Courts & Tribunals Service
+    x-api-evangelist:
+      aid: hmcts
+      profiled: '2026-10-09'
+      source_repo: https://github.com/api-evangelist/hmcts
+- target: $.paths['/'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/api/validation/validate'].post
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false
+- target: $.paths['/api/validation/rules'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/api/validation/rules/{ruleId}'].get
+  update:
+    x-agent-hint:
+      readOnly: true
+      destructive: false
+- target: $.paths['/api/validation/rules/{ruleId}'].patch
+  update:
+    x-agent-hint:
+      readOnly: false
+      destructive: false

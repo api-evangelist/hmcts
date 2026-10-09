@@ -1,0 +1,9 @@
+generated: '2026-10-09'
+method: none
+name: HM Courts & Tribunals Service Plans
+audience: unclear
+pricing_basis: none
+published: false
+plan_count: 0
+note: HMCTS is a UK government executive agency; neither its GOV.UK organisation page nor its engineering docs (hmcts.github.io) publish API plans or pricing.
+plans: []
