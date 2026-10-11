@@ -1,8 +1,0 @@
-# harvested from https://github.com/hmcts/api-cp-crime-hearing-results-validator/blob/7535367a437135400f6fa6043f71a2ad87f740a4/.spectral.yml on 2026-10-09 — a Spectral ruleset published in the provider's own GitHub repository (hmcts/api-cp-crime-hearing-results-validator); found by GitHub code search, fetched verbatim
-x-method: harvested
-x-stamped: 2026-10-09
-x-source-url: https://github.com/hmcts/api-cp-crime-hearing-results-validator/blob/7535367a437135400f6fa6043f71a2ad87f740a4/.spectral.yml
-extends: ["spectral:oas"]
-rules:
-  oas3-valid-media-example: off
-  oas3-valid-schema-example: off

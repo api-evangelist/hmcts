@@ -124,8 +124,6 @@ common:
     insidehmcts.blog.gov.uk 200; probed 2026-10-09. No public developer portal, pricing, or API reference found (api.gov.uk/hmcts 404).
 - type: SpectralRules
   url: https://github.com/hmcts/api-cp-crime-hearing-results-document-subscription/blob/9f3ab203a23196e728b1e8ae68092245b98ddb7b/.spectral.yml
-- type: SpectralRules
-  url: https://github.com/hmcts/api-cp-crime-hearing-results-validator/blob/7535367a437135400f6fa6043f71a2ad87f740a4/.spectral.yml
 
 apis:
 - aid: hmcts:hmcts-admin-api
