@@ -1,11 +1,11 @@
 openapi: 3.2.0
 info:
-  title: Hmcts Application List Entries API
-  version: '@version@'
   contact:
     name: HMCTS AppReg Team
     url: https://github.com/hmcts/appreg-api
-  description: 'Operations tagged application-list-entries across 2 of this provider''s published API definitions: appreg-api-openapi.yaml, hmcts-applications-register-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: REST API for managing Administrative Tasks, Applications Lists, Application List Entries and getting important, reference data including Application Codes, Result Codes, Fees, Court Locations, Criminal Justice Areas and Standard Applicants.
+  title: Applications Register Application List Entries API
+  version: '@version@'
 servers:
 - url: /
 tags:
@@ -131,8 +131,6 @@ paths:
       summary: Get all Entries (paginated, filterable)
       tags:
       - application-list-entries
-    servers:
-    - url: /
   /application-list-entries/bulk-action-preview:
     post:
       description: Resolves the current global Application List Entry selection into entry IDs and row context for the next bulk action page, enforcing the configured global bulk action limit.
@@ -230,8 +228,6 @@ paths:
       summary: Resolve global bulk action selection preview
       tags:
       - application-list-entries
-    servers:
-    - url: /
   /application-lists/{listId}/entries:
     get:
       description: Returns a paginated list of Application List Entries linked to a specific Application List.
@@ -475,8 +471,6 @@ paths:
       summary: Create an Application List Entry
       tags:
       - application-list-entries
-    servers:
-    - url: /
   /application-lists/{listId}/entries/bulk-action-preview:
     post:
       description: Resolves a selection within a single Application List into entry IDs and row context, enforcing the configured single-list bulk action limit.
@@ -596,8 +590,6 @@ paths:
       summary: Resolve Application List bulk action selection preview
       tags:
       - application-list-entries
-    servers:
-    - url: /
   /application-lists/{listId}/entries/officials:
     post:
       description: 'Atomically replaces the full officials array for each specified entry in the source list (path `listId`). If any entry cannot be updated, no officials are changed. NOTE: Duplicate entryIds will result in an error'
@@ -700,8 +692,6 @@ paths:
       summary: Replace officials for multiple Application List Entries
       tags:
       - application-list-entries
-    servers:
-    - url: /
   /application-lists/{listId}/entries/fees:
     put:
       description: Atomically appends the supplied fee status rows to each specified entry in the source list (path `listId`). Existing fee status rows are preserved to retain fee-status history. If any supplied fee detail has `hasOffsiteFee=true`, the selected entries will be ensured to have an off-site fee mapping. `hasOffsiteFee=false` does not remove an existing off-site fee mapping. If any entry cannot be updated, no fee status rows are changed.
@@ -808,8 +798,6 @@ paths:
       summary: Bulk append fee status rows for multiple Application List Entries
       tags:
       - application-list-entries
-    servers:
-    - url: /
   /application-lists/{listId}/entries/{entryId}:
     delete:
       description: Permanently deletes the Application List Entry identified by `entryId`.
@@ -1134,8 +1122,6 @@ paths:
       summary: Update an Application List Entry
       tags:
       - application-list-entries
-    servers:
-    - url: /
   /application-lists/{listId}/entries/bulk-import:
     post:
       description: Validates the target application list and CSV structure up front, then enqueues a background job that validates the uploaded rows and, if valid, automatically inserts all rows in a single transaction. If row validation or commit fails, the entire transaction is rolled back and the job ends in `FAILED`. Row-validation failures provide actionable input feedback; unexpected processing failures return only a generic message and the job reference to quote to support. Files must not exceed 5MB or contain more than 1,050 application entries (excluding the header). Either limit is rejected with HTTP 413 before a background job is created. Split larger uploads into smaller files.
@@ -1272,8 +1258,6 @@ paths:
       summary: Start an asynchronous bulk upload of entries via CSV
       tags:
       - application-list-entries
-    servers:
-    - url: /
   /application-lists/entries/bulk-import/{jobId}:
     get:
       description: Fetches the application list entries that have been inserted via the bulk upload endpoint.
@@ -1359,8 +1343,6 @@ paths:
       summary: Fetches the application list entries that have been inserted via the bulk…
       tags:
       - application-list-entries
-    servers:
-    - url: /
   /application-lists/{listId}/entries/move:
     post:
       description: 'Moves the specified entries from the **source** list (path `listId`) to a single **destination** list. Each moved entry has a note appended containing its previous list details. If appending the note would make an entry''s notes exceed 4000 characters, that entry is not moved. Other eligible entries are still moved and committed, then the request returns `400 Bad Request` with the skipped entry IDs in the format `Could not move ALEs: , `.'
@@ -1463,8 +1445,6 @@ paths:
       summary: Move entries from one Application List to another
       tags:
       - application-list-entries
-    servers:
-    - url: /
   /application-lists/{listId}/entries/closed/{entryId}:
     get:
       description: Returns the selected Application List Entry details and existing notes when the parent Application List is closed.
@@ -1687,55 +1667,136 @@ paths:
       summary: Update notes for an Application List Entry whose Application List is closed
       tags:
       - application-list-entries
-    servers:
-    - url: /
 components:
   schemas:
-    applicant:
-      additionalProperties: false
-      description: 'The applicant making the application.
-
-        In application read and print responses, Standard Applicants are represented by their
-
-        reference name in organisation.name (or their code when no reference name exists).
-
-        Their personal and contact values are not returned. For these read responses the
-
-        shared input contact constraints do not apply: contact fields may be null or absent.
-
-        Ordinary applicant input still requires the person or organisation contact details.
-
-        '
+    page:
+      description: Generic Spring Data page.
       properties:
-        person:
-          $ref: '#/components/schemas/person'
-        organisation:
-          $ref: '#/components/schemas/organisation'
+        pageNumber:
+          description: Zero-based page index.
+          format: int32
+          type: integer
+        pageSize:
+          description: Page size.
+          format: int32
+          type: integer
+        totalElements:
+          description: Total number of elements across all pages.
+          format: int64
+          type: integer
+        totalPages:
+          description: Total number of pages.
+          format: int32
+          type: integer
+        sort:
+          $ref: '#/components/schemas/sort'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        elementsOnPage:
+          description: Total number of elements in the current page.
+          format: int32
+          type: integer
+      required:
+      - content
+      - elementsOnPage
+      - pageNumber
+      - pageSize
+      - totalElements
       type: object
-    bulkUploadApplicationListEntries_request:
+    template-key-with-constraint:
+      description: The template field with an associated value
       properties:
-        file:
-          format: binary
+        key:
+          description: Field key for substitution into the template.
+          example: account-number
           type: string
+        value:
+          description: The optional value for the key.
+          example: '12345678'
+          type: string
+        constraint:
+          allOf:
+          - $ref: '#/components/schemas/template-constraint'
+          description: The constraint details for the field
+      required:
+      - constraint
+      - key
       type: object
-    entry-page_1:
-      allOf:
-      - $ref: '#/components/schemas/page'
-      - properties:
-          content:
-            items:
-              $ref: '#/components/schemas/entry-get-summary-dto'
-            type: array
-        type: object
-    entry-page:
-      allOf:
-      - $ref: '#/components/schemas/page'
-      - properties:
-          content:
-            items:
-              $ref: '#/components/schemas/entry-get-summary-dto'
-            type: array
-        type: object
+    entry-create-dto:
+      additionalProperties: false
+      description: Request payload to create an Application List Entry. Blank fields will be rejected, nulls should be used instead.
+      properties:
+        standardApplicantCode:
+          description: Code that identifies the Standard Applicant.
+          example: APP001
+          maxLength: 10
+          minLength: 1
+          type: string
+        applicationCode:
+          description: Code that identifies the Application Code.
+          example: APP001
+          maxLength: 10
+          minLength: 1
+          type: string
+        applicant:
+          $ref: '#/components/schemas/applicant'
+        respondent:
+          $ref: '#/components/schemas/respondent'
+        numberOfRespondents:
+          description: Number of respondents required by the Application.
+          example: 0
+          format: int16
+          type: integer
+        wordingFields:
+          description: 'An array of user-provided values used to populate placeholders in the ''wording''. The wording is a field belonging to the linked Application Code. Each string is applied to the wording in the order they are provided.
+
+            '
+          items:
+            $ref: '#/components/schemas/template-substitution'
+          type: array
+        feeStatuses:
+          description: Fee-status rows for the entry. Must only be supplied when the selected application code requires a fee.
+          items:
+            $ref: '#/components/schemas/fee-status'
+          type: array
+        hasOffsiteFee:
+          description: Indicates whether an off-site fee applies.
+          example: true
+          type: boolean
+        caseReference:
+          description: A reference code to identify a related case (maximum 15 characters).
+          example: CASE-001
+          maxLength: 15
+          minLength: 1
+          type: string
+        accountNumber:
+          description: The Applicant's account number (maximum 20 characters). Required when the Application Code starts with EF.
+          example: APP-001
+          maxLength: 20
+          minLength: 1
+          type: string
+        notes:
+          description: Notes about the application or the hearing (maximum 4000 characters).
+          example: Time is 10:31, we have convened to talk about Application...
+          maxLength: 4000
+          minLength: 1
+          type: string
+        lodgementDate:
+          description: The date on which the application was submitted. Will be set to current date if omitted.
+          example: 2025-12-01
+          format: date
+          type: string
+        officials:
+          description: An array of Officials who will decide the outcome of the Application. A maximum of 4 officials may be supplied, with no more than 3 MAGISTRATE entries and no more than 1 CLERK entry.
+          items:
+            $ref: '#/components/schemas/official'
+          maxItems: 4
+          type: array
+      required:
+      - applicationCode
+      type: object
     bulk-fees-update-dto:
       additionalProperties: false
       description: Append fee-status rows for multiple Application List Entries in one atomic operation.
@@ -1774,57 +1835,62 @@ components:
       required:
       - entryIds
       type: object
-    sort_orders_inner:
-      properties:
-        property:
-          description: Property name used for sorting.
-          example: title
-          type: string
-        direction:
-          description: Sort direction.
-          enum:
-          - asc
-          - desc
-          example: asc
-          type: string
-      required:
-      - direction
-      - property
-      type: object
-    bulk-action-selection-dto:
+    full-name:
       additionalProperties: false
-      description: 'Selection criteria for a global bulk action preview. When selectionType is IDS, entryIds must contain at least one non-null entry ID. When selectionType is FILTER, filter, sort, and excludedEntryIds describe the select-all-matching selection.
-
-        '
+      description: A persons full name. Blank fields will be rejected, nulls should be used instead.
       properties:
-        selectionType:
-          $ref: '#/components/schemas/bulk-action-selection-type'
-        filter:
-          $ref: '#/components/schemas/entry-get-filter-dto'
-        sort:
-          description: 'Sort order for the resolved selection. A single value is currently supported. Format: `property,(asc|desc)`.
-
-            '
-          example:
-          - date,desc
-          items:
-            type: string
-          type: array
-        entryIds:
-          description: Explicitly selected Application List Entry IDs.
-          items:
-            format: uuid
-            type: string
-          minItems: 1
-          type: array
-        excludedEntryIds:
-          description: Entry IDs excluded from a select-all-matching filter selection.
-          items:
-            format: uuid
-            type: string
-          type: array
+        title:
+          description: Prefix before a persons name.
+          example: Mr, Mrs
+          maxLength: 100
+          minLength: 1
+          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
+          type: string
+        firstName:
+          description: The person's first name.
+          example: John
+          maxLength: 100
+          minLength: 1
+          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
+          type: string
+        middleName:
+          description: The person's optional middle name or names.
+          example: James
+          maxLength: 100
+          minLength: 1
+          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
+          type:
+          - string
+          - 'null'
+        lastName:
+          description: The person's family name.
+          example: Smith
+          maxLength: 100
+          minLength: 1
+          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
+          type: string
       required:
-      - selectionType
+      - firstName
+      - lastName
+      type: object
+    application-list-status:
+      description: Status of the Application List.
+      enum:
+      - OPEN
+      - CLOSED
+      example: OPEN
+      type: string
+    person:
+      additionalProperties: false
+      description: The person making, or responding to, the application.
+      properties:
+        name:
+          $ref: '#/components/schemas/full-name'
+        contactDetails:
+          $ref: '#/components/schemas/contact-details'
+      required:
+      - contactDetails
+      - name
       type: object
     problem:
       description: RFC 9457/7807 problem details.
@@ -1861,214 +1927,30 @@ components:
       - title
       - type
       type: object
-    entry-get-summary-dto:
-      description: Lightweight DTO for Application Lists Entries, not retrieved through a parent list. Used in list/search views.
-      properties:
-        id:
-          description: Unique identifier of the Application List Entry.
-          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-          format: uuid
-          type: string
-        applicant:
-          $ref: '#/components/schemas/applicant'
-        respondent:
-          $ref: '#/components/schemas/respondent'
-        applicationTitle:
-          description: Descriptive title of the application.
-          example: Application to Crown Court
-          type: string
-        legislation:
-          description: Legislation under which the application is made.
-          example: Application to Crown Court
-          type: string
-        isFeeRequired:
-          description: True if submitting the application incurs a charge.
-          type: boolean
-        isResulted:
-          description: True if this application list entry has been resulted.
-          type: boolean
-        listId:
-          description: Unique Identifier of the Application List to which this entry belongs.
-          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-          format: uuid
-          type: string
-        date:
-          description: Single date of the Application List.
-          example: 2025-10-07
-          format: date
-          type: string
-        sequenceNumber:
-          description: The sequence number of the application in the list.
-          example: 1
-          type: integer
-        resulted:
-          description: List of result codes applied to this application list entry.
-          items:
-            $ref: '#/components/schemas/result-code-get-summary-dto'
-          type: array
-        status:
-          $ref: '#/components/schemas/application-list-status'
-        accountNumber:
-          example: ACC-001
-          maxLength: 20
-          type:
-          - string
-          - 'null'
-      required:
-      - applicantName
-      - applicationTitle
-      - id
-      - isFeeRequired
-      - isResulted
-      - status
-      type: object
-    organisation:
+    template-substitution:
       additionalProperties: false
-      description: The organisation making, or responding to, the application. Blank fields will be rejected, nulls should be used instead.
+      description: The template field with the associated value to substitute. Blank fields will be rejected, nulls should be used instead.
       properties:
-        name:
-          description: The name of the organisation.
-          example: ACME Industries LTD
-          maxLength: 100
+        key:
+          description: Field key for substitution into the template.
+          example: account-number
           minLength: 1
-          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
           type: string
-        contactDetails:
-          $ref: '#/components/schemas/contact-details'
-      required:
-      - contactDetails
-      - name
-      type: object
-    job-acknowledgement:
-      additionalProperties: false
-      description: Acknowledgement returned when a background job is created.
-      properties:
-        id:
-          description: Unique identifier for the job, in UUID v4 format.
-          example: 9f7b2a35-57ac-4a1c-9c41-83b6c8157af4
-          format: uuid
-          type: string
-        type:
-          $ref: '#/components/schemas/job-type'
-        status:
-          $ref: '#/components/schemas/job-status'
-        createdCount:
-          description: 'Number of applications imported by this job, excluding the CSV header and including subsequently soft-deleted applications. Available only when polling a completed BULK_UPLOAD_ENTRIES job; omitted from all other responses. Counted from retained job-to-application mappings, not the current list size.
-
-            '
-          example: 12
-          format: int64
-          minimum: 0
-          type: integer
-          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
-        mainFeeTotal:
-          description: 'Current main fees in GBP for non-deleted applications created by this upload, regardless of payment or remission status. Available only when polling a completed BULK_UPLOAD_ENTRIES job; zero when no applicable fees remain. Calculated on read, so later changes to applications or associated fees can change this value. Omitted from all other responses.
-
-            '
-          example: 120.5
-          type: number
-          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
-        offsiteFeeTotal:
-          description: 'Current applicable offsite fees in GBP for non-deleted applications created by this upload, regardless of payment or remission status. Available only when polling a completed BULK_UPLOAD_ENTRIES job; zero when no applicable fees remain. Calculated on read, not an upload-time snapshot. Omitted from all other responses.
-
-            '
-          example: 30.25
-          type: number
-          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
-        totalFeeValue:
-          description: 'Sum of mainFeeTotal and offsiteFeeTotal in GBP. Available only when polling a completed BULK_UPLOAD_ENTRIES job. Zero when no applicable fees remain; calculated on read. Omitted from all other responses.
-
-            '
-          example: 150.75
-          type: number
-          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
-        error_description:
-          description: 'Details of a failed job. Bulk-upload validation failures may include actionable input errors; unexpected bulk-upload processing failures use a generic message and identify the job reference to quote to support.
-
-            '
+        value:
+          description: The field value to substitute into the template key. Braces and line breaks are not permitted.
+          example: '1234'
+          minLength: 1
           type: string
       required:
-      - id
-      - status
-      - type
+      - key
+      - value
       type: object
-    entry-update-dto:
-      additionalProperties: false
-      description: 'Request payload to update an Application List Entry. Note, this is a PUT operation so the whole object is replaced. When `feeStatuses` is supplied it replaces the existing fee-status rows for the entry. When `feeStatuses` is `null`, fee-status rows are left unchanged. Blank fields will be rejected, nulls should be used instead.
-
-        '
+    bulkUploadApplicationListEntries_request:
       properties:
-        standardApplicantCode:
-          description: Code that identifies the Standard Applicant.
-          example: APP001
-          maxLength: 10
-          minLength: 1
+        file:
+          format: binary
           type: string
-        applicationCode:
-          description: Code that identifies the Application Code.
-          example: APP001
-          maxLength: 10
-          minLength: 1
-          type: string
-        applicant:
-          $ref: '#/components/schemas/applicant'
-        respondent:
-          $ref: '#/components/schemas/respondent'
-        numberOfRespondents:
-          description: Number of respondents required by the Application.
-          example: 0
-          format: int16
-          type: integer
-        wordingFields:
-          description: An array of user-provided values used to populate placeholders in the entry wording template, applied in the order they are provided.
-          items:
-            $ref: '#/components/schemas/template-substitution'
-          type: array
-        feeStatuses:
-          description: 'Fee-status rows to persist for the entry. Providing a list replaces the existing fee-status rows. `null` means the existing fee-status rows are left unchanged. For application codes that do not require a fee, this operation allows existing historical fee-status rows to be retained unchanged, but rejects new, changed, or cleared fee-status rows.
-
-            '
-          items:
-            $ref: '#/components/schemas/fee-status'
-          type: array
-        hasOffsiteFee:
-          description: Indicates whether an off-site fee applies.
-          example: true
-          type: boolean
-        caseReference:
-          description: A reference code to identify a related case (maximum 15 characters).
-          example: CASE-001
-          maxLength: 15
-          minLength: 1
-          type: string
-        accountNumber:
-          description: The Applicant's account number (maximum 20 characters). Required when the Application Code starts with EF.
-          example: ACC-001
-          maxLength: 20
-          minLength: 1
-          type: string
-        notes:
-          description: Notes about the application or the hearing (maximum 4000 characters).
-          example: Time is 10:31, we have convened to talk about Application...
-          maxLength: 4000
-          minLength: 1
-          type: string
-        officials:
-          description: An array of Officials who will decide the outcome of the Application. A maximum of 4 officials may be supplied, with no more than 3 MAGISTRATE entries and no more than 1 CLERK entry.
-          items:
-            $ref: '#/components/schemas/official'
-          maxItems: 4
-          type: array
-      required:
-      - applicationCode
       type: object
-    official-type:
-      description: The type of Official hearing the application.
-      enum:
-      - MAGISTRATE
-      - CLERK
-      example: MAGISTRATE
-      type: string
     application-list-entry-bulk-action-selection-dto:
       additionalProperties: false
       description: 'Selection criteria for a single Application List bulk action preview. When selectionType is IDS, entryIds must contain at least one non-null entry ID. When selectionType is FILTER, filter, sort, and excludedEntryIds describe the select-all-matching selection.
@@ -2104,20 +1986,176 @@ components:
       required:
       - selectionType
       type: object
-    template-detail:
-      description: The wording details
+    bulk-fee-details-dto:
+      additionalProperties: false
+      description: One fee detail row to apply to every selected Application List Entry.
       properties:
-        template:
-          description: The template name. It contains the field names between curly braces.
-          example: This is a test {{Applicant number}} with a date
+        paymentStatus:
+          $ref: '#/components/schemas/payment-status'
+        statusDate:
+          description: The date when the fee status was updated. Must not be in the future.
+          example: 2025-12-01
+          format: date
           type: string
-        substitution-key-constraints:
-          description: A list of fields and the associated constraints
+        paymentReference:
+          description: Optional reference used to identify the payment.
+          example: PAY-001
+          maxLength: 15
+          minLength: 1
+          type: string
+      required:
+      - paymentStatus
+      - statusDate
+      type: object
+    bulk-action-preview-response-dto:
+      additionalProperties: false
+      description: Resolved preview for a global bulk action selection.
+      properties:
+        action:
+          $ref: '#/components/schemas/bulk-action-type'
+        limit:
+          example: 2000
+          format: int32
+          type: integer
+        selectedCount:
+          example: 25
+          format: int32
+          type: integer
+        eligibleCount:
+          example: 22
+          format: int32
+          type: integer
+        ineligibleCount:
+          example: 3
+          format: int32
+          type: integer
+        entryIds:
           items:
-            $ref: '#/components/schemas/template-key-with-constraint'
+            format: uuid
+            type: string
+          type: array
+        entries:
+          items:
+            $ref: '#/components/schemas/entry-get-summary-dto'
           type: array
       required:
-      - template
+      - action
+      - eligibleCount
+      - entries
+      - entryIds
+      - ineligibleCount
+      - limit
+      - selectedCount
+      type: object
+    respondent:
+      additionalProperties: false
+      description: The respondent to the application.
+      properties:
+        person:
+          $ref: '#/components/schemas/respondent_person'
+        organisation:
+          $ref: '#/components/schemas/organisation'
+      type: object
+    sort_orders_inner:
+      properties:
+        property:
+          description: Property name used for sorting.
+          example: title
+          type: string
+        direction:
+          description: Sort direction.
+          enum:
+          - asc
+          - desc
+          example: asc
+          type: string
+      required:
+      - direction
+      - property
+      type: object
+    official:
+      additionalProperties: false
+      description: The Official hearing the application. Blank fields will be rejected, nulls should be used instead.
+      properties:
+        title:
+          description: Prefix before a persons name.
+          example: Mr, Mrs
+          maxLength: 100
+          minLength: 1
+          type: string
+        surname:
+          description: The persons family name.
+          example: Smith
+          maxLength: 100
+          minLength: 1
+          type: string
+        forename:
+          description: The persons first name.
+          example: John
+          maxLength: 100
+          minLength: 1
+          type: string
+        type:
+          $ref: '#/components/schemas/official-type'
+      type: object
+    entry-application-list-get-filter-dto:
+      description: Filter criteria for retrieving Application List Entries for an Application List.
+      properties:
+        sequenceNumber:
+          description: The sequence number of the application in the list. This has to be Exact.
+          example: 1
+          type: integer
+        applicationTitle:
+          description: The title of the application. This can be Partial.
+          example: Smith vs Jones
+          maxLength: 500
+          pattern: ^[a-zA-Z0-9\-\+\.,£@\?'\(\)/%_ &!:]*$
+          type: string
+        applicantName:
+          description: The applicant display name. For people this uses the format "firstName lastName"; for organisations this uses the organisation name. This can be Partial.
+          example: John Turner
+          maxLength: 300
+          pattern: ^[a-zA-Z0-9\-\+\.,£@\?'\(\)/%_ &!:]*$
+          type: string
+        respondentName:
+          description: The respondent display name. For people this uses the format "firstName lastName"; for organisations this uses the organisation name. This can be Partial.
+          example: Sarah Johnson
+          maxLength: 300
+          pattern: ^[a-zA-Z0-9\-\+\.,£@\?'\(\)/%_ &!:]*$
+          type: string
+        respondentPostcode:
+          description: The postcode associated with the respondent’s address. This can be Partial.
+          example: SW1A 1AA
+          maxLength: 8
+          pattern: ^[a-zA-Z0-9 ]*$
+          type: string
+        accountReference:
+          description: Reference code identifying the applicant’s account. This can be Partial.
+          maxLength: 20
+          type: string
+        feeRequired:
+          description: Whether a fee is required for the application. This has to be Exact.
+          example: true
+          type: boolean
+        resulted:
+          description: The application resolution code. This can be Partial.
+          example: APPC
+          type: string
+      type: object
+    result-code-get-summary-dto:
+      description: Lightweight DTO used in list/search views.
+      properties:
+        resultCode:
+          description: Code that identifies the result.
+          example: RC-001
+          type: string
+        title:
+          description: Human-readable title.
+          example: Application List Entry Fee Status
+          type: string
+      required:
+      - resultCode
+      - title
       type: object
     entry-get-detail-dto_1:
       description: DTO representing a detailed Application List Entry.
@@ -2193,65 +2231,26 @@ components:
       - lodgementDate
       - numberOfRespondents
       type: object
-    page:
-      description: Generic Spring Data page.
-      properties:
-        pageNumber:
-          description: Zero-based page index.
-          format: int32
-          type: integer
-        pageSize:
-          description: Page size.
-          format: int32
-          type: integer
-        totalElements:
-          description: Total number of elements across all pages.
-          format: int64
-          type: integer
-        totalPages:
-          description: Total number of pages.
-          format: int32
-          type: integer
-        sort:
-          $ref: '#/components/schemas/sort'
-        first:
-          type: boolean
-        last:
-          type: boolean
-        elementsOnPage:
-          description: Total number of elements in the current page.
-          format: int32
-          type: integer
-      required:
-      - content
-      - elementsOnPage
-      - pageNumber
-      - pageSize
-      - totalElements
-      type: object
-    move-entries-dto:
+    fee-status:
       additionalProperties: false
-      description: Parameters to move entries from one Application List to another.
+      description: The status of the fee linked to the application. Blank fields will be rejected, nulls should be used instead.
       properties:
-        targetListId:
-          description: ID of the **destination** Application List (must differ from the source `listId` in the path).
-          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-          format: uuid
+        paymentReference:
+          description: The reference code used to identify the payment.
+          example: PAY-001
+          maxLength: 15
+          minLength: 1
           type: string
-        entryIds:
-          description: Array of entry IDs to move. All must currently belong to the source list.
-          example:
-          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
-          - 3fa85f64-5717-4562-b3fc-2c963f66afa7
-          items:
-            format: uuid
-            type: string
-          minItems: 1
-          type: array
-          uniqueItems: true
+        paymentStatus:
+          $ref: '#/components/schemas/payment-status'
+        statusDate:
+          description: The date when the payment status was updated. Must be today's date or a past date.
+          example: 2025-12-01
+          format: date
+          type: string
       required:
-      - entryIds
-      - targetListId
+      - paymentStatus
+      - statusDate
       type: object
     contact-details:
       additionalProperties: false
@@ -2337,337 +2336,20 @@ components:
       required:
       - addressLine1
       type: object
-    entry-create-dto:
-      additionalProperties: false
-      description: Request payload to create an Application List Entry. Blank fields will be rejected, nulls should be used instead.
+    template-detail:
+      description: The wording details
       properties:
-        standardApplicantCode:
-          description: Code that identifies the Standard Applicant.
-          example: APP001
-          maxLength: 10
-          minLength: 1
+        template:
+          description: The template name. It contains the field names between curly braces.
+          example: This is a test {{Applicant number}} with a date
           type: string
-        applicationCode:
-          description: Code that identifies the Application Code.
-          example: APP001
-          maxLength: 10
-          minLength: 1
-          type: string
-        applicant:
-          $ref: '#/components/schemas/applicant'
-        respondent:
-          $ref: '#/components/schemas/respondent'
-        numberOfRespondents:
-          description: Number of respondents required by the Application.
-          example: 0
-          format: int16
-          type: integer
-        wordingFields:
-          description: 'An array of user-provided values used to populate placeholders in the ''wording''. The wording is a field belonging to the linked Application Code. Each string is applied to the wording in the order they are provided.
-
-            '
+        substitution-key-constraints:
+          description: A list of fields and the associated constraints
           items:
-            $ref: '#/components/schemas/template-substitution'
-          type: array
-        feeStatuses:
-          description: Fee-status rows for the entry. Must only be supplied when the selected application code requires a fee.
-          items:
-            $ref: '#/components/schemas/fee-status'
-          type: array
-        hasOffsiteFee:
-          description: Indicates whether an off-site fee applies.
-          example: true
-          type: boolean
-        caseReference:
-          description: A reference code to identify a related case (maximum 15 characters).
-          example: CASE-001
-          maxLength: 15
-          minLength: 1
-          type: string
-        accountNumber:
-          description: The Applicant's account number (maximum 20 characters). Required when the Application Code starts with EF.
-          example: APP-001
-          maxLength: 20
-          minLength: 1
-          type: string
-        notes:
-          description: Notes about the application or the hearing (maximum 4000 characters).
-          example: Time is 10:31, we have convened to talk about Application...
-          maxLength: 4000
-          minLength: 1
-          type: string
-        lodgementDate:
-          description: The date on which the application was submitted. Will be set to current date if omitted.
-          example: 2025-12-01
-          format: date
-          type: string
-        officials:
-          description: An array of Officials who will decide the outcome of the Application. A maximum of 4 officials may be supplied, with no more than 3 MAGISTRATE entries and no more than 1 CLERK entry.
-          items:
-            $ref: '#/components/schemas/official'
-          maxItems: 4
+            $ref: '#/components/schemas/template-key-with-constraint'
           type: array
       required:
-      - applicationCode
-      type: object
-    entry_update_closed_dto:
-      additionalProperties: false
-      description: 'Request payload to update notes for an Application List Entry whose Application List is closed.
-
-        '
-      properties:
-        additionalNotes:
-          description: 'The additional notes to append to the Application List Entry. Empty values are accepted and leave existing notes unchanged.
-
-            '
-          example: Additional notes
-          maxLength: 4000
-          minLength: 0
-          type: string
-      required:
-      - additionalNotes
-      type: object
-    entry-get-detail-dto:
-      description: DTO representing a detailed Application List Entry.
-      properties:
-        id:
-          description: Unique identifier of the Application List Entry.
-          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-          format: uuid
-          type: string
-        listId:
-          description: The Unique identifier of the Application List this Entry belongs to.
-          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-          format: uuid
-          type: string
-        standardApplicantCode:
-          description: Code that identifies the Standard Applicant.
-          example: APP001
-          type: string
-        applicationCode:
-          description: Code that identifies the Application Code.
-          example: APP001
-          type: string
-        applicant:
-          $ref: '#/components/schemas/applicant'
-        respondent:
-          $ref: '#/components/schemas/respondent'
-        numberOfRespondents:
-          description: Number of respondents required by the Application.
-          example: 0
-          type:
-          - integer
-          - 'null'
-        wording:
-          $ref: '#/components/schemas/template-detail'
-        feeStatuses:
-          items:
-            $ref: '#/components/schemas/fee-status'
-          type: array
-        hasOffsiteFee:
-          description: Indicates whether an off-site fee applies.
-          example: true
-          type: boolean
-        caseReference:
-          description: A reference code to identify a related case (maximum 15 characters).
-          example: CASE-001
-          maxLength: 15
-          type: string
-        accountNumber:
-          description: The Applicants account number (maximum 20 characters).
-          example: ACC-001
-          maxLength: 20
-          type: string
-        notes:
-          description: Notes about the application or the hearing (maximum 4000 characters).
-          example: Time is 10:31, we have convened to talk about Application...
-          maxLength: 4000
-          type: string
-        lodgementDate:
-          description: The date on which the application was submitted. Will be set to current date if omitted.
-          example: 2025-12-01
-          format: date
-          type: string
-        officials:
-          description: An array of Officials who will decide the outcome of the Application.
-          items:
-            $ref: '#/components/schemas/official'
-          maxItems: 4
-          type: array
-      required:
-      - applicationCode
-      - id
-      - listId
-      - lodgementDate
-      - numberOfRespondents
-      type: object
-    respondent_person:
-      allOf:
-      - $ref: '#/components/schemas/person'
-      - description: Person details for a respondent (includes DOB).
-        properties:
-          dateOfBirth:
-            description: Date of birth (only applicable for person respondents).
-            example: 1990-01-01
-            format: date
-            type: string
-        type: object
-    application-list-status:
-      description: Status of the Application List.
-      enum:
-      - OPEN
-      - CLOSED
-      example: OPEN
-      type: string
-    bulk-action-preview-response-dto:
-      additionalProperties: false
-      description: Resolved preview for a global bulk action selection.
-      properties:
-        action:
-          $ref: '#/components/schemas/bulk-action-type'
-        limit:
-          example: 2000
-          format: int32
-          type: integer
-        selectedCount:
-          example: 25
-          format: int32
-          type: integer
-        eligibleCount:
-          example: 22
-          format: int32
-          type: integer
-        ineligibleCount:
-          example: 3
-          format: int32
-          type: integer
-        entryIds:
-          items:
-            format: uuid
-            type: string
-          type: array
-        entries:
-          items:
-            $ref: '#/components/schemas/entry-get-summary-dto'
-          type: array
-      required:
-      - action
-      - eligibleCount
-      - entries
-      - entryIds
-      - ineligibleCount
-      - limit
-      - selectedCount
-      type: object
-    fee-status:
-      additionalProperties: false
-      description: The status of the fee linked to the application. Blank fields will be rejected, nulls should be used instead.
-      properties:
-        paymentReference:
-          description: The reference code used to identify the payment.
-          example: PAY-001
-          maxLength: 15
-          minLength: 1
-          type: string
-        paymentStatus:
-          $ref: '#/components/schemas/payment-status'
-        statusDate:
-          description: The date when the payment status was updated. Must be today's date or a past date.
-          example: 2025-12-01
-          format: date
-          type: string
-      required:
-      - paymentStatus
-      - statusDate
-      type: object
-    bulk-officials-update-dto:
-      additionalProperties: false
-      description: Replace officials for multiple Application List Entries in one atomic operation.
-      properties:
-        entryIds:
-          description: Array of entry IDs whose officials should be replaced. All must belong to the list in the path.
-          example:
-          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
-          - 3fa85f64-5717-4562-b3fc-2c963f66afa7
-          items:
-            format: uuid
-            type: string
-          minItems: 1
-          type: array
-        officials:
-          description: An array of Officials who will decide the outcome of each selected Application. A maximum of 4 officials may be supplied, with no more than 3 MAGISTRATE entries and no more than 1 CLERK entry.
-          items:
-            $ref: '#/components/schemas/official'
-          maxItems: 4
-          type: array
-      required:
-      - entryIds
-      - officials
-      type: object
-    full-name:
-      additionalProperties: false
-      description: A persons full name. Blank fields will be rejected, nulls should be used instead.
-      properties:
-        title:
-          description: Prefix before a persons name.
-          example: Mr, Mrs
-          maxLength: 100
-          minLength: 1
-          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
-          type: string
-        firstName:
-          description: The person's first name.
-          example: John
-          maxLength: 100
-          minLength: 1
-          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
-          type: string
-        middleName:
-          description: The person's optional middle name or names.
-          example: James
-          maxLength: 100
-          minLength: 1
-          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
-          type:
-          - string
-          - 'null'
-        lastName:
-          description: The person's family name.
-          example: Smith
-          maxLength: 100
-          minLength: 1
-          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
-          type: string
-      required:
-      - firstName
-      - lastName
-      type: object
-    respondent:
-      additionalProperties: false
-      description: The respondent to the application.
-      properties:
-        person:
-          $ref: '#/components/schemas/respondent_person'
-        organisation:
-          $ref: '#/components/schemas/organisation'
-      type: object
-    template-substitution:
-      additionalProperties: false
-      description: The template field with the associated value to substitute. Blank fields will be rejected, nulls should be used instead.
-      properties:
-        key:
-          description: Field key for substitution into the template.
-          example: account-number
-          minLength: 1
-          type: string
-        value:
-          description: The field value to substitute into the template key. Braces and line breaks are not permitted.
-          example: '1234'
-          minLength: 1
-          type: string
-      required:
-      - key
-      - value
+      - template
       type: object
     bulk-action-type:
       description: Supported bulk action types.
@@ -2695,236 +2377,6 @@ components:
             $ref: '#/components/schemas/sort_orders_inner'
           type: array
       type: object
-    job-status:
-      description: The status of the job being polled by the user.
-      enum:
-      - RECEIVED
-      - VALIDATING
-      - PROCESSING
-      - FAILED
-      - COMPLETED
-      example: RECEIVED
-      type: string
-    entry-application-list-get-filter-dto:
-      description: Filter criteria for retrieving Application List Entries for an Application List.
-      properties:
-        sequenceNumber:
-          description: The sequence number of the application in the list. This has to be Exact.
-          example: 1
-          type: integer
-        applicationTitle:
-          description: The title of the application. This can be Partial.
-          example: Smith vs Jones
-          maxLength: 500
-          pattern: ^[a-zA-Z0-9\-\+\.,£@\?'\(\)/%_ &!:]*$
-          type: string
-        applicantName:
-          description: The applicant display name. For people this uses the format "firstName lastName"; for organisations this uses the organisation name. This can be Partial.
-          example: John Turner
-          maxLength: 300
-          pattern: ^[a-zA-Z0-9\-\+\.,£@\?'\(\)/%_ &!:]*$
-          type: string
-        respondentName:
-          description: The respondent display name. For people this uses the format "firstName lastName"; for organisations this uses the organisation name. This can be Partial.
-          example: Sarah Johnson
-          maxLength: 300
-          pattern: ^[a-zA-Z0-9\-\+\.,£@\?'\(\)/%_ &!:]*$
-          type: string
-        respondentPostcode:
-          description: The postcode associated with the respondent’s address. This can be Partial.
-          example: SW1A 1AA
-          maxLength: 8
-          pattern: ^[a-zA-Z0-9 ]*$
-          type: string
-        accountReference:
-          description: Reference code identifying the applicant’s account. This can be Partial.
-          maxLength: 20
-          type: string
-        feeRequired:
-          description: Whether a fee is required for the application. This has to be Exact.
-          example: true
-          type: boolean
-        resulted:
-          description: The application resolution code. This can be Partial.
-          example: APPC
-          type: string
-      type: object
-    application-list-entry-bulk-action-preview-request-dto:
-      additionalProperties: false
-      description: Request to resolve a single-list bulk action selection into IDs and row context.
-      properties:
-        action:
-          $ref: '#/components/schemas/bulk-action-type'
-        selection:
-          $ref: '#/components/schemas/application-list-entry-bulk-action-selection-dto'
-      required:
-      - action
-      - selection
-      type: object
-    template-key-with-constraint:
-      description: The template field with an associated value
-      properties:
-        key:
-          description: Field key for substitution into the template.
-          example: account-number
-          type: string
-        value:
-          description: The optional value for the key.
-          example: '12345678'
-          type: string
-        constraint:
-          allOf:
-          - $ref: '#/components/schemas/template-constraint'
-          description: The constraint details for the field
-      required:
-      - constraint
-      - key
-      type: object
-    payment-status:
-      description: The Status of the Fee's Payment.
-      enum:
-      - PAID
-      - UNDERTAKEN
-      - DUE
-      - REMITTED
-      example: PAID
-      type: string
-    bulk-action-preview-request-dto:
-      additionalProperties: false
-      description: Request to resolve a global bulk action selection into IDs and row context.
-      properties:
-        action:
-          $ref: '#/components/schemas/bulk-action-type'
-        selection:
-          $ref: '#/components/schemas/bulk-action-selection-dto'
-      required:
-      - action
-      - selection
-      type: object
-    job-type:
-      description: The type of the job being polled by the user.
-      enum:
-      - ACTIVITY_AUDIT_REPORT
-      - FEES_REPORT
-      - LIST_MAINTENANCE_REPORT
-      - SEARCH_WARRANTS_REPORT
-      - WORKLOAD_REPORT
-      - DURATION_REPORT
-      - PRIVATE_PROSECUTORS_INDEX_REPORT
-      - BULK_UPLOAD_ENTRIES
-      example: FEES_REPORT
-      type: string
-    official:
-      additionalProperties: false
-      description: The Official hearing the application. Blank fields will be rejected, nulls should be used instead.
-      properties:
-        title:
-          description: Prefix before a persons name.
-          example: Mr, Mrs
-          maxLength: 100
-          minLength: 1
-          type: string
-        surname:
-          description: The persons family name.
-          example: Smith
-          maxLength: 100
-          minLength: 1
-          type: string
-        forename:
-          description: The persons first name.
-          example: John
-          maxLength: 100
-          minLength: 1
-          type: string
-        type:
-          $ref: '#/components/schemas/official-type'
-      type: object
-    bulk-fee-details-dto:
-      additionalProperties: false
-      description: One fee detail row to apply to every selected Application List Entry.
-      properties:
-        paymentStatus:
-          $ref: '#/components/schemas/payment-status'
-        statusDate:
-          description: The date when the fee status was updated. Must not be in the future.
-          example: 2025-12-01
-          format: date
-          type: string
-        paymentReference:
-          description: Optional reference used to identify the payment.
-          example: PAY-001
-          maxLength: 15
-          minLength: 1
-          type: string
-      required:
-      - paymentStatus
-      - statusDate
-      type: object
-    template-constraint:
-      description: The template field with an associated value
-      properties:
-        type:
-          description: The data type of the value.
-          enum:
-          - TEXT
-          example: TEXT
-          type: string
-        length:
-          description: The length of the data value.
-          example: 1234
-          type: integer
-      required:
-      - length
-      - type
-      type: object
-    bulk-update-response-dto:
-      description: Result of a bulk update operation.
-      properties:
-        totalCount:
-          description: Total number of records requested for update.
-          example: 2
-          format: int32
-          minimum: 0
-          type: integer
-        updatedCount:
-          description: Number of records updated.
-          example: 2
-          format: int32
-          minimum: 0
-          type: integer
-        status:
-          description: Overall status of the bulk update operation.
-          enum:
-          - SUCCEEDED
-          - FAILED
-          example: SUCCEEDED
-          type: string
-      required:
-      - status
-      - totalCount
-      - updatedCount
-      type: object
-    result-code-get-summary-dto:
-      description: Lightweight DTO used in list/search views.
-      properties:
-        resultCode:
-          description: Code that identifies the result.
-          example: RC-001
-          type: string
-        title:
-          description: Human-readable title.
-          example: Application List Entry Fee Status
-          type: string
-      required:
-      - resultCode
-      - title
-      type: object
-    bulk-action-selection-type:
-      description: How the global bulk action selection should be resolved.
-      enum:
-      - FILTER
-      - IDS
-      type: string
     entry-get-filter-dto:
       description: Filter criteria for retrieving Application List Entries.
       properties:
@@ -3002,18 +2454,541 @@ components:
           maxLength: 300
           type: string
       type: object
-    person:
+    entry-get-detail-dto:
+      description: DTO representing a detailed Application List Entry.
+      properties:
+        id:
+          description: Unique identifier of the Application List Entry.
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          format: uuid
+          type: string
+        listId:
+          description: The Unique identifier of the Application List this Entry belongs to.
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          format: uuid
+          type: string
+        standardApplicantCode:
+          description: Code that identifies the Standard Applicant.
+          example: APP001
+          type: string
+        applicationCode:
+          description: Code that identifies the Application Code.
+          example: APP001
+          type: string
+        applicant:
+          $ref: '#/components/schemas/applicant'
+        respondent:
+          $ref: '#/components/schemas/respondent'
+        numberOfRespondents:
+          description: Number of respondents required by the Application.
+          example: 0
+          type:
+          - integer
+          - 'null'
+        wording:
+          $ref: '#/components/schemas/template-detail'
+        feeStatuses:
+          items:
+            $ref: '#/components/schemas/fee-status'
+          type: array
+        hasOffsiteFee:
+          description: Indicates whether an off-site fee applies.
+          example: true
+          type: boolean
+        caseReference:
+          description: A reference code to identify a related case (maximum 15 characters).
+          example: CASE-001
+          maxLength: 15
+          type: string
+        accountNumber:
+          description: The Applicants account number (maximum 20 characters).
+          example: ACC-001
+          maxLength: 20
+          type: string
+        notes:
+          description: Notes about the application or the hearing (maximum 4000 characters).
+          example: Time is 10:31, we have convened to talk about Application...
+          maxLength: 4000
+          type: string
+        lodgementDate:
+          description: The date on which the application was submitted. Will be set to current date if omitted.
+          example: 2025-12-01
+          format: date
+          type: string
+        officials:
+          description: An array of Officials who will decide the outcome of the Application.
+          items:
+            $ref: '#/components/schemas/official'
+          maxItems: 4
+          type: array
+      required:
+      - applicationCode
+      - id
+      - listId
+      - lodgementDate
+      - numberOfRespondents
+      type: object
+    template-constraint:
+      description: The template field with an associated value
+      properties:
+        type:
+          description: The data type of the value.
+          enum:
+          - TEXT
+          example: TEXT
+          type: string
+        length:
+          description: The length of the data value.
+          example: 1234
+          type: integer
+      required:
+      - length
+      - type
+      type: object
+    job-status:
+      description: The status of the job being polled by the user.
+      enum:
+      - RECEIVED
+      - VALIDATING
+      - PROCESSING
+      - FAILED
+      - COMPLETED
+      example: RECEIVED
+      type: string
+    applicant:
       additionalProperties: false
-      description: The person making, or responding to, the application.
+      description: 'The applicant making the application.
+
+        In application read and print responses, Standard Applicants are represented by their
+
+        reference name in organisation.name (or their code when no reference name exists).
+
+        Their personal and contact values are not returned. For these read responses the
+
+        shared input contact constraints do not apply: contact fields may be null or absent.
+
+        Ordinary applicant input still requires the person or organisation contact details.
+
+        '
+      properties:
+        person:
+          $ref: '#/components/schemas/person'
+        organisation:
+          $ref: '#/components/schemas/organisation'
+      type: object
+    job-type:
+      description: The type of the job being polled by the user.
+      enum:
+      - ACTIVITY_AUDIT_REPORT
+      - FEES_REPORT
+      - LIST_MAINTENANCE_REPORT
+      - SEARCH_WARRANTS_REPORT
+      - WORKLOAD_REPORT
+      - DURATION_REPORT
+      - PRIVATE_PROSECUTORS_INDEX_REPORT
+      - BULK_UPLOAD_ENTRIES
+      example: FEES_REPORT
+      type: string
+    organisation:
+      additionalProperties: false
+      description: The organisation making, or responding to, the application. Blank fields will be rejected, nulls should be used instead.
       properties:
         name:
-          $ref: '#/components/schemas/full-name'
+          description: The name of the organisation.
+          example: ACME Industries LTD
+          maxLength: 100
+          minLength: 1
+          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
+          type: string
         contactDetails:
           $ref: '#/components/schemas/contact-details'
       required:
       - contactDetails
       - name
       type: object
-x-refined-from:
-- appreg-api-openapi.yaml
-- hmcts-applications-register-openapi.yml
+    respondent_person:
+      allOf:
+      - $ref: '#/components/schemas/person'
+      - description: Person details for a respondent (includes DOB).
+        properties:
+          dateOfBirth:
+            description: Date of birth (only applicable for person respondents).
+            example: 1990-01-01
+            format: date
+            type: string
+        type: object
+    entry-page:
+      allOf:
+      - $ref: '#/components/schemas/page'
+      - properties:
+          content:
+            items:
+              $ref: '#/components/schemas/entry-get-summary-dto'
+            type: array
+        type: object
+    entry-get-summary-dto:
+      description: Lightweight DTO for Application Lists Entries, not retrieved through a parent list. Used in list/search views.
+      properties:
+        id:
+          description: Unique identifier of the Application List Entry.
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          format: uuid
+          type: string
+        applicant:
+          $ref: '#/components/schemas/applicant'
+        respondent:
+          $ref: '#/components/schemas/respondent'
+        applicationTitle:
+          description: Descriptive title of the application.
+          example: Application to Crown Court
+          type: string
+        legislation:
+          description: Legislation under which the application is made.
+          example: Application to Crown Court
+          type: string
+        isFeeRequired:
+          description: True if submitting the application incurs a charge.
+          type: boolean
+        isResulted:
+          description: True if this application list entry has been resulted.
+          type: boolean
+        listId:
+          description: Unique Identifier of the Application List to which this entry belongs.
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          format: uuid
+          type: string
+        date:
+          description: Single date of the Application List.
+          example: 2025-10-07
+          format: date
+          type: string
+        sequenceNumber:
+          description: The sequence number of the application in the list.
+          example: 1
+          type: integer
+        resulted:
+          description: List of result codes applied to this application list entry.
+          items:
+            $ref: '#/components/schemas/result-code-get-summary-dto'
+          type: array
+        status:
+          $ref: '#/components/schemas/application-list-status'
+        accountNumber:
+          example: ACC-001
+          maxLength: 20
+          type:
+          - string
+          - 'null'
+      required:
+      - applicantName
+      - applicationTitle
+      - id
+      - isFeeRequired
+      - isResulted
+      - status
+      type: object
+    job-acknowledgement:
+      additionalProperties: false
+      description: Acknowledgement returned when a background job is created.
+      properties:
+        id:
+          description: Unique identifier for the job, in UUID v4 format.
+          example: 9f7b2a35-57ac-4a1c-9c41-83b6c8157af4
+          format: uuid
+          type: string
+        type:
+          $ref: '#/components/schemas/job-type'
+        status:
+          $ref: '#/components/schemas/job-status'
+        createdCount:
+          description: 'Number of applications imported by this job, excluding the CSV header and including subsequently soft-deleted applications. Available only when polling a completed BULK_UPLOAD_ENTRIES job; omitted from all other responses. Counted from retained job-to-application mappings, not the current list size.
+
+            '
+          example: 12
+          format: int64
+          minimum: 0
+          type: integer
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
+        mainFeeTotal:
+          description: 'Current main fees in GBP for non-deleted applications created by this upload, regardless of payment or remission status. Available only when polling a completed BULK_UPLOAD_ENTRIES job; zero when no applicable fees remain. Calculated on read, so later changes to applications or associated fees can change this value. Omitted from all other responses.
+
+            '
+          example: 120.5
+          type: number
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
+        offsiteFeeTotal:
+          description: 'Current applicable offsite fees in GBP for non-deleted applications created by this upload, regardless of payment or remission status. Available only when polling a completed BULK_UPLOAD_ENTRIES job; zero when no applicable fees remain. Calculated on read, not an upload-time snapshot. Omitted from all other responses.
+
+            '
+          example: 30.25
+          type: number
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
+        totalFeeValue:
+          description: 'Sum of mainFeeTotal and offsiteFeeTotal in GBP. Available only when polling a completed BULK_UPLOAD_ENTRIES job. Zero when no applicable fees remain; calculated on read. Omitted from all other responses.
+
+            '
+          example: 150.75
+          type: number
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)'
+        error_description:
+          description: 'Details of a failed job. Bulk-upload validation failures may include actionable input errors; unexpected bulk-upload processing failures use a generic message and identify the job reference to quote to support.
+
+            '
+          type: string
+      required:
+      - id
+      - status
+      - type
+      type: object
+    bulk-action-selection-type:
+      description: How the global bulk action selection should be resolved.
+      enum:
+      - FILTER
+      - IDS
+      type: string
+    official-type:
+      description: The type of Official hearing the application.
+      enum:
+      - MAGISTRATE
+      - CLERK
+      example: MAGISTRATE
+      type: string
+    move-entries-dto:
+      additionalProperties: false
+      description: Parameters to move entries from one Application List to another.
+      properties:
+        targetListId:
+          description: ID of the **destination** Application List (must differ from the source `listId` in the path).
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          format: uuid
+          type: string
+        entryIds:
+          description: Array of entry IDs to move. All must currently belong to the source list.
+          example:
+          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          - 3fa85f64-5717-4562-b3fc-2c963f66afa7
+          items:
+            format: uuid
+            type: string
+          minItems: 1
+          type: array
+          uniqueItems: true
+      required:
+      - entryIds
+      - targetListId
+      type: object
+    bulk-action-preview-request-dto:
+      additionalProperties: false
+      description: Request to resolve a global bulk action selection into IDs and row context.
+      properties:
+        action:
+          $ref: '#/components/schemas/bulk-action-type'
+        selection:
+          $ref: '#/components/schemas/bulk-action-selection-dto'
+      required:
+      - action
+      - selection
+      type: object
+    bulk-officials-update-dto:
+      additionalProperties: false
+      description: Replace officials for multiple Application List Entries in one atomic operation.
+      properties:
+        entryIds:
+          description: Array of entry IDs whose officials should be replaced. All must belong to the list in the path.
+          example:
+          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          - 3fa85f64-5717-4562-b3fc-2c963f66afa7
+          items:
+            format: uuid
+            type: string
+          minItems: 1
+          type: array
+        officials:
+          description: An array of Officials who will decide the outcome of each selected Application. A maximum of 4 officials may be supplied, with no more than 3 MAGISTRATE entries and no more than 1 CLERK entry.
+          items:
+            $ref: '#/components/schemas/official'
+          maxItems: 4
+          type: array
+      required:
+      - entryIds
+      - officials
+      type: object
+    entry-page_1:
+      allOf:
+      - $ref: '#/components/schemas/page'
+      - properties:
+          content:
+            items:
+              $ref: '#/components/schemas/entry-get-summary-dto'
+            type: array
+        type: object
+    bulk-action-selection-dto:
+      additionalProperties: false
+      description: 'Selection criteria for a global bulk action preview. When selectionType is IDS, entryIds must contain at least one non-null entry ID. When selectionType is FILTER, filter, sort, and excludedEntryIds describe the select-all-matching selection.
+
+        '
+      properties:
+        selectionType:
+          $ref: '#/components/schemas/bulk-action-selection-type'
+        filter:
+          $ref: '#/components/schemas/entry-get-filter-dto'
+        sort:
+          description: 'Sort order for the resolved selection. A single value is currently supported. Format: `property,(asc|desc)`.
+
+            '
+          example:
+          - date,desc
+          items:
+            type: string
+          type: array
+        entryIds:
+          description: Explicitly selected Application List Entry IDs.
+          items:
+            format: uuid
+            type: string
+          minItems: 1
+          type: array
+        excludedEntryIds:
+          description: Entry IDs excluded from a select-all-matching filter selection.
+          items:
+            format: uuid
+            type: string
+          type: array
+      required:
+      - selectionType
+      type: object
+    entry_update_closed_dto:
+      additionalProperties: false
+      description: 'Request payload to update notes for an Application List Entry whose Application List is closed.
+
+        '
+      properties:
+        additionalNotes:
+          description: 'The additional notes to append to the Application List Entry. Empty values are accepted and leave existing notes unchanged.
+
+            '
+          example: Additional notes
+          maxLength: 4000
+          minLength: 0
+          type: string
+      required:
+      - additionalNotes
+      type: object
+    bulk-update-response-dto:
+      description: Result of a bulk update operation.
+      properties:
+        totalCount:
+          description: Total number of records requested for update.
+          example: 2
+          format: int32
+          minimum: 0
+          type: integer
+        updatedCount:
+          description: Number of records updated.
+          example: 2
+          format: int32
+          minimum: 0
+          type: integer
+        status:
+          description: Overall status of the bulk update operation.
+          enum:
+          - SUCCEEDED
+          - FAILED
+          example: SUCCEEDED
+          type: string
+      required:
+      - status
+      - totalCount
+      - updatedCount
+      type: object
+    entry-update-dto:
+      additionalProperties: false
+      description: 'Request payload to update an Application List Entry. Note, this is a PUT operation so the whole object is replaced. When `feeStatuses` is supplied it replaces the existing fee-status rows for the entry. When `feeStatuses` is `null`, fee-status rows are left unchanged. Blank fields will be rejected, nulls should be used instead.
+
+        '
+      properties:
+        standardApplicantCode:
+          description: Code that identifies the Standard Applicant.
+          example: APP001
+          maxLength: 10
+          minLength: 1
+          type: string
+        applicationCode:
+          description: Code that identifies the Application Code.
+          example: APP001
+          maxLength: 10
+          minLength: 1
+          type: string
+        applicant:
+          $ref: '#/components/schemas/applicant'
+        respondent:
+          $ref: '#/components/schemas/respondent'
+        numberOfRespondents:
+          description: Number of respondents required by the Application.
+          example: 0
+          format: int16
+          type: integer
+        wordingFields:
+          description: An array of user-provided values used to populate placeholders in the entry wording template, applied in the order they are provided.
+          items:
+            $ref: '#/components/schemas/template-substitution'
+          type: array
+        feeStatuses:
+          description: 'Fee-status rows to persist for the entry. Providing a list replaces the existing fee-status rows. `null` means the existing fee-status rows are left unchanged. For application codes that do not require a fee, this operation allows existing historical fee-status rows to be retained unchanged, but rejects new, changed, or cleared fee-status rows.
+
+            '
+          items:
+            $ref: '#/components/schemas/fee-status'
+          type: array
+        hasOffsiteFee:
+          description: Indicates whether an off-site fee applies.
+          example: true
+          type: boolean
+        caseReference:
+          description: A reference code to identify a related case (maximum 15 characters).
+          example: CASE-001
+          maxLength: 15
+          minLength: 1
+          type: string
+        accountNumber:
+          description: The Applicant's account number (maximum 20 characters). Required when the Application Code starts with EF.
+          example: ACC-001
+          maxLength: 20
+          minLength: 1
+          type: string
+        notes:
+          description: Notes about the application or the hearing (maximum 4000 characters).
+          example: Time is 10:31, we have convened to talk about Application...
+          maxLength: 4000
+          minLength: 1
+          type: string
+        officials:
+          description: An array of Officials who will decide the outcome of the Application. A maximum of 4 officials may be supplied, with no more than 3 MAGISTRATE entries and no more than 1 CLERK entry.
+          items:
+            $ref: '#/components/schemas/official'
+          maxItems: 4
+          type: array
+      required:
+      - applicationCode
+      type: object
+    application-list-entry-bulk-action-preview-request-dto:
+      additionalProperties: false
+      description: Request to resolve a single-list bulk action selection into IDs and row context.
+      properties:
+        action:
+          $ref: '#/components/schemas/bulk-action-type'
+        selection:
+          $ref: '#/components/schemas/application-list-entry-bulk-action-selection-dto'
+      required:
+      - action
+      - selection
+      type: object
+    payment-status:
+      description: The Status of the Fee's Payment.
+      enum:
+      - PAID
+      - UNDERTAKEN
+      - DUE
+      - REMITTED
+      example: PAID
+      type: string

@@ -1,8 +1,8 @@
 openapi: 3.2.0
 info:
-  title: Hmcts Display API
+  title: Core Case Data Definition Display API
+  description: An API to manage case data and ui definitions
   version: 0.0.1
-  description: 'Operations tagged Display across 2 of this provider''s published API definitions: ccd-data-store-definition.yaml, hmcts-core-case-data-definition-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://core-case-data.common-components.reform/api
 tags:
@@ -36,8 +36,6 @@ paths:
       - Display
       operationId: getDisplayTabStructureById
       x-operation-id-source: derived
-    servers:
-    - url: https://core-case-data.common-components.reform/api
   /display/work-basket-definition/{id}:
     get:
       summary: Fetch the UI definition for the work basket for a given Case Type
@@ -65,8 +63,6 @@ paths:
       - Display
       operationId: getDisplayWorkBasketDefinitionById
       x-operation-id-source: derived
-    servers:
-    - url: https://core-case-data.common-components.reform/api
   /display/search-input-definition/{id}:
     get:
       summary: Fetch the UI definition for the search inputs for a given Case Type
@@ -94,8 +90,6 @@ paths:
       - Display
       operationId: getDisplaySearchInputDefinitionById
       x-operation-id-source: derived
-    servers:
-    - url: https://core-case-data.common-components.reform/api
   /display/search-result-definition/{id}:
     get:
       summary: Fetch the UI definition for the search result fields for a given Case Type
@@ -123,54 +117,8 @@ paths:
       - Display
       operationId: getDisplaySearchResultDefinitionById
       x-operation-id-source: derived
-    servers:
-    - url: https://core-case-data.common-components.reform/api
 components:
   schemas:
-    SearchInputFields:
-      type: object
-      properties:
-        case_type_id:
-          type: string
-        case_field_id:
-          type: string
-        label:
-          type: string
-        order:
-          type: integer
-          format: int32
-    CaseTypeTabField:
-      type: object
-      properties:
-        case_field:
-          $ref: '#/components/schemas/CaseField'
-        order:
-          type: integer
-          format: int32
-    Error:
-      type: object
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-        fields:
-          type: string
-    CaseTypeTab:
-      type: object
-      properties:
-        id:
-          type: string
-        label:
-          type: string
-        order:
-          type: integer
-          format: int32
-        tab_fields:
-          type: array
-          items:
-            $ref: '#/components/schemas/CaseTypeTabField'
     CaseTabCollection:
       type: object
       properties:
@@ -189,13 +137,6 @@ components:
       required:
       - case_type_id
       - tabs
-    WorkBasketResult:
-      type: object
-      properties:
-        fields:
-          type: array
-          items:
-            $ref: '#/components/schemas/WorkBasketResultFields'
     SearchInputDefinition:
       type: object
       properties:
@@ -203,23 +144,20 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SearchInputFields'
-    SearchResultsFields:
+    CaseTypeTab:
       type: object
       properties:
-        case_type_id:
-          type: string
-        case_field_id:
+        id:
           type: string
         label:
           type: string
         order:
           type: integer
           format: int32
-    FieldType:
-      type: object
-      properties:
-        name:
-          type: string
+        tab_fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseTypeTabField'
     CaseField:
       type: object
       properties:
@@ -250,6 +188,24 @@ components:
       - id
       - label
       - field_type
+    CaseTypeTabField:
+      type: object
+      properties:
+        case_field:
+          $ref: '#/components/schemas/CaseField'
+        order:
+          type: integer
+          format: int32
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        fields:
+          type: string
     SearchResultDefinition:
       type: object
       properties:
@@ -257,6 +213,23 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SearchResultsFields'
+    SearchResultsFields:
+      type: object
+      properties:
+        case_type_id:
+          type: string
+        case_field_id:
+          type: string
+        label:
+          type: string
+        order:
+          type: integer
+          format: int32
+    FieldType:
+      type: object
+      properties:
+        name:
+          type: string
     WorkBasketResultFields:
       type: object
       properties:
@@ -269,6 +242,22 @@ components:
         order:
           type: integer
           format: int32
-x-refined-from:
-- ccd-data-store-definition.yaml
-- hmcts-core-case-data-definition-openapi.yml
+    SearchInputFields:
+      type: object
+      properties:
+        case_type_id:
+          type: string
+        case_field_id:
+          type: string
+        label:
+          type: string
+        order:
+          type: integer
+          format: int32
+    WorkBasketResult:
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkBasketResultFields'

@@ -1,11 +1,11 @@
 openapi: 3.2.0
 info:
-  title: Hmcts Standard Applicants API
-  version: '@version@'
   contact:
     name: HMCTS AppReg Team
     url: https://github.com/hmcts/appreg-api
-  description: 'Operations tagged standard-applicants across 2 of this provider''s published API definitions: appreg-api-openapi.yaml, hmcts-applications-register-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: REST API for managing Administrative Tasks, Applications Lists, Application List Entries and getting important, reference data including Application Codes, Result Codes, Fees, Court Locations, Criminal Justice Areas and Standard Applicants.
+  title: Applications Register Standard Applicants API
+  version: '@version@'
 servers:
 - url: /
 tags:
@@ -160,8 +160,6 @@ paths:
       summary: Get Standard Applicants (paginated, filterable)
       tags:
       - standard-applicants
-    servers:
-    - url: /
   /standard-applicants/reports/print:
     get:
       description: Returns all data required for printing Standard Applicants filtered by the supported print criteria; code, name, addressLine1, from and to. Dates are returned in ISO format; frontend PDF rendering should display dates as dd/MM/yyyy for legacy parity. Code and name are optional and may be combined; both must match when supplied together. Without date filters, only currently active records are returned, as for search. Returns all matching pages in the requested order (default code ascending). Results exceeding appreg.standard-applicants.max-print-rows (default 1000) are rejected with HTTP 400; results are never silently truncated.
@@ -278,8 +276,6 @@ paths:
       summary: Get a print-ready JSON payload for a Standard Applicants
       tags:
       - standard-applicants
-    servers:
-    - url: /
   /standard-applicants/{code}:
     get:
       description: 'Returns a Standard Applicant record matching the supplied code without applying
@@ -384,8 +380,6 @@ paths:
       summary: Get a specific Standard Applicant by code
       tags:
       - standard-applicants
-    servers:
-    - url: /
   /standard-applicants/export:
     get:
       description: 'Export all matching currently active Standard Applicants, across all pages, to a CSV file.
@@ -503,144 +497,8 @@ paths:
       - standard-applicants
       summary: Standard applicants export
       x-summary-source: derived
-    servers:
-    - url: /
 components:
   schemas:
-    standard-applicant-page:
-      allOf:
-      - $ref: '#/components/schemas/page'
-      - properties:
-          content:
-            items:
-              $ref: '#/components/schemas/standard-applicant-get-summary-dto'
-            type: array
-        type: object
-    standard-applicant-print-search-criteria-dto:
-      description: Search criteria used for the Standard Applicants print report.
-      properties:
-        code:
-          type:
-          - string
-          - 'null'
-        name:
-          type:
-          - string
-          - 'null'
-        from:
-          format: date
-          type:
-          - string
-          - 'null'
-        to:
-          format: date
-          type:
-          - string
-          - 'null'
-      required:
-      - code
-      - from
-      - name
-      - to
-      type: object
-    standard-applicant-get-detail-dto:
-      description: Standard Applicant reference data. Only code, name and usage dates are exposed; personal and contact details are excluded.
-      properties:
-        code:
-          description: Code that identifies the Standard Applicant.
-          example: STANDARD-1
-          type: string
-        name:
-          description: Name of the Standard Applicant.
-          example: Standard Applicant 1
-          type: string
-        startDate:
-          description: Date the applicant record became active.
-          example: 2025-12-01
-          format: date
-          type: string
-        endDate:
-          description: Date the applicant became inactive. `null` indicates that this row is still active.
-          example: 2025-12-01
-          format: date
-          type:
-          - string
-          - 'null'
-      required:
-      - code
-      - endDate
-      - startDate
-      type: object
-    standard-applicant-get-summary-dto:
-      description: Standard Applicant reference data. Only code, name and usage dates are exposed; personal and contact details are excluded.
-      properties:
-        code:
-          description: Code that identifies the Standard Applicant.
-          example: STANDARD-1
-          type: string
-        name:
-          description: Standard Applicant name. Never derived from personal name fields.
-          example: Standard Applicant 1
-          type: string
-        startDate:
-          description: Date the applicant record became active.
-          example: 2025-12-01
-          format: date
-          type: string
-        endDate:
-          description: Date the applicant record became inactive, or null if still active.
-          example: 2025-12-01
-          format: date
-          type:
-          - string
-          - 'null'
-      required:
-      - code
-      - endDate
-      - startDate
-      type: object
-    standard-applicant-print-dto:
-      description: Print-ready Standard Applicans report payload.
-      properties:
-        reportTitle:
-          example: Standard Applicants Report
-          type: string
-        searchCriteria:
-          $ref: '#/components/schemas/standard-applicant-print-search-criteria-dto'
-        generatedAt:
-          format: date-time
-          type: string
-        recordCount:
-          format: int32
-          type: integer
-        applicants:
-          items:
-            $ref: '#/components/schemas/standard-applicant-print-row-dto'
-          type: array
-      required:
-      - applicants
-      - generatedAt
-      - recordCount
-      - reportTitle
-      - searchCriteria
-      type: object
-    sort_orders_inner:
-      properties:
-        property:
-          description: Property name used for sorting.
-          example: title
-          type: string
-        direction:
-          description: Sort direction.
-          enum:
-          - asc
-          - desc
-          example: asc
-          type: string
-      required:
-      - direction
-      - property
-      type: object
     page:
       description: Generic Spring Data page.
       properties:
@@ -677,20 +535,138 @@ components:
       - pageSize
       - totalElements
       type: object
-    sort:
-      description: Sorting state for the returned page.
-      example:
-        orders:
-        - property: title
-          direction: asc
-        - property: code
-          direction: desc
+    standard-applicant-page:
+      allOf:
+      - $ref: '#/components/schemas/page'
+      - properties:
+          content:
+            items:
+              $ref: '#/components/schemas/standard-applicant-get-summary-dto'
+            type: array
+        type: object
+    standard-applicant-print-dto:
+      description: Print-ready Standard Applicans report payload.
       properties:
-        orders:
-          description: Active sort orders in priority order.
+        reportTitle:
+          example: Standard Applicants Report
+          type: string
+        searchCriteria:
+          $ref: '#/components/schemas/standard-applicant-print-search-criteria-dto'
+        generatedAt:
+          format: date-time
+          type: string
+        recordCount:
+          format: int32
+          type: integer
+        applicants:
           items:
-            $ref: '#/components/schemas/sort_orders_inner'
+            $ref: '#/components/schemas/standard-applicant-print-row-dto'
           type: array
+      required:
+      - applicants
+      - generatedAt
+      - recordCount
+      - reportTitle
+      - searchCriteria
+      type: object
+    standard-applicant-print-row-dto:
+      description: Standard Applicant print row containing only code, name and usage dates. Personal and contact details are excluded.
+      properties:
+        code:
+          type:
+          - string
+          - 'null'
+        useFrom:
+          format: date
+          type:
+          - string
+          - 'null'
+        name:
+          type:
+          - string
+          - 'null'
+        useTo:
+          format: date
+          type:
+          - string
+          - 'null'
+      required:
+      - code
+      - name
+      - useFrom
+      - useTo
+      type: object
+    sort_orders_inner:
+      properties:
+        property:
+          description: Property name used for sorting.
+          example: title
+          type: string
+        direction:
+          description: Sort direction.
+          enum:
+          - asc
+          - desc
+          example: asc
+          type: string
+      required:
+      - direction
+      - property
+      type: object
+    standard-applicant-get-detail-dto:
+      description: Standard Applicant reference data. Only code, name and usage dates are exposed; personal and contact details are excluded.
+      properties:
+        code:
+          description: Code that identifies the Standard Applicant.
+          example: STANDARD-1
+          type: string
+        name:
+          description: Name of the Standard Applicant.
+          example: Standard Applicant 1
+          type: string
+        startDate:
+          description: Date the applicant record became active.
+          example: 2025-12-01
+          format: date
+          type: string
+        endDate:
+          description: Date the applicant became inactive. `null` indicates that this row is still active.
+          example: 2025-12-01
+          format: date
+          type:
+          - string
+          - 'null'
+      required:
+      - code
+      - endDate
+      - startDate
+      type: object
+    standard-applicant-print-search-criteria-dto:
+      description: Search criteria used for the Standard Applicants print report.
+      properties:
+        code:
+          type:
+          - string
+          - 'null'
+        name:
+          type:
+          - string
+          - 'null'
+        from:
+          format: date
+          type:
+          - string
+          - 'null'
+        to:
+          format: date
+          type:
+          - string
+          - 'null'
+      required:
+      - code
+      - from
+      - name
+      - to
       type: object
     problem:
       description: RFC 9457/7807 problem details.
@@ -727,33 +703,46 @@ components:
       - title
       - type
       type: object
-    standard-applicant-print-row-dto:
-      description: Standard Applicant print row containing only code, name and usage dates. Personal and contact details are excluded.
+    standard-applicant-get-summary-dto:
+      description: Standard Applicant reference data. Only code, name and usage dates are exposed; personal and contact details are excluded.
       properties:
         code:
-          type:
-          - string
-          - 'null'
-        useFrom:
-          format: date
-          type:
-          - string
-          - 'null'
+          description: Code that identifies the Standard Applicant.
+          example: STANDARD-1
+          type: string
         name:
-          type:
-          - string
-          - 'null'
-        useTo:
+          description: Standard Applicant name. Never derived from personal name fields.
+          example: Standard Applicant 1
+          type: string
+        startDate:
+          description: Date the applicant record became active.
+          example: 2025-12-01
+          format: date
+          type: string
+        endDate:
+          description: Date the applicant record became inactive, or null if still active.
+          example: 2025-12-01
           format: date
           type:
           - string
           - 'null'
       required:
       - code
-      - name
-      - useFrom
-      - useTo
+      - endDate
+      - startDate
       type: object
-x-refined-from:
-- appreg-api-openapi.yaml
-- hmcts-applications-register-openapi.yml
+    sort:
+      description: Sorting state for the returned page.
+      example:
+        orders:
+        - property: title
+          direction: asc
+        - property: code
+          direction: desc
+      properties:
+        orders:
+          description: Active sort orders in priority order.
+          items:
+            $ref: '#/components/schemas/sort_orders_inner'
+          type: array
+      type: object

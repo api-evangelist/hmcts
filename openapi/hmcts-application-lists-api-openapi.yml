@@ -1,11 +1,11 @@
 openapi: 3.2.0
 info:
-  title: Hmcts Application Lists API
-  version: '@version@'
   contact:
     name: HMCTS AppReg Team
     url: https://github.com/hmcts/appreg-api
-  description: 'Operations tagged application-lists across 2 of this provider''s published API definitions: appreg-api-openapi.yaml, hmcts-applications-register-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: REST API for managing Administrative Tasks, Applications Lists, Application List Entries and getting important, reference data including Application Codes, Result Codes, Fees, Court Locations, Criminal Justice Areas and Standard Applicants.
+  title: Applications Register Application Lists API
+  version: '@version@'
 servers:
 - url: /
 tags:
@@ -199,8 +199,6 @@ paths:
       summary: Create an Application List
       tags:
       - application-lists
-    servers:
-    - url: /
   /application-lists/print:
     post:
       description: Returns print-oriented Application Lists for one or more Application Lists in a single request. Supply `listIds` to scope the search. If `entryIds` is omitted or empty, all active entries from the supplied lists are returned. If `entryIds` is supplied, only the specified active entries from the supplied lists are returned within each returned list. Validation is all-or-nothing.
@@ -300,8 +298,6 @@ paths:
       summary: Get print-ready Application Lists in bulk
       tags:
       - application-lists
-    servers:
-    - url: /
   /application-lists/{listId}:
     delete:
       description: Permanently deletes the Application List identified by `listId`.
@@ -619,90 +615,43 @@ paths:
       summary: Update an Application List
       tags:
       - application-lists
-    servers:
-    - url: /
 components:
   schemas:
-    applicant:
-      additionalProperties: false
-      description: 'The applicant making the application.
-
-        In application read and print responses, Standard Applicants are represented by their
-
-        reference name in organisation.name (or their code when no reference name exists).
-
-        Their personal and contact values are not returned. For these read responses the
-
-        shared input contact constraints do not apply: contact fields may be null or absent.
-
-        Ordinary applicant input still requires the person or organisation contact details.
-
-        '
+    page:
+      description: Generic Spring Data page.
       properties:
-        person:
-          $ref: '#/components/schemas/person'
-        organisation:
-          $ref: '#/components/schemas/organisation'
-      type: object
-    application-list-update-dto:
-      additionalProperties: false
-      description: Request payload to fully replace an existing Application List. Blank fields will be rejected, nulls should be used instead.
-      properties:
-        date:
-          description: The calendar date on which the Application List is scheduled.
-          example: 2025-09-17
-          format: date
-          type: string
-        time:
-          description: The time of day at which the Application List is scheduled.
-          example: 37800
-          format: time
-          type: string
-        description:
-          description: Human-readable description of the Application List (e.g. session title or purpose).
-          example: Morning session for traffic-related applications
-          maxLength: 200
-          minLength: 1
-          type: string
-        status:
-          $ref: '#/components/schemas/application-list-status'
-        otherLocationDescription:
-          description: Free-text location if not using a standard court.
-          example: Temporary Courtroom at Town Hall
-          maxLength: 200
-          minLength: 1
-          type: string
-        courtLocationCode:
-          description: Code that identifies the Court Location.
-          example: LOC123
-          maxLength: 10
-          minLength: 1
-          type: string
-        cjaCode:
-          description: Criminal Justice Area code.
-          example: CJ
-          maxLength: 2
-          minLength: 1
-          type: string
-        durationHours:
-          description: Duration hours component.
-          example: 2
+        pageNumber:
+          description: Zero-based page index.
           format: int32
-          maximum: 99
-          minimum: 0
           type: integer
-        durationMinutes:
-          description: Duration minutes component.
-          example: 30
+        pageSize:
+          description: Page size.
           format: int32
-          maximum: 59
-          minimum: 0
+          type: integer
+        totalElements:
+          description: Total number of elements across all pages.
+          format: int64
+          type: integer
+        totalPages:
+          description: Total number of pages.
+          format: int32
+          type: integer
+        sort:
+          $ref: '#/components/schemas/sort'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        elementsOnPage:
+          description: Total number of elements in the current page.
+          format: int32
           type: integer
       required:
-      - date
-      - description
-      - status
-      - time
+      - content
+      - elementsOnPage
+      - pageNumber
+      - pageSize
+      - totalElements
       type: object
     entry-get-print-dto:
       description: An application view, used specifically for printing.
@@ -763,73 +712,62 @@ components:
       - applicationWording
       - id
       type: object
-    application-list-get-summary-dto:
-      description: Lightweight DTO for Application Lists, used in list/search views.
+    full-name:
+      additionalProperties: false
+      description: A persons full name. Blank fields will be rejected, nulls should be used instead.
       properties:
-        id:
-          description: Unique identifier of the Application List.
-          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-          format: uuid
+        title:
+          description: Prefix before a persons name.
+          example: Mr, Mrs
+          maxLength: 100
+          minLength: 1
+          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
           type: string
-        date:
-          description: The calendar date on which the Application List is scheduled.
-          example: 2025-09-17
-          format: date
+        firstName:
+          description: The person's first name.
+          example: John
+          maxLength: 100
+          minLength: 1
+          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
           type: string
-        time:
-          description: The time of day at which the Application List is scheduled, seconds are optional.
-          example: 37800
-          format: time
+        middleName:
+          description: The person's optional middle name or names.
+          example: James
+          maxLength: 100
+          minLength: 1
+          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
+          type:
+          - string
+          - 'null'
+        lastName:
+          description: The person's family name.
+          example: Smith
+          maxLength: 100
+          minLength: 1
+          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
           type: string
-        location:
-          description: Location where the applications will be considered.
-          example: Bath Magistrates Court
-          type: string
-        description:
-          description: Human-readable description of the Application List (e.g. session title or purpose).
-          example: Morning session for traffic-related applications
-          type: string
-        entriesCount:
-          description: Total number of Application List Entries associated with this Application List.
-          example: 12
-          format: int32
-          type: integer
-        status:
-          $ref: '#/components/schemas/application-list-status'
       required:
-      - date
-      - description
-      - id
-      - location
-      - numberOfEntries
-      - status
-      - time
+      - firstName
+      - lastName
       type: object
-    application-list-page:
-      allOf:
-      - $ref: '#/components/schemas/page'
-      - properties:
-          content:
-            items:
-              $ref: '#/components/schemas/application-list-get-summary-dto'
-            type: array
-        type: object
-    sort_orders_inner:
+    application-list-status:
+      description: Status of the Application List.
+      enum:
+      - OPEN
+      - CLOSED
+      example: OPEN
+      type: string
+    person:
+      additionalProperties: false
+      description: The person making, or responding to, the application.
       properties:
-        property:
-          description: Property name used for sorting.
-          example: title
-          type: string
-        direction:
-          description: Sort direction.
-          enum:
-          - asc
-          - desc
-          example: asc
-          type: string
+        name:
+          $ref: '#/components/schemas/full-name'
+        contactDetails:
+          $ref: '#/components/schemas/contact-details'
       required:
-      - direction
-      - property
+      - contactDetails
+      - name
       type: object
     problem:
       description: RFC 9457/7807 problem details.
@@ -865,159 +803,6 @@ components:
       - status
       - title
       - type
-      type: object
-    organisation:
-      additionalProperties: false
-      description: The organisation making, or responding to, the application. Blank fields will be rejected, nulls should be used instead.
-      properties:
-        name:
-          description: The name of the organisation.
-          example: ACME Industries LTD
-          maxLength: 100
-          minLength: 1
-          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
-          type: string
-        contactDetails:
-          $ref: '#/components/schemas/contact-details'
-      required:
-      - contactDetails
-      - name
-      type: object
-    official-type:
-      description: The type of Official hearing the application.
-      enum:
-      - MAGISTRATE
-      - CLERK
-      example: MAGISTRATE
-      type: string
-    application-list-create-dto:
-      additionalProperties: false
-      description: Request payload to create an Application List. Blank fields will be rejected, nulls should be used instead.
-      properties:
-        date:
-          description: The calendar date on which the Application List is scheduled.
-          example: 2025-09-17
-          format: date
-          type: string
-        time:
-          description: The time of day at which the Application List is scheduled, seconds are optional.
-          example: 37800
-          format: time
-          type: string
-        description:
-          maxLength: 200
-          minLength: 1
-          type: string
-        status:
-          $ref: '#/components/schemas/application-list-status'
-        courtLocationCode:
-          description: Code that identifies the Court Location.
-          example: LOC123
-          maxLength: 10
-          minLength: 1
-          type: string
-        otherLocationDescription:
-          description: Free-text location if not using a standard court.
-          example: Temporary Courtroom at Town Hall
-          maxLength: 200
-          minLength: 1
-          type: string
-        cjaCode:
-          description: Criminal Justice Area code.
-          example: CJ
-          maxLength: 2
-          minLength: 1
-          type: string
-        durationHours:
-          format: int32
-          maximum: 99
-          minimum: 0
-          type: integer
-        durationMinutes:
-          format: int32
-          maximum: 59
-          minimum: 0
-          type: integer
-      required:
-      - date
-      - description
-      - status
-      - time
-      type: object
-    application-list-get-print-dto:
-      description: Immutable DTO representing a detailed Application List.
-      properties:
-        date:
-          description: The calendar date on which the Application List is scheduled.
-          example: 2025-09-17
-          format: date
-          type: string
-        time:
-          description: The time of day at which the Application List is scheduled, seconds are optional.
-          example: 37800
-          format: time
-          type: string
-        courtName:
-          description: Name that identifies the Court Location.
-          example: Bath Magistrates Court
-          type: string
-        cja:
-          description: The Criminal Justice Area code and description.
-          example: 52 - Avon & Somerset
-          type: string
-        otherLocationDescription:
-          description: Free-text location if not using a standard court.
-          example: Temporary Courtroom at Town Hall
-          type: string
-        duration:
-          description: The length of the hearing that heard the Application List.
-          example: 1 hour, 30 minutes
-          type: string
-        entries:
-          description: List of entries (empty when none).
-          items:
-            $ref: '#/components/schemas/entry-get-print-dto'
-          type: array
-      required:
-      - date
-      - entries
-      - time
-      type: object
-    page:
-      description: Generic Spring Data page.
-      properties:
-        pageNumber:
-          description: Zero-based page index.
-          format: int32
-          type: integer
-        pageSize:
-          description: Page size.
-          format: int32
-          type: integer
-        totalElements:
-          description: Total number of elements across all pages.
-          format: int64
-          type: integer
-        totalPages:
-          description: Total number of pages.
-          format: int32
-          type: integer
-        sort:
-          $ref: '#/components/schemas/sort'
-        first:
-          type: boolean
-        last:
-          type: boolean
-        elementsOnPage:
-          description: Total number of elements in the current page.
-          format: int32
-          type: integer
-      required:
-      - content
-      - elementsOnPage
-      - pageNumber
-      - pageSize
-      - totalElements
       type: object
     application-list-get-detail-dto:
       description: Immutable DTO representing a detailed Application List.
@@ -1091,6 +876,150 @@ components:
       - status
       - time
       - version
+      type: object
+    application-list-get-print-dto:
+      description: Immutable DTO representing a detailed Application List.
+      properties:
+        date:
+          description: The calendar date on which the Application List is scheduled.
+          example: 2025-09-17
+          format: date
+          type: string
+        time:
+          description: The time of day at which the Application List is scheduled, seconds are optional.
+          example: 37800
+          format: time
+          type: string
+        courtName:
+          description: Name that identifies the Court Location.
+          example: Bath Magistrates Court
+          type: string
+        cja:
+          description: The Criminal Justice Area code and description.
+          example: 52 - Avon & Somerset
+          type: string
+        otherLocationDescription:
+          description: Free-text location if not using a standard court.
+          example: Temporary Courtroom at Town Hall
+          type: string
+        duration:
+          description: The length of the hearing that heard the Application List.
+          example: 1 hour, 30 minutes
+          type: string
+        entries:
+          description: List of entries (empty when none).
+          items:
+            $ref: '#/components/schemas/entry-get-print-dto'
+          type: array
+      required:
+      - date
+      - entries
+      - time
+      type: object
+    application-list-create-dto:
+      additionalProperties: false
+      description: Request payload to create an Application List. Blank fields will be rejected, nulls should be used instead.
+      properties:
+        date:
+          description: The calendar date on which the Application List is scheduled.
+          example: 2025-09-17
+          format: date
+          type: string
+        time:
+          description: The time of day at which the Application List is scheduled, seconds are optional.
+          example: 37800
+          format: time
+          type: string
+        description:
+          maxLength: 200
+          minLength: 1
+          type: string
+        status:
+          $ref: '#/components/schemas/application-list-status'
+        courtLocationCode:
+          description: Code that identifies the Court Location.
+          example: LOC123
+          maxLength: 10
+          minLength: 1
+          type: string
+        otherLocationDescription:
+          description: Free-text location if not using a standard court.
+          example: Temporary Courtroom at Town Hall
+          maxLength: 200
+          minLength: 1
+          type: string
+        cjaCode:
+          description: Criminal Justice Area code.
+          example: CJ
+          maxLength: 2
+          minLength: 1
+          type: string
+        durationHours:
+          format: int32
+          maximum: 99
+          minimum: 0
+          type: integer
+        durationMinutes:
+          format: int32
+          maximum: 59
+          minimum: 0
+          type: integer
+      required:
+      - date
+      - description
+      - status
+      - time
+      type: object
+    respondent:
+      additionalProperties: false
+      description: The respondent to the application.
+      properties:
+        person:
+          $ref: '#/components/schemas/respondent_person'
+        organisation:
+          $ref: '#/components/schemas/organisation'
+      type: object
+    sort_orders_inner:
+      properties:
+        property:
+          description: Property name used for sorting.
+          example: title
+          type: string
+        direction:
+          description: Sort direction.
+          enum:
+          - asc
+          - desc
+          example: asc
+          type: string
+      required:
+      - direction
+      - property
+      type: object
+    official:
+      additionalProperties: false
+      description: The Official hearing the application. Blank fields will be rejected, nulls should be used instead.
+      properties:
+        title:
+          description: Prefix before a persons name.
+          example: Mr, Mrs
+          maxLength: 100
+          minLength: 1
+          type: string
+        surname:
+          description: The persons family name.
+          example: Smith
+          maxLength: 100
+          minLength: 1
+          type: string
+        forename:
+          description: The persons first name.
+          example: John
+          maxLength: 100
+          minLength: 1
+          type: string
+        type:
+          $ref: '#/components/schemas/official-type'
       type: object
     contact-details:
       additionalProperties: false
@@ -1176,71 +1105,6 @@ components:
       required:
       - addressLine1
       type: object
-    respondent_person:
-      allOf:
-      - $ref: '#/components/schemas/person'
-      - description: Person details for a respondent (includes DOB).
-        properties:
-          dateOfBirth:
-            description: Date of birth (only applicable for person respondents).
-            example: 1990-01-01
-            format: date
-            type: string
-        type: object
-    application-list-status:
-      description: Status of the Application List.
-      enum:
-      - OPEN
-      - CLOSED
-      example: OPEN
-      type: string
-    full-name:
-      additionalProperties: false
-      description: A persons full name. Blank fields will be rejected, nulls should be used instead.
-      properties:
-        title:
-          description: Prefix before a persons name.
-          example: Mr, Mrs
-          maxLength: 100
-          minLength: 1
-          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
-          type: string
-        firstName:
-          description: The person's first name.
-          example: John
-          maxLength: 100
-          minLength: 1
-          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
-          type: string
-        middleName:
-          description: The person's optional middle name or names.
-          example: James
-          maxLength: 100
-          minLength: 1
-          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
-          type:
-          - string
-          - 'null'
-        lastName:
-          description: The person's family name.
-          example: Smith
-          maxLength: 100
-          minLength: 1
-          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
-          type: string
-      required:
-      - firstName
-      - lastName
-      type: object
-    respondent:
-      additionalProperties: false
-      description: The respondent to the application.
-      properties:
-        person:
-          $ref: '#/components/schemas/respondent_person'
-        organisation:
-          $ref: '#/components/schemas/organisation'
-      type: object
     sort:
       description: Sorting state for the returned page.
       example:
@@ -1255,31 +1119,6 @@ components:
           items:
             $ref: '#/components/schemas/sort_orders_inner'
           type: array
-      type: object
-    official:
-      additionalProperties: false
-      description: The Official hearing the application. Blank fields will be rejected, nulls should be used instead.
-      properties:
-        title:
-          description: Prefix before a persons name.
-          example: Mr, Mrs
-          maxLength: 100
-          minLength: 1
-          type: string
-        surname:
-          description: The persons family name.
-          example: Smith
-          maxLength: 100
-          minLength: 1
-          type: string
-        forename:
-          description: The persons first name.
-          example: John
-          maxLength: 100
-          minLength: 1
-          type: string
-        type:
-          $ref: '#/components/schemas/official-type'
       type: object
     application-list-get-filter-dto:
       description: Filter criteria for GET /application-lists.
@@ -1323,6 +1162,104 @@ components:
           example: true
           type: boolean
       type: object
+    application-list-get-summary-dto:
+      description: Lightweight DTO for Application Lists, used in list/search views.
+      properties:
+        id:
+          description: Unique identifier of the Application List.
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          format: uuid
+          type: string
+        date:
+          description: The calendar date on which the Application List is scheduled.
+          example: 2025-09-17
+          format: date
+          type: string
+        time:
+          description: The time of day at which the Application List is scheduled, seconds are optional.
+          example: 37800
+          format: time
+          type: string
+        location:
+          description: Location where the applications will be considered.
+          example: Bath Magistrates Court
+          type: string
+        description:
+          description: Human-readable description of the Application List (e.g. session title or purpose).
+          example: Morning session for traffic-related applications
+          type: string
+        entriesCount:
+          description: Total number of Application List Entries associated with this Application List.
+          example: 12
+          format: int32
+          type: integer
+        status:
+          $ref: '#/components/schemas/application-list-status'
+      required:
+      - date
+      - description
+      - id
+      - location
+      - numberOfEntries
+      - status
+      - time
+      type: object
+    applicant:
+      additionalProperties: false
+      description: 'The applicant making the application.
+
+        In application read and print responses, Standard Applicants are represented by their
+
+        reference name in organisation.name (or their code when no reference name exists).
+
+        Their personal and contact values are not returned. For these read responses the
+
+        shared input contact constraints do not apply: contact fields may be null or absent.
+
+        Ordinary applicant input still requires the person or organisation contact details.
+
+        '
+      properties:
+        person:
+          $ref: '#/components/schemas/person'
+        organisation:
+          $ref: '#/components/schemas/organisation'
+      type: object
+    respondent_person:
+      allOf:
+      - $ref: '#/components/schemas/person'
+      - description: Person details for a respondent (includes DOB).
+        properties:
+          dateOfBirth:
+            description: Date of birth (only applicable for person respondents).
+            example: 1990-01-01
+            format: date
+            type: string
+        type: object
+    organisation:
+      additionalProperties: false
+      description: The organisation making, or responding to, the application. Blank fields will be rejected, nulls should be used instead.
+      properties:
+        name:
+          description: The name of the organisation.
+          example: ACME Industries LTD
+          maxLength: 100
+          minLength: 1
+          pattern: ^[^\u0000-\u001F\u007F-\u009F]*$
+          type: string
+        contactDetails:
+          $ref: '#/components/schemas/contact-details'
+      required:
+      - contactDetails
+      - name
+      type: object
+    official-type:
+      description: The type of Official hearing the application.
+      enum:
+      - MAGISTRATE
+      - CLERK
+      example: MAGISTRATE
+      type: string
     bulk-get-application-list-entries-request-dto:
       properties:
         listIds:
@@ -1350,18 +1287,72 @@ components:
       required:
       - listIds
       type: object
-    person:
+    application-list-update-dto:
       additionalProperties: false
-      description: The person making, or responding to, the application.
+      description: Request payload to fully replace an existing Application List. Blank fields will be rejected, nulls should be used instead.
       properties:
-        name:
-          $ref: '#/components/schemas/full-name'
-        contactDetails:
-          $ref: '#/components/schemas/contact-details'
+        date:
+          description: The calendar date on which the Application List is scheduled.
+          example: 2025-09-17
+          format: date
+          type: string
+        time:
+          description: The time of day at which the Application List is scheduled.
+          example: 37800
+          format: time
+          type: string
+        description:
+          description: Human-readable description of the Application List (e.g. session title or purpose).
+          example: Morning session for traffic-related applications
+          maxLength: 200
+          minLength: 1
+          type: string
+        status:
+          $ref: '#/components/schemas/application-list-status'
+        otherLocationDescription:
+          description: Free-text location if not using a standard court.
+          example: Temporary Courtroom at Town Hall
+          maxLength: 200
+          minLength: 1
+          type: string
+        courtLocationCode:
+          description: Code that identifies the Court Location.
+          example: LOC123
+          maxLength: 10
+          minLength: 1
+          type: string
+        cjaCode:
+          description: Criminal Justice Area code.
+          example: CJ
+          maxLength: 2
+          minLength: 1
+          type: string
+        durationHours:
+          description: Duration hours component.
+          example: 2
+          format: int32
+          maximum: 99
+          minimum: 0
+          type: integer
+        durationMinutes:
+          description: Duration minutes component.
+          example: 30
+          format: int32
+          maximum: 59
+          minimum: 0
+          type: integer
       required:
-      - contactDetails
-      - name
+      - date
+      - description
+      - status
+      - time
       type: object
-x-refined-from:
-- appreg-api-openapi.yaml
-- hmcts-applications-register-openapi.yml
+    application-list-page:
+      allOf:
+      - $ref: '#/components/schemas/page'
+      - properties:
+          content:
+            items:
+              $ref: '#/components/schemas/application-list-get-summary-dto'
+            type: array
+        type: object

@@ -1,13 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Hmcts Validation API
+  title: Results Service Validation API
+  description: API for validating draft hearing results against declarative, programmatic, and LLM-assisted rules
   version: 0.1.0
   contact:
     email: no-reply@hmcts.com
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-  description: 'Operations tagged validation across 2 of this provider''s published API definitions: api-cp-crime-hearing-results-validator-openapi-spec.yml, hmcts-results-validation-service-openapi.yml. Each path carries the servers of the definition it was published in.'
 tags:
 - name: Validation
 paths:
@@ -42,18 +42,74 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    Prompt:
+    ValidationIssue:
       type: object
-      required:
-      - promptRef
-      - promptValue
+      description: 'Represents a single validation issue raised against a hearing result. Each issue is scoped to either the OFFENCE or DEFENDANT level, indicated by validationLevel. Issues with severity ERROR must always have validationLevel OFFENCE and populate affectedOffences. Issues with severity WARNING may have validationLevel OFFENCE or DEFENDANT. When validationLevel is OFFENCE, affectedOffences lists every offence the issue applies to, each carrying its own per-offence message. When validationLevel is DEFENDANT, affectedDefendants lists every defendant the issue applies to, each carrying its own per-defendant message.
+
+        '
       properties:
-        promptRef:
+        ruleId:
           type: string
-          description: Identifies the data field this prompt captures (e.g. endDate, endDateOfTagging).
-        promptValue:
+          description: Rule identifier
+        severity:
           type: string
-          description: The raw string value entered for this prompt.
+          enum:
+          - ERROR
+          - WARNING
+          description: Issue severity. ERROR issues are always at OFFENCE level (validationLevel must be OFFENCE). WARNING issues may be at either OFFENCE or DEFENDANT level.
+        affectedResultCodes:
+          type: array
+          items:
+            type: string
+          description: Affected result codes
+        affectedOffences:
+          type: array
+          items:
+            $ref: '#/components/schemas/AffectedOffence'
+          description: Populated when validationLevel is OFFENCE. Each entry identifies an offence the issue applies to, with a per-offence message. Always populated for ERROR severity issues.
+        affectedDefendants:
+          type: array
+          items:
+            $ref: '#/components/schemas/AffectedDefendant'
+          description: Populated when validationLevel is DEFENDANT. Each entry identifies a defendant the issue applies to, with a per-defendant message. Only applicable to WARNING severity issues.
+        validationLevel:
+          type: string
+          enum:
+          - OFFENCE
+          - DEFENDANT
+          description: Scopes the issue to either offence or defendant level. Must be OFFENCE when severity is ERROR. Determines whether affectedOffences or affectedDefendants is populated.
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Machine-readable error code
+        message:
+          type: string
+          description: Human-readable error message
+        details:
+          type: object
+          additionalProperties: true
+          description: Additional error context
+        timestamp:
+          type: string
+          format: date-time
+        traceId:
+          type: string
+          description: Unique identifier for error tracing
+    AffectedDefendant:
+      type: object
+      description: A defendant affected by a validation issue, including a specific message for that defendant
+      required:
+      - defendantId
+      - message
+      properties:
+        defendantId:
+          type: string
+          description: Defendant identifier
+        message:
+          type: string
+          description: Human-readable message describing why this defendant is affected by the validation issue
     DraftValidationRequest:
       type: object
       required:
@@ -93,19 +149,68 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/OffenceDto'
-    AffectedDefendant:
+    ValidationErrors:
       type: object
-      description: A defendant affected by a validation issue, including a specific message for that defendant
+      description: Container for validation errors, combining human-readable messages with structured validation issues
       required:
-      - defendantId
+      - errorMessages
+      properties:
+        errorMessages:
+          type: array
+          items:
+            type: string
+          description: Top-level human-readable summaries of the validation errors
+        validationIssues:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationIssue'
+          description: Structured validation issues with rule details and affected entities
+    DraftValidationResponse:
+      type: object
+      properties:
+        validationId:
+          type: string
+          description: Unique validation request identifier
+        timestamp:
+          type: string
+          format: date-time
+          description: Validation execution timestamp
+        mode:
+          type: string
+          description: Validation mode (e.g. advisory)
+        rulesEvaluated:
+          type: array
+          items:
+            type: string
+          description: Rule IDs that were evaluated
+        isValid:
+          type: boolean
+          description: Whether validation passed (no errors)
+        errors:
+          $ref: '#/components/schemas/ValidationErrors'
+        warnings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationIssue'
+        processingTimeMs:
+          type: integer
+          description: Processing time in milliseconds
+    AffectedOffence:
+      type: object
+      description: An offence affected by a validation issue, including a specific message for that offence
+      required:
+      - offenceId
       - message
       properties:
-        defendantId:
+        offenceId:
           type: string
-          description: Defendant identifier
+          description: Offence identifier
+        offenceTitle:
+          type: string
+          description: Offence title
         message:
           type: string
-          description: Human-readable message describing why this defendant is affected by the validation issue
+          description: Human-readable message describing why this offence is affected by the validation issue
     DefendantDto:
       type: object
       required:
@@ -129,69 +234,6 @@ components:
           type: string
           format: date
           description: Defendant's date of birth. Optional during the transition period while callers are updated to populate it.
-    ValidationErrors:
-      type: object
-      description: Container for validation errors, combining human-readable messages with structured validation issues
-      required:
-      - errorMessages
-      properties:
-        errorMessages:
-          type: array
-          items:
-            type: string
-          description: Top-level human-readable summaries of the validation errors
-        validationIssues:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationIssue'
-          description: Structured validation issues with rule details and affected entities
-    OffenceDto:
-      type: object
-      required:
-      - offenceId
-      - offenceCode
-      - offenceTitle
-      properties:
-        offenceId:
-          type: string
-          description: Offence identifier
-        offenceCode:
-          type: string
-          description: Offence code (e.g. TH68001)
-        offenceTitle:
-          type: string
-          description: Offence description
-        hasActiveElectronicMonitoring:
-          type: boolean
-          description: Active electronic monitoring indicator
-        orderIndex:
-          type: integer
-          description: Offence order index (count number) for display in validation messages
-        caseUrn:
-          type: string
-          description: Case URN (prosecution case reference) for identifying which case this offence belongs to
-        hasExistingCtlRecord:
-          type: boolean
-          description: True if a Custody Time Limit record is already associated with this offence from a previous hearing. When true the CTL missing check (DR-CTL-001) is suppressed.
-        isConvicted:
-          type: boolean
-          description: True if this offence is convicted (guilty plea, finding of guilt, or a recorded date of conviction). When true the CTL missing check (DR-CTL-001) is suppressed.
-    AffectedOffence:
-      type: object
-      description: An offence affected by a validation issue, including a specific message for that offence
-      required:
-      - offenceId
-      - message
-      properties:
-        offenceId:
-          type: string
-          description: Offence identifier
-        offenceTitle:
-          type: string
-          description: Offence title
-        message:
-          type: string
-          description: Human-readable message describing why this offence is affected by the validation issue
     ResultLineDto:
       type: object
       required:
@@ -234,91 +276,49 @@ components:
           items:
             $ref: '#/components/schemas/Prompt'
           description: Structured data fields captured alongside the result line.
-    ValidationIssue:
+    OffenceDto:
       type: object
-      description: 'Represents a single validation issue raised against a hearing result. Each issue is scoped to either the OFFENCE or DEFENDANT level, indicated by validationLevel. Issues with severity ERROR must always have validationLevel OFFENCE and populate affectedOffences. Issues with severity WARNING may have validationLevel OFFENCE or DEFENDANT. When validationLevel is OFFENCE, affectedOffences lists every offence the issue applies to, each carrying its own per-offence message. When validationLevel is DEFENDANT, affectedDefendants lists every defendant the issue applies to, each carrying its own per-defendant message.
-
-        '
+      required:
+      - offenceId
+      - offenceCode
+      - offenceTitle
       properties:
-        ruleId:
+        offenceId:
           type: string
-          description: Rule identifier
-        severity:
+          description: Offence identifier
+        offenceCode:
           type: string
-          enum:
-          - ERROR
-          - WARNING
-          description: Issue severity. ERROR issues are always at OFFENCE level (validationLevel must be OFFENCE). WARNING issues may be at either OFFENCE or DEFENDANT level.
-        affectedResultCodes:
-          type: array
-          items:
-            type: string
-          description: Affected result codes
-        affectedOffences:
-          type: array
-          items:
-            $ref: '#/components/schemas/AffectedOffence'
-          description: Populated when validationLevel is OFFENCE. Each entry identifies an offence the issue applies to, with a per-offence message. Always populated for ERROR severity issues.
-        affectedDefendants:
-          type: array
-          items:
-            $ref: '#/components/schemas/AffectedDefendant'
-          description: Populated when validationLevel is DEFENDANT. Each entry identifies a defendant the issue applies to, with a per-defendant message. Only applicable to WARNING severity issues.
-        validationLevel:
+          description: Offence code (e.g. TH68001)
+        offenceTitle:
           type: string
-          enum:
-          - OFFENCE
-          - DEFENDANT
-          description: Scopes the issue to either offence or defendant level. Must be OFFENCE when severity is ERROR. Determines whether affectedOffences or affectedDefendants is populated.
-    DraftValidationResponse:
-      type: object
-      properties:
-        validationId:
-          type: string
-          description: Unique validation request identifier
-        timestamp:
-          type: string
-          format: date-time
-          description: Validation execution timestamp
-        mode:
-          type: string
-          description: Validation mode (e.g. advisory)
-        rulesEvaluated:
-          type: array
-          items:
-            type: string
-          description: Rule IDs that were evaluated
-        isValid:
+          description: Offence description
+        hasActiveElectronicMonitoring:
           type: boolean
-          description: Whether validation passed (no errors)
-        errors:
-          $ref: '#/components/schemas/ValidationErrors'
-        warnings:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationIssue'
-        processingTimeMs:
+          description: Active electronic monitoring indicator
+        orderIndex:
           type: integer
-          description: Processing time in milliseconds
-    ErrorResponse:
+          description: Offence order index (count number) for display in validation messages
+        caseUrn:
+          type: string
+          description: Case URN (prosecution case reference) for identifying which case this offence belongs to
+        hasExistingCtlRecord:
+          type: boolean
+          description: True if a Custody Time Limit record is already associated with this offence from a previous hearing. When true the CTL missing check (DR-CTL-001) is suppressed.
+        isConvicted:
+          type: boolean
+          description: True if this offence is convicted (guilty plea, finding of guilt, or a recorded date of conviction). When true the CTL missing check (DR-CTL-001) is suppressed.
+    Prompt:
       type: object
+      required:
+      - promptRef
+      - promptValue
       properties:
-        error:
+        promptRef:
           type: string
-          description: Machine-readable error code
-        message:
+          description: Identifies the data field this prompt captures (e.g. endDate, endDateOfTagging).
+        promptValue:
           type: string
-          description: Human-readable error message
-        details:
-          type: object
-          additionalProperties: true
-          description: Additional error context
-        timestamp:
-          type: string
-          format: date-time
-        traceId:
-          type: string
-          description: Unique identifier for error tracing
+          description: The raw string value entered for this prompt.
   parameters:
     CppclientcorrelationidHeader:
       in: header
@@ -334,6 +334,3 @@ components:
       schema:
         type: string
       description: User identifier for CP authentication
-x-refined-from:
-- api-cp-crime-hearing-results-validator-openapi-spec.yml
-- hmcts-results-validation-service-openapi.yml

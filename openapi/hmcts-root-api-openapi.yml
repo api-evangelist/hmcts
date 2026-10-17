@@ -1,13 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Hmcts Root API
+  title: Results Validation Service Root API
+  description: API for validating draft hearing results against declarative, programmatic, and LLM-assisted rules
   version: 0.1.0
   contact:
     email: no-reply@hmcts.com
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-  description: 'Operations tagged root across 2 of this provider''s published API definitions: api-cp-crime-hearing-results-validator-openapi-spec.yml, hmcts-results-validation-service-openapi.yml. Each path carries the servers of the definition it was published in.'
 tags:
 - name: Root
 paths:
@@ -25,6 +25,3 @@ paths:
               schema:
                 type: string
                 example: Hello
-x-refined-from:
-- api-cp-crime-hearing-results-validator-openapi-spec.yml
-- hmcts-results-validation-service-openapi.yml

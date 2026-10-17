@@ -1,14 +1,18 @@
 openapi: 3.2.0
 info:
-  title: Hmcts Subscription API
+  title: Crime Hearing Results Document Subscription API
+  description: 'Allows organisations to be automatically notified when crime hearing result
+
+    documents become available, such as when a verdict is recorded or sentencing
+
+    notes are published.'
   version: 1.0.0
-  contact:
-    name: HMCTS API Marketplace
-    email: no-reply@hmcts.com
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-  description: 'Operations tagged Subscription across 2 of this provider''s published API definitions: api-cp-crime-hearing-results-document-subscription-openapi-spec.yml, hmcts-crime-hearing-results-document-subscription-openapi.yml. Each path carries the servers of the definition it was published in.'
+  contact:
+    name: HMCTS API Marketplace
+    email: no-reply@hmcts.com
 servers:
 - description: Crime Hearing Results Document Subscription API
   url: https://api-cp-crime-hearing-results-document-subscription.net/{version}
@@ -52,13 +56,6 @@ paths:
           headers:
             X-Correlation-Id:
               $ref: '#/components/headers/XCorrelationId'
-    servers:
-    - description: Crime Hearing Results Document Subscription API
-      url: https://api-cp-crime-hearing-results-document-subscription.net/{version}
-      variables:
-        version:
-          default: 1.0.0
-          description: API version; matches the spec info.version
   /client-subscriptions:
     post:
       summary: Create a new client subscription
@@ -151,13 +148,6 @@ paths:
                       $ref: '#/components/headers/XCorrelationId'
                 '400':
                   description: Bad request - the event payload was invalid
-    servers:
-    - description: Crime Hearing Results Document Subscription API
-      url: https://api-cp-crime-hearing-results-document-subscription.net/{version}
-      variables:
-        version:
-          default: 1.0.0
-          description: API version; matches the spec info.version
   /client-subscriptions/{clientSubscriptionId}:
     get:
       summary: Retrieve a client subscription by ID
@@ -302,13 +292,6 @@ paths:
           headers:
             X-Correlation-Id:
               $ref: '#/components/headers/XCorrelationId'
-    servers:
-    - description: Crime Hearing Results Document Subscription API
-      url: https://api-cp-crime-hearing-results-document-subscription.net/{version}
-      variables:
-        version:
-          default: 1.0.0
-          description: API version; matches the spec info.version
   /client-subscriptions/{clientSubscriptionId}/secret/rotate:
     post:
       summary: Rotate the HMAC signing secret for a subscription
@@ -375,33 +358,8 @@ paths:
           headers:
             X-Correlation-Id:
               $ref: '#/components/headers/XCorrelationId'
-    servers:
-    - description: Crime Hearing Results Document Subscription API
-      url: https://api-cp-crime-hearing-results-document-subscription.net/{version}
-      variables:
-        version:
-          default: 1.0.0
-          description: API version; matches the spec info.version
 components:
   schemas:
-    NotificationEndpoint:
-      type: object
-      required:
-      - callbackUrl
-      properties:
-        callbackUrl:
-          type: string
-          pattern: ^https://.*$
-          description: The location where event data will be sent. Event notifications will be POSTed to this URL with EventNotificationPayload in the request body.
-    RotateSecretRequest:
-      type: object
-      required:
-      - keyId
-      properties:
-        keyId:
-          type: string
-          description: Identifier of the current key to rotate
-          example: kid-v1-b41a48b7-a2a1-45f1-b562-1358f141ddb2
     ErrorResponse:
       type: object
       required:
@@ -412,6 +370,28 @@ components:
           type: string
         message:
           type: string
+    HmacCredentials:
+      type: object
+      description: HMAC credentials issued at subscription creation for signing outbound callbacks.
+      properties:
+        keyId:
+          type: string
+          description: Identifier for the shared secret used to sign outbound callbacks for this subscription
+          example: kid-v1-b41a48b7-a2a1-45f1-b562-1358f141ddb2
+        secret:
+          type: string
+          writeOnly: true
+          description: Base64-encoded shared secret used to sign outbound callbacks for this subscription. Returned in the create subscription response. Not returned by subsequent GET operations.
+          example: example-base64-encoded-secret
+    NotificationEndpoint:
+      type: object
+      required:
+      - callbackUrl
+      properties:
+        callbackUrl:
+          type: string
+          pattern: ^https://.*$
+          description: The location where event data will be sent. Event notifications will be POSTed to this URL with EventNotificationPayload in the request body.
     ClientSubscription:
       type: object
       required:
@@ -437,32 +417,15 @@ components:
           format: date-time
         hmac:
           $ref: '#/components/schemas/HmacCredentials'
-    ClientSubscriptionRequest:
+    EventTypePayload:
       type: object
-      required:
-      - notificationEndpoint
-      - eventTypes
       properties:
-        notificationEndpoint:
-          $ref: '#/components/schemas/NotificationEndpoint'
-        eventTypes:
-          type: array
-          minItems: 1
-          items:
-            $ref: '#/components/schemas/EventType'
-    HmacCredentials:
-      type: object
-      description: HMAC credentials issued at subscription creation for signing outbound callbacks.
-      properties:
-        keyId:
+        eventName:
           type: string
-          description: Identifier for the shared secret used to sign outbound callbacks for this subscription
-          example: kid-v1-b41a48b7-a2a1-45f1-b562-1358f141ddb2
-        secret:
+        displayName:
           type: string
-          writeOnly: true
-          description: Base64-encoded shared secret used to sign outbound callbacks for this subscription. Returned in the create subscription response. Not returned by subsequent GET operations.
-          example: example-base64-encoded-secret
+        category:
+          type: string
     EventTypeResponse:
       type: object
       properties:
@@ -470,6 +433,15 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EventTypePayload'
+    RotateSecretRequest:
+      type: object
+      required:
+      - keyId
+      properties:
+        keyId:
+          type: string
+          description: Identifier of the current key to rotate
+          example: kid-v1-b41a48b7-a2a1-45f1-b562-1358f141ddb2
     EventNotificationPayload:
       type: object
       description: Callback payload delivered to the subscriber.
@@ -532,23 +504,49 @@ components:
     EventType:
       type: string
       description: "Possible values:\n  - PRISON_COURT_REGISTER_GENERATED\n  - WEE_Layout5\n  - NEE_DetentionOnRecommendationForDeportation\n  - OEE_MedicalRemandAdditionalDetails\n  - WEE_RemandAfterBailAppealByProsecutor\n  - WEE_CustodialSentence\n  - WEE_CustodialSentenceWitness\n  - WEE_CommittalToCrownCourtForConsiderationOfTheQuestionOfBailOnAChargeOfMurder\n  - WEE_CommittalToCrownCourtForSentence\n  - WEE_SendingToCrownCourtForTrial\n  - OEE_BailAppealEndOfCustody\n  - WEE_CommitmentPendingTransferToServiceCustody\n  - WEE_NonPaymentOfMoneyOwedCivilDebt\n  - WEE_CustodyWarrantOnDischargeOfExtraditionPendingAppeal\n  - WEE_CustodyWarrantOnDischargeOfExtraditionPendingAppealPart2\n  - WEE_CustodyWarrantOnExtradition\n  - WEE_CustodyWarrantOnExtraditionCategory2Territory\n  - WEE_CustodyWarrantOnExtraditionWithConsent\n  - WEE_CustodyWarrantOnExtraditionWithBailDirection\n  - WEE_CustodyWarrantOnExtraditionWithBailDirectionWithConsent\n  - WEE_CustodyWarrantOnExtraditionWithBailDirectionCategory2Territory\n  - WEE_CustodyWarrantSendingToSecretaryOfStateCategory2Territory\n  - WEE_CustodyWarrantSendingToSecretaryOfStateOnConsentCategory2Territory\n  - WEE_CustodyWarrantWithBailDirectionOnDischargeOfExtraditionPendingAppeal\n  - WEE_CustodyWarrantWithBailDirectionOnDischargeOfExtraditionPendingAppealPart2\n  - WEE_CustodyWarrantWithBailDirectionSendingToSecretaryOfStateCategory2Territory\n  - WEE_CustodyWarrantWithBailDirectionSendingToSecretaryOfStateOnConsentCategory2Territory\n  - WEE_ExtraditionRemandAfterBailAppealByProsecutor\n  - WEE_ExtraditionSupplementToCustodyWarrant\n  - OBE_TerminationOfFootballBanning\n  - OBE_ChangeOfFootballBanning\n  - NEE_FootballBanning\n  - WEE_Remand\n  - WXE_RemandWarrantYouthDetentionAccommodation\n  - OXE_DetentionAndTraining\n  - WEE_InjunctionDetention\n  - OPE_SupervisionOnBreachOfDetentionAndTraining\n  - WEE_CommittalToCrownCourtAuthorityToHoldInYouthDetentionAccommodation\n  - WEE_Detention\n  - WEE_DetentionInYouthDetentionAccommodationBreach\n  - WEE_SendingToCrownCourtAuthorityToHoldInYouthDetentionAccommodation\n"
-    EventTypePayload:
+    ClientSubscriptionRequest:
       type: object
+      required:
+      - notificationEndpoint
+      - eventTypes
       properties:
-        eventName:
-          type: string
-        displayName:
-          type: string
-        category:
-          type: string
-  headers:
-    XCorrelationId:
-      description: Correlation identifier for this request/response, used for end-to-end tracing.
-      schema:
-        type: string
-        format: uuid
-        example: bf931a90-3e3f-4e8e-a8e4-a4ca9ac07830
+        notificationEndpoint:
+          $ref: '#/components/schemas/NotificationEndpoint'
+        eventTypes:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/EventType'
   examples:
+    updateSubscription:
+      summary: Example update request
+      value:
+        notificationEndpoint:
+          callbackUrl: https://client.example.com/new-hook
+        eventTypes:
+        - PRISON_COURT_REGISTER_GENERATED
+    rotateSecretResponse:
+      summary: Example secret rotation response
+      value:
+        keyId: kid-v1-b41a48b7-a2a1-45f1-b562-1358f141ddb2
+        secret: new-example-base64-encoded-secret
+    createSubscriptionRequest:
+      summary: Example subscription creation request
+      value:
+        notificationEndpoint:
+          callbackUrl: https://client.example.com/events
+        eventTypes:
+        - PRISON_COURT_REGISTER_GENERATED
+    getSubscriptionError:
+      summary: Example GET subscription error response
+      value:
+        error: not_found
+        message: No subscription exists for ID aa12f3dd-4cc1-4da7-b9ea-552fa3b9bc44.
+    createSubscriptionError:
+      summary: Example subscription creation error response
+      value:
+        error: invalid_request
+        message: eventTypes must contain at least one value.
     updatedSubscriptionResponse:
       summary: Example update subscription response
       value:
@@ -559,35 +557,20 @@ components:
         - PRISON_COURT_REGISTER_GENERATED
         createdAt: '2025-01-01T10:00:00Z'
         updatedAt: '2025-01-10T09:15:00Z'
-    createSubscriptionRequest:
-      summary: Example subscription creation request
+    getSubscriptionResponse:
+      summary: Example GET subscription response
       value:
+        clientSubscriptionId: aa12f3dd-4cc1-4da7-b9ea-552fa3b9bc44
         notificationEndpoint:
           callbackUrl: https://client.example.com/events
         eventTypes:
         - PRISON_COURT_REGISTER_GENERATED
-    updateSubscription:
-      summary: Example update request
-      value:
-        notificationEndpoint:
-          callbackUrl: https://client.example.com/new-hook
-        eventTypes:
-        - PRISON_COURT_REGISTER_GENERATED
-    createSubscriptionError:
-      summary: Example subscription creation error response
-      value:
-        error: invalid_request
-        message: eventTypes must contain at least one value.
-    rotateSecretResponse:
-      summary: Example secret rotation response
+        createdAt: '2025-01-01T10:00:00Z'
+        updatedAt: '2025-01-05T17:30:00Z'
+    rotateSecretRequest:
+      summary: Example secret rotation request
       value:
         keyId: kid-v1-b41a48b7-a2a1-45f1-b562-1358f141ddb2
-        secret: new-example-base64-encoded-secret
-    getSubscriptionError:
-      summary: Example GET subscription error response
-      value:
-        error: not_found
-        message: No subscription exists for ID aa12f3dd-4cc1-4da7-b9ea-552fa3b9bc44.
     createSubscriptionResponse:
       summary: Example subscription creation response
       value:
@@ -601,16 +584,6 @@ components:
           secret: example-base64-encoded-secret
         createdAt: '2025-01-01T10:00:00Z'
         updatedAt: null
-    getSubscriptionResponse:
-      summary: Example GET subscription response
-      value:
-        clientSubscriptionId: aa12f3dd-4cc1-4da7-b9ea-552fa3b9bc44
-        notificationEndpoint:
-          callbackUrl: https://client.example.com/events
-        eventTypes:
-        - PRISON_COURT_REGISTER_GENERATED
-        createdAt: '2025-01-01T10:00:00Z'
-        updatedAt: '2025-01-05T17:30:00Z'
     EventTypesResponse:
       summary: Example Event-Types response
       value:
@@ -738,10 +711,6 @@ components:
         - eventName: WEE_SendingToCrownCourtAuthorityToHoldInYouthDetentionAccommodation
           displayName: Warrant of Sending to Crown Court - Authority to Hold in Youth Detention Accommodation
           category: WARRANT
-    rotateSecretRequest:
-      summary: Example secret rotation request
-      value:
-        keyId: kid-v1-b41a48b7-a2a1-45f1-b562-1358f141ddb2
   parameters:
     XCorrelationId:
       name: X-Correlation-Id
@@ -752,6 +721,13 @@ components:
         type: string
         format: uuid
         example: d679fd61-061f-4440-9623-36280f0807b7
+  headers:
+    XCorrelationId:
+      description: Correlation identifier for this request/response, used for end-to-end tracing.
+      schema:
+        type: string
+        format: uuid
+        example: bf931a90-3e3f-4e8e-a8e4-a4ca9ac07830
   securitySchemes:
     bearerAuth:
       type: http
@@ -762,6 +738,3 @@ components:
       in: header
       name: Ocp-Apim-Subscription-Key
       description: Subscription key for API access
-x-refined-from:
-- api-cp-crime-hearing-results-document-subscription-openapi-spec.yml
-- hmcts-crime-hearing-results-document-subscription-openapi.yml

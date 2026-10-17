@@ -1,11 +1,11 @@
 openapi: 3.2.0
 info:
-  title: Hmcts Jobs API
-  version: '@version@'
   contact:
     name: HMCTS AppReg Team
     url: https://github.com/hmcts/appreg-api
-  description: 'Operations tagged jobs across 2 of this provider''s published API definitions: appreg-api-openapi.yaml, hmcts-applications-register-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: REST API for managing Administrative Tasks, Applications Lists, Application List Entries and getting important, reference data including Application Codes, Result Codes, Fees, Court Locations, Criminal Justice Areas and Standard Applicants.
+  title: Applications Register Jobs API
+  version: '@version@'
 servers:
 - url: /
 tags:
@@ -93,10 +93,31 @@ paths:
       summary: Get the status of a background job
       tags:
       - Jobs
-    servers:
-    - url: /
 components:
   schemas:
+    job-status:
+      description: The status of the job being polled by the user.
+      enum:
+      - RECEIVED
+      - VALIDATING
+      - PROCESSING
+      - FAILED
+      - COMPLETED
+      example: RECEIVED
+      type: string
+    job-type:
+      description: The type of the job being polled by the user.
+      enum:
+      - ACTIVITY_AUDIT_REPORT
+      - FEES_REPORT
+      - LIST_MAINTENANCE_REPORT
+      - SEARCH_WARRANTS_REPORT
+      - WORKLOAD_REPORT
+      - DURATION_REPORT
+      - PRIVATE_PROSECUTORS_INDEX_REPORT
+      - BULK_UPLOAD_ENTRIES
+      example: FEES_REPORT
+      type: string
     job-acknowledgement:
       additionalProperties: false
       description: Acknowledgement returned when a background job is created.
@@ -150,16 +171,6 @@ components:
       - status
       - type
       type: object
-    job-status:
-      description: The status of the job being polled by the user.
-      enum:
-      - RECEIVED
-      - VALIDATING
-      - PROCESSING
-      - FAILED
-      - COMPLETED
-      example: RECEIVED
-      type: string
     problem:
       description: RFC 9457/7807 problem details.
       properties:
@@ -195,19 +206,3 @@ components:
       - title
       - type
       type: object
-    job-type:
-      description: The type of the job being polled by the user.
-      enum:
-      - ACTIVITY_AUDIT_REPORT
-      - FEES_REPORT
-      - LIST_MAINTENANCE_REPORT
-      - SEARCH_WARRANTS_REPORT
-      - WORKLOAD_REPORT
-      - DURATION_REPORT
-      - PRIVATE_PROSECUTORS_INDEX_REPORT
-      - BULK_UPLOAD_ENTRIES
-      example: FEES_REPORT
-      type: string
-x-refined-from:
-- appreg-api-openapi.yaml
-- hmcts-applications-register-openapi.yml

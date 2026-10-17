@@ -1,11 +1,11 @@
 openapi: 3.2.0
 info:
-  title: Hmcts Application List Entry Results API
-  version: '@version@'
   contact:
     name: HMCTS AppReg Team
     url: https://github.com/hmcts/appreg-api
-  description: 'Operations tagged application-list-entry-results across 2 of this provider''s published API definitions: appreg-api-openapi.yaml, hmcts-applications-register-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: REST API for managing Administrative Tasks, Applications Lists, Application List Entries and getting important, reference data including Application Codes, Result Codes, Fees, Court Locations, Criminal Justice Areas and Standard Applicants.
+  title: Applications Register Application List Entry Results API
+  version: '@version@'
 servers:
 - url: /
 tags:
@@ -120,8 +120,6 @@ paths:
       summary: Create the same Result for multiple entries in an Application List
       tags:
       - application-list-entry-results
-    servers:
-    - url: /
   /application-lists/entries/results:
     delete:
       description: Atomically deletes the specified Application List Entry Results. Each item is validated using the same rules as the single delete endpoint. If any item cannot be deleted, no Results are removed.
@@ -313,8 +311,6 @@ paths:
       summary: Create the same Result for multiple entries across application lists
       tags:
       - application-list-entry-results
-    servers:
-    - url: /
   /application-lists/{listId}/entries/{entryId}/results:
     get:
       description: Returns a paginated list of Application List Entry Results linked to a specific Entry.
@@ -566,8 +562,6 @@ paths:
       summary: Create an Application List Entry Result
       tags:
       - application-list-entry-results
-    servers:
-    - url: /
   /application-lists/{listId}/entries/{entryId}/results/{resultId}:
     put:
       description: Full replacement (PUT) of an existing Application List Entry Result.
@@ -690,10 +684,262 @@ paths:
       summary: Update an Application List Entry Result
       tags:
       - application-list-entry-results
-    servers:
-    - url: /
 components:
   schemas:
+    result-create-dto:
+      additionalProperties: false
+      description: Request payload to create an Application List Entry Result. Blank fields will be rejected, nulls should be used instead.
+      properties:
+        resultCode:
+          description: Code that identifies the Result Code.
+          example: RC-001
+          maxLength: 10
+          minLength: 1
+          type: string
+        wordingFields:
+          description: 'An array of user-provided values used to populate placeholders in the ''wording''. The wording is a field belonging to the linked Result Code. Each string is applied to the wording in the order they are provided.
+
+            '
+          items:
+            $ref: '#/components/schemas/template-substitution'
+          type: array
+      required:
+      - resultCode
+      type: object
+    template-key-with-constraint:
+      description: The template field with an associated value
+      properties:
+        key:
+          description: Field key for substitution into the template.
+          example: account-number
+          type: string
+        value:
+          description: The optional value for the key.
+          example: '12345678'
+          type: string
+        constraint:
+          allOf:
+          - $ref: '#/components/schemas/template-constraint'
+          description: The constraint details for the field
+      required:
+      - constraint
+      - key
+      type: object
+    result-page:
+      allOf:
+      - $ref: '#/components/schemas/page'
+      - properties:
+          content:
+            items:
+              $ref: '#/components/schemas/result-get-dto'
+            type: array
+        type: object
+    page:
+      description: Generic Spring Data page.
+      properties:
+        pageNumber:
+          description: Zero-based page index.
+          format: int32
+          type: integer
+        pageSize:
+          description: Page size.
+          format: int32
+          type: integer
+        totalElements:
+          description: Total number of elements across all pages.
+          format: int64
+          type: integer
+        totalPages:
+          description: Total number of pages.
+          format: int32
+          type: integer
+        sort:
+          $ref: '#/components/schemas/sort'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        elementsOnPage:
+          description: Total number of elements in the current page.
+          format: int32
+          type: integer
+      required:
+      - content
+      - elementsOnPage
+      - pageNumber
+      - pageSize
+      - totalElements
+      type: object
+    template-constraint:
+      description: The template field with an associated value
+      properties:
+        type:
+          description: The data type of the value.
+          enum:
+          - TEXT
+          example: TEXT
+          type: string
+        length:
+          description: The length of the data value.
+          example: 1234
+          type: integer
+      required:
+      - length
+      - type
+      type: object
+    sort_orders_inner:
+      properties:
+        property:
+          description: Property name used for sorting.
+          example: title
+          type: string
+        direction:
+          description: Sort direction.
+          enum:
+          - asc
+          - desc
+          example: asc
+          type: string
+      required:
+      - direction
+      - property
+      type: object
+    problem:
+      description: RFC 9457/7807 problem details.
+      properties:
+        type:
+          description: Problem type identifier (URI).
+          example: https://errors.hmcts.net/appreg/bad-request
+          format: uri
+          type: string
+        title:
+          description: Short, human-readable summary.
+          example: Invalid request parameters
+          type: string
+        status:
+          description: HTTP status code.
+          example: 400
+          format: int32
+          type: integer
+        detail:
+          description: Human-readable explanation specific to this occurrence.
+          example: startDateFrom must be on or before startDateTo
+          type: string
+        instance:
+          description: URI reference to the specific occurrence (if applicable).
+          example: urn:request:2f9c3d8a-1b3a-4a1e-9b7f-6b2a6a0a2b2f
+          format: uri
+          type: string
+        correlationId:
+          description: Server-side correlation ID for tracing.
+          example: 3e1a2c95a7d84a5fb3e1a2c95a7d84a5
+          type: string
+      required:
+      - status
+      - title
+      - type
+      type: object
+    template-substitution:
+      additionalProperties: false
+      description: The template field with the associated value to substitute. Blank fields will be rejected, nulls should be used instead.
+      properties:
+        key:
+          description: Field key for substitution into the template.
+          example: account-number
+          minLength: 1
+          type: string
+        value:
+          description: The field value to substitute into the template key. Braces and line breaks are not permitted.
+          example: '1234'
+          minLength: 1
+          type: string
+      required:
+      - key
+      - value
+      type: object
+    bulk-delete-results-dto:
+      additionalProperties: false
+      description: Delete multiple Application List Entry Results atomically.
+      properties:
+        results:
+          description: 'Result delete requests to execute. Each item is validated using the same rules as the single-result delete endpoint. If any item is invalid, no results are deleted.
+
+            '
+          items:
+            $ref: '#/components/schemas/bulk-delete-result-item-dto'
+          minItems: 1
+          type: array
+      required:
+      - results
+      type: object
+    bulk-delete-result-item-dto:
+      additionalProperties: false
+      properties:
+        listId:
+          description: Public identifier of the Application List.
+          example: 123e4567-e89b-12d3-a456-426655440000
+          format: uuid
+          type: string
+        entryId:
+          description: Public identifier of the Application List Entry.
+          example: 123e4567-e89b-12d3-a456-426655440100
+          format: uuid
+          type: string
+        resultId:
+          description: Public identifier of the Application List Entry Result.
+          example: 123e4567-e89b-12d3-a456-426655440200
+          format: uuid
+          type: string
+      required:
+      - entryId
+      - listId
+      - resultId
+      type: object
+    template-detail:
+      description: The wording details
+      properties:
+        template:
+          description: The template name. It contains the field names between curly braces.
+          example: This is a test {{Applicant number}} with a date
+          type: string
+        substitution-key-constraints:
+          description: A list of fields and the associated constraints
+          items:
+            $ref: '#/components/schemas/template-key-with-constraint'
+          type: array
+      required:
+      - template
+      type: object
+    result-get-dto:
+      description: Response payload to get an Application List Entry Result.
+      properties:
+        id:
+          description: Unique identifier of the Application List Entry Result.
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          format: uuid
+          type: string
+        entryId:
+          description: The Unique identifier of the parent Application List Entry belongs.
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          format: uuid
+          type: string
+        resultCode:
+          description: Code that identifies the Result Code.
+          example: RC-001
+          type: string
+        updatedDateTime:
+          description: Date and time the Application List Entry Result was last updated.
+          example: 2026-08-28 10:15:30+00:00
+          format: date-time
+          type: string
+        wording:
+          $ref: '#/components/schemas/template-detail'
+      required:
+      - entryId
+      - id
+      - resultCode
+      - updatedDateTime
+      type: object
     bulk-result-dto:
       additionalProperties: false
       description: Create the same Result for multiple entries (atomic operation).
@@ -734,174 +980,6 @@ components:
       required:
       - resultCode
       type: object
-    bulk-delete-results-dto:
-      additionalProperties: false
-      description: Delete multiple Application List Entry Results atomically.
-      properties:
-        results:
-          description: 'Result delete requests to execute. Each item is validated using the same rules as the single-result delete endpoint. If any item is invalid, no results are deleted.
-
-            '
-          items:
-            $ref: '#/components/schemas/bulk-delete-result-item-dto'
-          minItems: 1
-          type: array
-      required:
-      - results
-      type: object
-    template-constraint:
-      description: The template field with an associated value
-      properties:
-        type:
-          description: The data type of the value.
-          enum:
-          - TEXT
-          example: TEXT
-          type: string
-        length:
-          description: The length of the data value.
-          example: 1234
-          type: integer
-      required:
-      - length
-      - type
-      type: object
-    template-detail:
-      description: The wording details
-      properties:
-        template:
-          description: The template name. It contains the field names between curly braces.
-          example: This is a test {{Applicant number}} with a date
-          type: string
-        substitution-key-constraints:
-          description: A list of fields and the associated constraints
-          items:
-            $ref: '#/components/schemas/template-key-with-constraint'
-          type: array
-      required:
-      - template
-      type: object
-    result-create-dto:
-      additionalProperties: false
-      description: Request payload to create an Application List Entry Result. Blank fields will be rejected, nulls should be used instead.
-      properties:
-        resultCode:
-          description: Code that identifies the Result Code.
-          example: RC-001
-          maxLength: 10
-          minLength: 1
-          type: string
-        wordingFields:
-          description: 'An array of user-provided values used to populate placeholders in the ''wording''. The wording is a field belonging to the linked Result Code. Each string is applied to the wording in the order they are provided.
-
-            '
-          items:
-            $ref: '#/components/schemas/template-substitution'
-          type: array
-      required:
-      - resultCode
-      type: object
-    result-get-dto:
-      description: Response payload to get an Application List Entry Result.
-      properties:
-        id:
-          description: Unique identifier of the Application List Entry Result.
-          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-          format: uuid
-          type: string
-        entryId:
-          description: The Unique identifier of the parent Application List Entry belongs.
-          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-          format: uuid
-          type: string
-        resultCode:
-          description: Code that identifies the Result Code.
-          example: RC-001
-          type: string
-        updatedDateTime:
-          description: Date and time the Application List Entry Result was last updated.
-          example: 2026-08-28 10:15:30+00:00
-          format: date-time
-          type: string
-        wording:
-          $ref: '#/components/schemas/template-detail'
-      required:
-      - entryId
-      - id
-      - resultCode
-      - updatedDateTime
-      type: object
-    sort_orders_inner:
-      properties:
-        property:
-          description: Property name used for sorting.
-          example: title
-          type: string
-        direction:
-          description: Sort direction.
-          enum:
-          - asc
-          - desc
-          example: asc
-          type: string
-      required:
-      - direction
-      - property
-      type: object
-    page:
-      description: Generic Spring Data page.
-      properties:
-        pageNumber:
-          description: Zero-based page index.
-          format: int32
-          type: integer
-        pageSize:
-          description: Page size.
-          format: int32
-          type: integer
-        totalElements:
-          description: Total number of elements across all pages.
-          format: int64
-          type: integer
-        totalPages:
-          description: Total number of pages.
-          format: int32
-          type: integer
-        sort:
-          $ref: '#/components/schemas/sort'
-        first:
-          type: boolean
-        last:
-          type: boolean
-        elementsOnPage:
-          description: Total number of elements in the current page.
-          format: int32
-          type: integer
-      required:
-      - content
-      - elementsOnPage
-      - pageNumber
-      - pageSize
-      - totalElements
-      type: object
-    template-substitution:
-      additionalProperties: false
-      description: The template field with the associated value to substitute. Blank fields will be rejected, nulls should be used instead.
-      properties:
-        key:
-          description: Field key for substitution into the template.
-          example: account-number
-          minLength: 1
-          type: string
-        value:
-          description: The field value to substitute into the template key. Braces and line breaks are not permitted.
-          example: '1234'
-          minLength: 1
-          type: string
-      required:
-      - key
-      - value
-      type: object
     sort:
       description: Sorting state for the returned page.
       example:
@@ -917,92 +995,3 @@ components:
             $ref: '#/components/schemas/sort_orders_inner'
           type: array
       type: object
-    bulk-delete-result-item-dto:
-      additionalProperties: false
-      properties:
-        listId:
-          description: Public identifier of the Application List.
-          example: 123e4567-e89b-12d3-a456-426655440000
-          format: uuid
-          type: string
-        entryId:
-          description: Public identifier of the Application List Entry.
-          example: 123e4567-e89b-12d3-a456-426655440100
-          format: uuid
-          type: string
-        resultId:
-          description: Public identifier of the Application List Entry Result.
-          example: 123e4567-e89b-12d3-a456-426655440200
-          format: uuid
-          type: string
-      required:
-      - entryId
-      - listId
-      - resultId
-      type: object
-    problem:
-      description: RFC 9457/7807 problem details.
-      properties:
-        type:
-          description: Problem type identifier (URI).
-          example: https://errors.hmcts.net/appreg/bad-request
-          format: uri
-          type: string
-        title:
-          description: Short, human-readable summary.
-          example: Invalid request parameters
-          type: string
-        status:
-          description: HTTP status code.
-          example: 400
-          format: int32
-          type: integer
-        detail:
-          description: Human-readable explanation specific to this occurrence.
-          example: startDateFrom must be on or before startDateTo
-          type: string
-        instance:
-          description: URI reference to the specific occurrence (if applicable).
-          example: urn:request:2f9c3d8a-1b3a-4a1e-9b7f-6b2a6a0a2b2f
-          format: uri
-          type: string
-        correlationId:
-          description: Server-side correlation ID for tracing.
-          example: 3e1a2c95a7d84a5fb3e1a2c95a7d84a5
-          type: string
-      required:
-      - status
-      - title
-      - type
-      type: object
-    template-key-with-constraint:
-      description: The template field with an associated value
-      properties:
-        key:
-          description: Field key for substitution into the template.
-          example: account-number
-          type: string
-        value:
-          description: The optional value for the key.
-          example: '12345678'
-          type: string
-        constraint:
-          allOf:
-          - $ref: '#/components/schemas/template-constraint'
-          description: The constraint details for the field
-      required:
-      - constraint
-      - key
-      type: object
-    result-page:
-      allOf:
-      - $ref: '#/components/schemas/page'
-      - properties:
-          content:
-            items:
-              $ref: '#/components/schemas/result-get-dto'
-            type: array
-        type: object
-x-refined-from:
-- appreg-api-openapi.yaml
-- hmcts-applications-register-openapi.yml

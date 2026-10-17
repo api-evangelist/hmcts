@@ -1,11 +1,11 @@
 openapi: 3.2.0
 info:
-  title: Hmcts Result Codes API
-  version: '@version@'
   contact:
     name: HMCTS AppReg Team
     url: https://github.com/hmcts/appreg-api
-  description: 'Operations tagged result-codes across 2 of this provider''s published API definitions: appreg-api-openapi.yaml, hmcts-applications-register-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: REST API for managing Administrative Tasks, Applications Lists, Application List Entries and getting important, reference data including Application Codes, Result Codes, Fees, Court Locations, Criminal Justice Areas and Standard Applicants.
+  title: Applications Register Result Codes API
+  version: '@version@'
 servers:
 - url: /
 tags:
@@ -141,8 +141,6 @@ paths:
       summary: Get Result Codes (paginated, filterable)
       tags:
       - result-codes
-    servers:
-    - url: /
   /result-codes/{code}:
     get:
       description: Returns the Result Code matching the supplied code and valid on the supplied date.
@@ -253,74 +251,8 @@ paths:
       summary: Get a specific Result Code by code and date
       tags:
       - result-codes
-    servers:
-    - url: /
 components:
   schemas:
-    template-constraint:
-      description: The template field with an associated value
-      properties:
-        type:
-          description: The data type of the value.
-          enum:
-          - TEXT
-          example: TEXT
-          type: string
-        length:
-          description: The length of the data value.
-          example: 1234
-          type: integer
-      required:
-      - length
-      - type
-      type: object
-    template-detail:
-      description: The wording details
-      properties:
-        template:
-          description: The template name. It contains the field names between curly braces.
-          example: This is a test {{Applicant number}} with a date
-          type: string
-        substitution-key-constraints:
-          description: A list of fields and the associated constraints
-          items:
-            $ref: '#/components/schemas/template-key-with-constraint'
-          type: array
-      required:
-      - template
-      type: object
-    result-code-get-summary-dto:
-      description: Lightweight DTO used in list/search views.
-      properties:
-        resultCode:
-          description: Code that identifies the result.
-          example: RC-001
-          type: string
-        title:
-          description: Human-readable title.
-          example: Application List Entry Fee Status
-          type: string
-      required:
-      - resultCode
-      - title
-      type: object
-    sort_orders_inner:
-      properties:
-        property:
-          description: Property name used for sorting.
-          example: title
-          type: string
-        direction:
-          description: Sort direction.
-          enum:
-          - asc
-          - desc
-          example: asc
-          type: string
-      required:
-      - direction
-      - property
-      type: object
     page:
       description: Generic Spring Data page.
       properties:
@@ -357,6 +289,68 @@ components:
       - pageSize
       - totalElements
       type: object
+    result-code-page:
+      allOf:
+      - $ref: '#/components/schemas/page'
+      - properties:
+          content:
+            items:
+              $ref: '#/components/schemas/result-code-get-summary-dto'
+            type: array
+        type: object
+    template-key-with-constraint:
+      description: The template field with an associated value
+      properties:
+        key:
+          description: Field key for substitution into the template.
+          example: account-number
+          type: string
+        value:
+          description: The optional value for the key.
+          example: '12345678'
+          type: string
+        constraint:
+          allOf:
+          - $ref: '#/components/schemas/template-constraint'
+          description: The constraint details for the field
+      required:
+      - constraint
+      - key
+      type: object
+    template-constraint:
+      description: The template field with an associated value
+      properties:
+        type:
+          description: The data type of the value.
+          enum:
+          - TEXT
+          example: TEXT
+          type: string
+        length:
+          description: The length of the data value.
+          example: 1234
+          type: integer
+      required:
+      - length
+      - type
+      type: object
+    sort_orders_inner:
+      properties:
+        property:
+          description: Property name used for sorting.
+          example: title
+          type: string
+        direction:
+          description: Sort direction.
+          enum:
+          - asc
+          - desc
+          example: asc
+          type: string
+      required:
+      - direction
+      - property
+      type: object
     result-code-get-detail-dto:
       description: Immutable DTO representing a detailed Result Code.
       properties:
@@ -389,20 +383,20 @@ components:
       - title
       - wording
       type: object
-    sort:
-      description: Sorting state for the returned page.
-      example:
-        orders:
-        - property: title
-          direction: asc
-        - property: code
-          direction: desc
+    result-code-get-summary-dto:
+      description: Lightweight DTO used in list/search views.
       properties:
-        orders:
-          description: Active sort orders in priority order.
-          items:
-            $ref: '#/components/schemas/sort_orders_inner'
-          type: array
+        resultCode:
+          description: Code that identifies the result.
+          example: RC-001
+          type: string
+        title:
+          description: Human-readable title.
+          example: Application List Entry Fee Status
+          type: string
+      required:
+      - resultCode
+      - title
       type: object
     problem:
       description: RFC 9457/7807 problem details.
@@ -439,34 +433,33 @@ components:
       - title
       - type
       type: object
-    template-key-with-constraint:
-      description: The template field with an associated value
+    template-detail:
+      description: The wording details
       properties:
-        key:
-          description: Field key for substitution into the template.
-          example: account-number
+        template:
+          description: The template name. It contains the field names between curly braces.
+          example: This is a test {{Applicant number}} with a date
           type: string
-        value:
-          description: The optional value for the key.
-          example: '12345678'
-          type: string
-        constraint:
-          allOf:
-          - $ref: '#/components/schemas/template-constraint'
-          description: The constraint details for the field
+        substitution-key-constraints:
+          description: A list of fields and the associated constraints
+          items:
+            $ref: '#/components/schemas/template-key-with-constraint'
+          type: array
       required:
-      - constraint
-      - key
+      - template
       type: object
-    result-code-page:
-      allOf:
-      - $ref: '#/components/schemas/page'
-      - properties:
-          content:
-            items:
-              $ref: '#/components/schemas/result-code-get-summary-dto'
-            type: array
-        type: object
-x-refined-from:
-- appreg-api-openapi.yaml
-- hmcts-applications-register-openapi.yml
+    sort:
+      description: Sorting state for the returned page.
+      example:
+        orders:
+        - property: title
+          direction: asc
+        - property: code
+          direction: desc
+      properties:
+        orders:
+          description: Active sort orders in priority order.
+          items:
+            $ref: '#/components/schemas/sort_orders_inner'
+          type: array
+      type: object

@@ -1,11 +1,11 @@
 openapi: 3.2.0
 info:
-  title: Hmcts Application Codes API
-  version: '@version@'
   contact:
     name: HMCTS AppReg Team
     url: https://github.com/hmcts/appreg-api
-  description: 'Operations tagged application-codes across 2 of this provider''s published API definitions: appreg-api-openapi.yaml, hmcts-applications-register-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: REST API for managing Administrative Tasks, Applications Lists, Application List Entries and getting important, reference data including Application Codes, Result Codes, Fees, Court Locations, Criminal Justice Areas and Standard Applicants.
+  title: Applications Register Application Codes API
+  version: '@version@'
 servers:
 - url: /
 tags:
@@ -149,8 +149,6 @@ paths:
       summary: Get Application Codes (paginated, filterable)
       tags:
       - application-codes
-    servers:
-    - url: /
   /application-codes/{code}:
     get:
       description: Returns the Application Code matching the supplied code and valid on the supplied date.
@@ -261,10 +259,27 @@ paths:
       summary: Get a specific Application Code by code
       tags:
       - application-codes
-    servers:
-    - url: /
 components:
   schemas:
+    template-key-with-constraint:
+      description: The template field with an associated value
+      properties:
+        key:
+          description: Field key for substitution into the template.
+          example: account-number
+          type: string
+        value:
+          description: The optional value for the key.
+          example: '12345678'
+          type: string
+        constraint:
+          allOf:
+          - $ref: '#/components/schemas/template-constraint'
+          description: The constraint details for the field
+      required:
+      - constraint
+      - key
+      type: object
     application-code-get-summary-dto:
       description: Lightweight DTO for Application Codes, used in list/search views.
       properties:
@@ -331,78 +346,6 @@ components:
       - title
       - wording
       type: object
-    application_code_get_detail_dto_offsiteFeeAmount:
-      description: 'Offsite Fee amount for this Application Code, expressed in pence (GBP minor units). Always use integer values; 1 GBP = 100 pence.
-
-        '
-      properties:
-        value:
-          description: Amount in pence.
-          example: 1299
-          format: int64
-          minimum: 0
-          type: integer
-        currency:
-          default: GBP
-          description: ISO 4217 currency code (always "GBP" for now).
-          enum:
-          - GBP
-          example: GBP
-          type: string
-      required:
-      - value
-      type:
-      - object
-      - 'null'
-    template-constraint:
-      description: The template field with an associated value
-      properties:
-        type:
-          description: The data type of the value.
-          enum:
-          - TEXT
-          example: TEXT
-          type: string
-        length:
-          description: The length of the data value.
-          example: 1234
-          type: integer
-      required:
-      - length
-      - type
-      type: object
-    template-detail:
-      description: The wording details
-      properties:
-        template:
-          description: The template name. It contains the field names between curly braces.
-          example: This is a test {{Applicant number}} with a date
-          type: string
-        substitution-key-constraints:
-          description: A list of fields and the associated constraints
-          items:
-            $ref: '#/components/schemas/template-key-with-constraint'
-          type: array
-      required:
-      - template
-      type: object
-    sort_orders_inner:
-      properties:
-        property:
-          description: Property name used for sorting.
-          example: title
-          type: string
-        direction:
-          description: Sort direction.
-          enum:
-          - asc
-          - desc
-          example: asc
-          type: string
-      required:
-      - direction
-      - property
-      type: object
     page:
       description: Generic Spring Data page.
       properties:
@@ -438,21 +381,6 @@ components:
       - pageNumber
       - pageSize
       - totalElements
-      type: object
-    sort:
-      description: Sorting state for the returned page.
-      example:
-        orders:
-        - property: title
-          direction: asc
-        - property: code
-          direction: desc
-      properties:
-        orders:
-          description: Active sort orders in priority order.
-          items:
-            $ref: '#/components/schemas/sort_orders_inner'
-          type: array
       type: object
     application-code-get-detail-dto:
       description: Immutable DTO representing a detailed Application Code.
@@ -534,29 +462,49 @@ components:
       - title
       - wording
       type: object
-    application_code_get_detail_dto_feeAmount:
-      description: 'Fee amount for this Application Code, expressed in pence (GBP minor units). Always use integer values; 1 GBP = 100 pence.
-
-        '
+    template-constraint:
+      description: The template field with an associated value
       properties:
-        value:
-          description: Amount in pence.
-          example: 1299
-          format: int64
-          minimum: 0
-          type: integer
-        currency:
-          default: GBP
-          description: ISO 4217 currency code (always "GBP" for now).
+        type:
+          description: The data type of the value.
           enum:
-          - GBP
-          example: GBP
+          - TEXT
+          example: TEXT
+          type: string
+        length:
+          description: The length of the data value.
+          example: 1234
+          type: integer
+      required:
+      - length
+      - type
+      type: object
+    application-code-page:
+      allOf:
+      - $ref: '#/components/schemas/page'
+      - properties:
+          content:
+            items:
+              $ref: '#/components/schemas/application-code-get-summary-dto'
+            type: array
+        type: object
+    sort_orders_inner:
+      properties:
+        property:
+          description: Property name used for sorting.
+          example: title
+          type: string
+        direction:
+          description: Sort direction.
+          enum:
+          - asc
+          - desc
+          example: asc
           type: string
       required:
-      - value
-      type:
-      - object
-      - 'null'
+      - direction
+      - property
+      type: object
     problem:
       description: RFC 9457/7807 problem details.
       properties:
@@ -592,34 +540,79 @@ components:
       - title
       - type
       type: object
-    template-key-with-constraint:
-      description: The template field with an associated value
+    application_code_get_detail_dto_offsiteFeeAmount:
+      description: 'Offsite Fee amount for this Application Code, expressed in pence (GBP minor units). Always use integer values; 1 GBP = 100 pence.
+
+        '
       properties:
-        key:
-          description: Field key for substitution into the template.
-          example: account-number
-          type: string
         value:
-          description: The optional value for the key.
-          example: '12345678'
+          description: Amount in pence.
+          example: 1299
+          format: int64
+          minimum: 0
+          type: integer
+        currency:
+          default: GBP
+          description: ISO 4217 currency code (always "GBP" for now).
+          enum:
+          - GBP
+          example: GBP
           type: string
-        constraint:
-          allOf:
-          - $ref: '#/components/schemas/template-constraint'
-          description: The constraint details for the field
       required:
-      - constraint
-      - key
+      - value
+      type:
+      - object
+      - 'null'
+    template-detail:
+      description: The wording details
+      properties:
+        template:
+          description: The template name. It contains the field names between curly braces.
+          example: This is a test {{Applicant number}} with a date
+          type: string
+        substitution-key-constraints:
+          description: A list of fields and the associated constraints
+          items:
+            $ref: '#/components/schemas/template-key-with-constraint'
+          type: array
+      required:
+      - template
       type: object
-    application-code-page:
-      allOf:
-      - $ref: '#/components/schemas/page'
-      - properties:
-          content:
-            items:
-              $ref: '#/components/schemas/application-code-get-summary-dto'
-            type: array
-        type: object
-x-refined-from:
-- appreg-api-openapi.yaml
-- hmcts-applications-register-openapi.yml
+    sort:
+      description: Sorting state for the returned page.
+      example:
+        orders:
+        - property: title
+          direction: asc
+        - property: code
+          direction: desc
+      properties:
+        orders:
+          description: Active sort orders in priority order.
+          items:
+            $ref: '#/components/schemas/sort_orders_inner'
+          type: array
+      type: object
+    application_code_get_detail_dto_feeAmount:
+      description: 'Fee amount for this Application Code, expressed in pence (GBP minor units). Always use integer values; 1 GBP = 100 pence.
+
+        '
+      properties:
+        value:
+          description: Amount in pence.
+          example: 1299
+          format: int64
+          minimum: 0
+          type: integer
+        currency:
+          default: GBP
+          description: ISO 4217 currency code (always "GBP" for now).
+          enum:
+          - GBP
+          example: GBP
+          type: string
+      required:
+      - value
+      type:
+      - object
+      - 'null'

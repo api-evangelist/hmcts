@@ -1,11 +1,11 @@
 openapi: 3.2.0
 info:
-  title: Hmcts Criminal Justice Areas API
-  version: '@version@'
   contact:
     name: HMCTS AppReg Team
     url: https://github.com/hmcts/appreg-api
-  description: 'Operations tagged criminal-justice-areas across 2 of this provider''s published API definitions: appreg-api-openapi.yaml, hmcts-applications-register-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: REST API for managing Administrative Tasks, Applications Lists, Application List Entries and getting important, reference data including Application Codes, Result Codes, Fees, Court Locations, Criminal Justice Areas and Standard Applicants.
+  title: Applications Register Criminal Justice Areas API
+  version: '@version@'
 servers:
 - url: /
 tags:
@@ -141,8 +141,6 @@ paths:
       summary: Get Criminal Justice Areas (paginated, filterable)
       tags:
       - criminal-justice-areas
-    servers:
-    - url: /
   /criminal-justice-areas/{code}:
     get:
       description: Returns the Criminal Justice Area matching the supplied code.
@@ -243,34 +241,8 @@ paths:
       summary: Get a specific Criminal Justice Area by code
       tags:
       - criminal-justice-areas
-    servers:
-    - url: /
 components:
   schemas:
-    criminal-justice-area-get-dto:
-      description: Immutable DTO representing a Criminal Justice Area.
-      properties:
-        code:
-          description: Code that identifies the Criminal Justice Area.
-          example: '001'
-          type: string
-        description:
-          description: Human-readable name of the Criminal Justice Area.
-          example: Leeds
-          type: string
-      required:
-      - code
-      - description
-      type: object
-    criminal-justice-area-page:
-      allOf:
-      - $ref: '#/components/schemas/page'
-      - properties:
-          content:
-            items:
-              $ref: '#/components/schemas/criminal-justice-area-get-dto'
-            type: array
-        type: object
     page:
       description: Generic Spring Data page.
       properties:
@@ -307,6 +279,15 @@ components:
       - pageSize
       - totalElements
       type: object
+    criminal-justice-area-page:
+      allOf:
+      - $ref: '#/components/schemas/page'
+      - properties:
+          content:
+            items:
+              $ref: '#/components/schemas/criminal-justice-area-get-dto'
+            type: array
+        type: object
     sort_orders_inner:
       properties:
         property:
@@ -323,21 +304,6 @@ components:
       required:
       - direction
       - property
-      type: object
-    sort:
-      description: Sorting state for the returned page.
-      example:
-        orders:
-        - property: title
-          direction: asc
-        - property: code
-          direction: desc
-      properties:
-        orders:
-          description: Active sort orders in priority order.
-          items:
-            $ref: '#/components/schemas/sort_orders_inner'
-          type: array
       type: object
     problem:
       description: RFC 9457/7807 problem details.
@@ -374,6 +340,33 @@ components:
       - title
       - type
       type: object
-x-refined-from:
-- appreg-api-openapi.yaml
-- hmcts-applications-register-openapi.yml
+    criminal-justice-area-get-dto:
+      description: Immutable DTO representing a Criminal Justice Area.
+      properties:
+        code:
+          description: Code that identifies the Criminal Justice Area.
+          example: '001'
+          type: string
+        description:
+          description: Human-readable name of the Criminal Justice Area.
+          example: Leeds
+          type: string
+      required:
+      - code
+      - description
+      type: object
+    sort:
+      description: Sorting state for the returned page.
+      example:
+        orders:
+        - property: title
+          direction: asc
+        - property: code
+          direction: desc
+      properties:
+        orders:
+          description: Active sort orders in priority order.
+          items:
+            $ref: '#/components/schemas/sort_orders_inner'
+          type: array
+      type: object

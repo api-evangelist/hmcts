@@ -1,11 +1,11 @@
 openapi: 3.2.0
 info:
-  title: Hmcts Court Locations API
-  version: '@version@'
   contact:
     name: HMCTS AppReg Team
     url: https://github.com/hmcts/appreg-api
-  description: 'Operations tagged court-locations across 2 of this provider''s published API definitions: appreg-api-openapi.yaml, hmcts-applications-register-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: REST API for managing Administrative Tasks, Applications Lists, Application List Entries and getting important, reference data including Application Codes, Result Codes, Fees, Court Locations, Criminal Justice Areas and Standard Applicants.
+  title: Applications Register Court Locations API
+  version: '@version@'
 servers:
 - url: /
 tags:
@@ -141,8 +141,6 @@ paths:
       summary: Get Court Locations (paginated, filterable)
       tags:
       - court-locations
-    servers:
-    - url: /
   /court-locations/{code}:
     get:
       description: Returns the Court Location matching the supplied code and valid on the supplied date.
@@ -253,51 +251,8 @@ paths:
       summary: Get a specific Court Location by code and date
       tags:
       - court-locations
-    servers:
-    - url: /
 components:
   schemas:
-    court-location-page:
-      allOf:
-      - $ref: '#/components/schemas/page'
-      - properties:
-          content:
-            items:
-              $ref: '#/components/schemas/court-location-get-summary-dto'
-            type: array
-        type: object
-    court-location-get-summary-dto:
-      description: Lightweight DTO for Court Locations, used in list/search views.
-      properties:
-        name:
-          description: Human-readable court name.
-          example: Cardiff Crown Court Set 1
-          type: string
-        locationCode:
-          description: Code that identifies the Court Location.
-          example: CCC003
-          type: string
-      required:
-      - locationCode
-      - name
-      type: object
-    sort_orders_inner:
-      properties:
-        property:
-          description: Property name used for sorting.
-          example: title
-          type: string
-        direction:
-          description: Sort direction.
-          enum:
-          - asc
-          - desc
-          example: asc
-          type: string
-      required:
-      - direction
-      - property
-      type: object
     page:
       description: Generic Spring Data page.
       properties:
@@ -334,23 +289,25 @@ components:
       - pageSize
       - totalElements
       type: object
-    sort:
-      description: Sorting state for the returned page.
-      example:
-        orders:
-        - property: title
-          direction: asc
-        - property: code
-          direction: desc
+    sort_orders_inner:
       properties:
-        orders:
-          description: Active sort orders in priority order.
-          items:
-            $ref: '#/components/schemas/sort_orders_inner'
-          type: array
+        property:
+          description: Property name used for sorting.
+          example: title
+          type: string
+        direction:
+          description: Sort direction.
+          enum:
+          - asc
+          - desc
+          example: asc
+          type: string
+      required:
+      - direction
+      - property
       type: object
-    court-location-get-detail-dto:
-      description: Immutable DTO representing a detailed Court Location.
+    court-location-get-summary-dto:
+      description: Lightweight DTO for Court Locations, used in list/search views.
       properties:
         name:
           description: Human-readable court name.
@@ -360,23 +317,9 @@ components:
           description: Code that identifies the Court Location.
           example: CCC003
           type: string
-        startDate:
-          description: Date the Court Location became active.
-          example: 2025-09-17
-          format: date
-          type: string
-        endDate:
-          description: Date the Court Location became inactive. `null` indicates that this row is still active.
-          example: 2025-12-01
-          format: date
-          type:
-          - string
-          - 'null'
       required:
-      - endDate
       - locationCode
       - name
-      - startDate
       type: object
     problem:
       description: RFC 9457/7807 problem details.
@@ -413,6 +356,56 @@ components:
       - title
       - type
       type: object
-x-refined-from:
-- appreg-api-openapi.yaml
-- hmcts-applications-register-openapi.yml
+    sort:
+      description: Sorting state for the returned page.
+      example:
+        orders:
+        - property: title
+          direction: asc
+        - property: code
+          direction: desc
+      properties:
+        orders:
+          description: Active sort orders in priority order.
+          items:
+            $ref: '#/components/schemas/sort_orders_inner'
+          type: array
+      type: object
+    court-location-page:
+      allOf:
+      - $ref: '#/components/schemas/page'
+      - properties:
+          content:
+            items:
+              $ref: '#/components/schemas/court-location-get-summary-dto'
+            type: array
+        type: object
+    court-location-get-detail-dto:
+      description: Immutable DTO representing a detailed Court Location.
+      properties:
+        name:
+          description: Human-readable court name.
+          example: Cardiff Crown Court Set 1
+          type: string
+        locationCode:
+          description: Code that identifies the Court Location.
+          example: CCC003
+          type: string
+        startDate:
+          description: Date the Court Location became active.
+          example: 2025-09-17
+          format: date
+          type: string
+        endDate:
+          description: Date the Court Location became inactive. `null` indicates that this row is still active.
+          example: 2025-12-01
+          format: date
+          type:
+          - string
+          - 'null'
+      required:
+      - endDate
+      - locationCode
+      - name
+      - startDate
+      type: object

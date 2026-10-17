@@ -1,13 +1,13 @@
 openapi: 3.2.0
 info:
-  title: Hmcts Validation Rules API
+  title: Results Validation Service Validation Rules API
+  description: API for validating draft hearing results against declarative, programmatic, and LLM-assisted rules
   version: 0.1.0
   contact:
     email: no-reply@hmcts.com
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-  description: 'Operations tagged validation-rules across 2 of this provider''s published API definitions: api-cp-crime-hearing-results-validator-openapi-spec.yml, hmcts-results-validation-service-openapi.yml. Each path carries the servers of the definition it was published in.'
 tags:
 - name: validation-rules
 paths:
@@ -98,21 +98,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
-  parameters:
-    CppclientcorrelationidHeader:
-      in: header
-      name: CPPCLIENTCORRELATIONID
-      required: false
-      schema:
-        type: string
-      description: Session-level correlation ID from UI
-    CjscppuidHeader:
-      in: header
-      name: CJSCPPUID
-      required: true
-      schema:
-        type: string
-      description: User identifier for CP authentication
   schemas:
     RuleListResponse:
       type: object
@@ -128,23 +113,6 @@ components:
           items:
             $ref: '#/components/schemas/RuleDetailResponse'
           description: List of rule summaries
-    UpdateRuleRequest:
-      type: object
-      description: 'At least one field must be provided. Only supplied fields are updated; omitted fields are left unchanged.
-
-        '
-      properties:
-        enabled:
-          type: boolean
-          description: Whether the rule should be active
-        severity:
-          type: string
-          enum:
-          - ERROR
-          - WARNING
-          description: 'Severity ceiling for the rule. Caps the rule''s condition severities downward (e.g. an ERROR condition is reduced to WARNING) but never promotes them above their configured severity. Setting WARNING stops the rule from blocking shares; setting ERROR leaves each condition at its configured severity.
-
-            '
     RuleDetailResponse:
       type: object
       required:
@@ -191,6 +159,35 @@ components:
         traceId:
           type: string
           description: Unique identifier for error tracing
-x-refined-from:
-- api-cp-crime-hearing-results-validator-openapi-spec.yml
-- hmcts-results-validation-service-openapi.yml
+    UpdateRuleRequest:
+      type: object
+      description: 'At least one field must be provided. Only supplied fields are updated; omitted fields are left unchanged.
+
+        '
+      properties:
+        enabled:
+          type: boolean
+          description: Whether the rule should be active
+        severity:
+          type: string
+          enum:
+          - ERROR
+          - WARNING
+          description: 'Severity ceiling for the rule. Caps the rule''s condition severities downward (e.g. an ERROR condition is reduced to WARNING) but never promotes them above their configured severity. Setting WARNING stops the rule from blocking shares; setting ERROR leaves each condition at its configured severity.
+
+            '
+  parameters:
+    CppclientcorrelationidHeader:
+      in: header
+      name: CPPCLIENTCORRELATIONID
+      required: false
+      schema:
+        type: string
+      description: Session-level correlation ID from UI
+    CjscppuidHeader:
+      in: header
+      name: CJSCPPUID
+      required: true
+      schema:
+        type: string
+      description: User identifier for CP authentication

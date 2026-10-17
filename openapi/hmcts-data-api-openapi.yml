@@ -1,8 +1,8 @@
 openapi: 3.2.0
 info:
-  title: Hmcts Data API
+  title: Core Case Definition Data API
+  description: An API to manage case data and ui definitions
   version: 0.0.1
-  description: 'Operations tagged Data across 2 of this provider''s published API definitions: ccd-data-store-definition.yaml, hmcts-core-case-data-definition-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://core-case-data.common-components.reform/api
 tags:
@@ -36,8 +36,6 @@ paths:
       - Data
       operationId: getDataCaseTypeById
       x-operation-id-source: derived
-    servers:
-    - url: https://core-case-data.common-components.reform/api
   /data/jurisdictions/{jurisdiction_id}/case-type:
     parameters:
     - name: jurisdiction_id
@@ -89,10 +87,55 @@ paths:
       - Data
       operationId: postDataJurisdictionsByJurisdictionIdCaseType
       x-operation-id-source: derived
-    servers:
-    - url: https://core-case-data.common-components.reform/api
 components:
   schemas:
+    CaseField:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The id of the case field
+        case_type_id:
+          type: string
+          description: Foriegn key to the case type as fields should not work across
+        label:
+          type: string
+        hint_text:
+          type: string
+        field_type:
+          $ref: '#/components/schemas/FieldType'
+        hidden:
+          type: boolean
+        validation_expr:
+          type: string
+        security_label:
+          type: string
+          description: Gov security level of the data (official, top secret etc)
+        live_from:
+          type: string
+        live_until:
+          type: string
+      required:
+      - id
+      - label
+      - field_type
+    Version:
+      type: object
+      properties:
+        number:
+          type: integer
+          description: Sequantial version number
+        live_from:
+          type: string
+          format: date-time
+          description: Date and time from when this version is valid from
+        live_until:
+          type: string
+          format: date-time
+          description: Date and time this version is to be retired
+      required:
+      - number
+      - live_from
     CaseState:
       type: object
       properties:
@@ -115,6 +158,24 @@ components:
           type: string
         fields:
           type: string
+    Jurisdiction:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        live_from:
+          type: string
+          format: date-time
+        live_until:
+          type: string
+          format: date-time
+      required:
+      - id
+      - name
     CaseEventField:
       type: object
       properties:
@@ -149,41 +210,6 @@ components:
       required:
       - id
       - name
-    FieldType:
-      type: object
-      properties:
-        name:
-          type: string
-    CaseField:
-      type: object
-      properties:
-        id:
-          type: string
-          description: The id of the case field
-        case_type_id:
-          type: string
-          description: Foriegn key to the case type as fields should not work across
-        label:
-          type: string
-        hint_text:
-          type: string
-        field_type:
-          $ref: '#/components/schemas/FieldType'
-        hidden:
-          type: boolean
-        validation_expr:
-          type: string
-        security_label:
-          type: string
-          description: Gov security level of the data (official, top secret etc)
-        live_from:
-          type: string
-        live_until:
-          type: string
-      required:
-      - id
-      - label
-      - field_type
     CaseType:
       type: object
       properties:
@@ -215,41 +241,8 @@ components:
       - name
       - Jurisdiction
       - states
-    Version:
+    FieldType:
       type: object
       properties:
-        number:
-          type: integer
-          description: Sequantial version number
-        live_from:
-          type: string
-          format: date-time
-          description: Date and time from when this version is valid from
-        live_until:
-          type: string
-          format: date-time
-          description: Date and time this version is to be retired
-      required:
-      - number
-      - live_from
-    Jurisdiction:
-      type: object
-      properties:
-        id:
-          type: string
         name:
           type: string
-        description:
-          type: string
-        live_from:
-          type: string
-          format: date-time
-        live_until:
-          type: string
-          format: date-time
-      required:
-      - id
-      - name
-x-refined-from:
-- ccd-data-store-definition.yaml
-- hmcts-core-case-data-definition-openapi.yml

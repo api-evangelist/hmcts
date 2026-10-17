@@ -1,11 +1,11 @@
 openapi: 3.2.0
 info:
-  title: Hmcts Admin API
-  version: '@version@'
   contact:
     name: HMCTS AppReg Team
     url: https://github.com/hmcts/appreg-api
-  description: 'Operations tagged admin across 2 of this provider''s published API definitions: appreg-api-openapi.yaml, hmcts-applications-register-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: REST API for managing Administrative Tasks, Applications Lists, Application List Entries and getting important, reference data including Application Codes, Result Codes, Fees, Court Locations, Criminal Justice Areas and Standard Applicants.
+  title: Applications Register Admin API
+  version: '@version@'
 servers:
 - url: /
 tags:
@@ -180,8 +180,6 @@ paths:
       summary: Enable/Disable a database job by its name
       tags:
       - Admin
-    servers:
-    - url: /
   /admin/jobs/{jobType}/retention-policy:
     get:
       description: Returns the RETENTION_PERIOD_DAYS configuration for the specified database job.
@@ -345,8 +343,6 @@ paths:
       summary: Update a database job retention period by its name
       tags:
       - Admin
-    servers:
-    - url: /
   /admin/csds/trigger:
     post:
       description: Runs all enabled CSDS ingress processors synchronously using the same retrieval and apply flow as the scheduled CSDS job. Processing continues if an individual processor fails, but the request returns an error after all processors have been attempted. Invalid record data returned by CSDS results in `502 Bad Gateway`; unexpected AppReg failures result in `500 Internal Server Error`. The endpoint does not update the scheduled-run execution log and therefore does not suppress a subsequent scheduled run. Only callers with the admin role can trigger the operation.
@@ -421,10 +417,25 @@ paths:
       summary: Trigger CSDS ingress on demand
       tags:
       - Admin
-    servers:
-    - url: /
 components:
   schemas:
+    admin-job-type:
+      description: The type of the administrative background job
+      enum:
+      - APPLICATION_LISTS_DATABASE_JOB
+      - REFRESH_REFERENCE_DATA
+      example: APPLICATION_LISTS_DATABASE_JOB
+      type: string
+    job-retention-policy:
+      additionalProperties: false
+      description: Retention policy configuration for an administrative background job.
+      properties:
+        retentionPeriodDays:
+          description: Number of days to retain closed application lists before deletion.
+          example: 1825
+          minimum: 1
+          type: integer
+      type: object
     admin-job-status:
       description: Details of the database job status.
       properties:
@@ -436,16 +447,6 @@ components:
           description: Whether the job is currently enabled.
           example: true
           type: boolean
-      type: object
-    job-retention-policy:
-      additionalProperties: false
-      description: Retention policy configuration for an administrative background job.
-      properties:
-        retentionPeriodDays:
-          description: Number of days to retain closed application lists before deletion.
-          example: 1825
-          minimum: 1
-          type: integer
       type: object
     problem:
       description: RFC 9457/7807 problem details.
@@ -482,13 +483,3 @@ components:
       - title
       - type
       type: object
-    admin-job-type:
-      description: The type of the administrative background job
-      enum:
-      - APPLICATION_LISTS_DATABASE_JOB
-      - REFRESH_REFERENCE_DATA
-      example: APPLICATION_LISTS_DATABASE_JOB
-      type: string
-x-refined-from:
-- appreg-api-openapi.yaml
-- hmcts-applications-register-openapi.yml
