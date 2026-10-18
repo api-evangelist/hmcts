@@ -132,6 +132,8 @@ apis:
   humanURL: https://github.com/hmcts/appreg-api
   baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
   tags:
+  - Admin
+  tags_raw:
   - admin
   properties:
   - type: OpenAPI
@@ -349,6 +351,8 @@ apis:
   humanURL: https://github.com/hmcts/appreg-api
   baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
   tags:
+  - Application Lists
+  tags_raw:
   - application-lists
   properties:
   - type: OpenAPI
@@ -613,6 +617,8 @@ apis:
   humanURL: https://github.com/hmcts/appreg-api
   baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
   tags:
+  - Displays
+  tags_raw:
   - Display
   properties:
   - type: OpenAPI
@@ -717,6 +723,8 @@ apis:
   humanURL: https://github.com/hmcts/appreg-api
   baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
   tags:
+  - Job
+  tags_raw:
   - jobs
   properties:
   - type: OpenAPI
@@ -822,6 +830,8 @@ apis:
   humanURL: https://github.com/hmcts/appreg-api
   baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
   tags:
+  - Reports
+  tags_raw:
   - reports
   properties:
   - type: OpenAPI
@@ -928,6 +938,8 @@ apis:
   humanURL: https://github.com/hmcts/appreg-api
   baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
   tags:
+  - Root
+  tags_raw:
   - root
   properties:
   - type: OpenAPI
@@ -1089,6 +1101,8 @@ apis:
   humanURL: https://github.com/hmcts/appreg-api
   baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
   tags:
+  - Validation
+  tags_raw:
   - validation
   properties:
   - type: OpenAPI
@@ -1142,6 +1156,8 @@ apis:
   humanURL: https://github.com/hmcts/appreg-api
   baseURL: https://api-cp-crime-hearing-results-document-subscription.net/{version}
   tags:
+  - Validation Rules
+  tags_raw:
   - validation-rules
   properties:
   - type: OpenAPI
