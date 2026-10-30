@@ -64,5 +64,189 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-HM Courts & Tribunals Service is a company surfaced via the API Evangelist harvest backlog (source: spectral-ruleset-github) and added to the network as a stub for full-pipeline profiling.
-- https://www.gov.uk/government/organisations/hm-courts-and-tribunals-service
+HM Courts & Tribunals Service (HMCTS) is the executive agency of the UK Ministry of Justice responsible for administering the criminal, civil and family courts in England and Wales and the reserved unified tribunals across the United Kingdom. Its engineering teams publish open source code on GitHub (github.com/hmcts) and the "HMCTS way" engineering standards at hmcts.github.io, including Spectral API linting rulesets used in its API repositories.
+
+**Areas:** Company · Government · Courts · Justice · Public Sector · United Kingdom
+
+## HM Courts & Tribunals Service on APIs.io
+
+Everything profiled for HM Courts & Tribunals Service is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/hmcts/](https://apis.io/providers/hmcts/)** — or go straight to one of the APIs or properties below.
+
+### APIs (20)
+
+- [HM Courts & Tribunals Service Admin API](https://apis.io/apis/hmcts/hmcts-admin-api/) — Administrative operations such as jobs can be run from this set of endpoints.
+- [HM Courts & Tribunals Service Application Codes API](https://apis.io/apis/hmcts/hmcts-application-codes-api/) — Application Codes are reference data, not managed in App Reg. They are required to provide a set repeatable data that can be used by Application List…
+- [HM Courts & Tribunals Service Application List Entries API](https://apis.io/apis/hmcts/hmcts-application-list-entries-api/) — An Application List Entry records all details of an individual Application. This will always belong to an Application List.
+- [HM Courts & Tribunals Service Application List Entry Results API](https://apis.io/apis/hmcts/hmcts-application-list-entry-results-api/) — An Application List Entry Result records the result of an individual Application. Each Application can have multiple child Results and Results cannot exist…
+- [HM Courts & Tribunals Service Application Lists API](https://apis.io/apis/hmcts/hmcts-application-lists-api/) — An Application List records the date, time and location at which one or more Applications is to be considered by a magistrate or delegated authority.
+- [HM Courts & Tribunals Service Caseworkers API](https://apis.io/apis/hmcts/hmcts-caseworkers-api/) — The Caseworkers API from HM Courts & Tribunals Service — 5 operation(s) for caseworkers.
+- [HM Courts & Tribunals Service Court Locations API](https://apis.io/apis/hmcts/hmcts-court-locations-api/) — Court Locations are reference data, not managed in App Reg. They are a consolidation of both crown and magistrates courts where an application will be heard…
+- [HM Courts & Tribunals Service Criminal Justice Areas API](https://apis.io/apis/hmcts/hmcts-criminal-justice-areas-api/) — Criminal Justice Areas are reference data, not managed in App Reg. They are officially recognized justice regions and used to classify records by jurisdiction.
+- [HM Courts & Tribunals Service Data API](https://apis.io/apis/hmcts/hmcts-data-api/) — The Data API from HM Courts & Tribunals Service — 2 operation(s) for data.
+- [HM Courts & Tribunals Service Display API](https://apis.io/apis/hmcts/hmcts-display-api/) — The Display API from HM Courts & Tribunals Service — 4 operation(s) for display.
+- [HM Courts & Tribunals Service Internal API](https://apis.io/apis/hmcts/hmcts-internal-api/) — The Internal API from HM Courts & Tribunals Service — 1 operation(s) for internal.
+- [HM Courts & Tribunals Service Jobs API](https://apis.io/apis/hmcts/hmcts-jobs-api/) — Background job operations for asynchronous tasks (polling status across all job types).
+- [HM Courts & Tribunals Service Notification API](https://apis.io/apis/hmcts/hmcts-notification-api/) — The Notification API from HM Courts & Tribunals Service — 1 operation(s) for notification.
+- [HM Courts & Tribunals Service Reports API](https://apis.io/apis/hmcts/hmcts-reports-api/) — Endpoints to generate and retrieve CSV reports asynchronously.
+- [HM Courts & Tribunals Service Result Codes API](https://apis.io/apis/hmcts/hmcts-result-codes-api/) — Result codes are reference data, not managed in App Reg. They are required to provide a set of ways an Application List Entry can be resulted. e.g.…
+- [HM Courts & Tribunals Service Root API](https://apis.io/apis/hmcts/hmcts-root-api/) — The root API from HM Courts & Tribunals Service — 1 operation(s) for root.
+- [HM Courts & Tribunals Service Standard Applicants API](https://apis.io/apis/hmcts/hmcts-standard-applicants-api/) — Standard Applicants are reference data, not managed in App Reg. Only code, name and usage dates are exposed by reference-data endpoints and exports.…
+- [HM Courts & Tribunals Service Subscription API](https://apis.io/apis/hmcts/hmcts-subscription-api/) — The Subscription API from HM Courts & Tribunals Service — 4 operation(s) for subscription.
+- [HM Courts & Tribunals Service Validation API](https://apis.io/apis/hmcts/hmcts-validation-api/) — The validation API from HM Courts & Tribunals Service — 1 operation(s) for validation.
+- [HM Courts & Tribunals Service Validation Rules API](https://apis.io/apis/hmcts/hmcts-validation-rules-api/) — The validation-rules API from HM Courts & Tribunals Service — 2 operation(s) for validation-rules.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### AsyncAPI (1)
+
+Event-driven and webhook contracts.
+
+- [Hmcts Webhooks](https://apis.io/asyncapis/hmcts/hmcts-webhooks/)
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [HM Courts & Tribunals Service MCP Server (candidate)](https://apis.io/servers/hmcts/hm-courts-tribunals-service-mcp-server-candidate/)
+
+#### Agentic access (1)
+
+Which operations an agent can call, which act, and which need a human in the loop.
+
+- [Hmcts Agentic Access](https://apis.io/agentic-access/hmcts/hmcts-agentic-access/)
+
+#### JSON Schema (17)
+
+The data models the API reads and writes.
+
+- [application-code-get-detail-dto](https://apis.io/schemas/hmcts/hmcts-application-code-get-detail-dto/)
+- [ClientSubscription](https://apis.io/schemas/hmcts/hmcts-client-subscription/)
+- [ClientSubscriptionRequest](https://apis.io/schemas/hmcts/hmcts-client-subscription-request/)
+- [DraftValidationRequest](https://apis.io/schemas/hmcts/hmcts-draft-validation-request/)
+- [DraftValidationResponse](https://apis.io/schemas/hmcts/hmcts-draft-validation-response/)
+- [entry-create-dto](https://apis.io/schemas/hmcts/hmcts-entry-create-dto/)
+- [entry-get-detail-dto](https://apis.io/schemas/hmcts/hmcts-entry-get-detail-dto/)
+- [entry-get-detail-dto_1](https://apis.io/schemas/hmcts/hmcts-entry-get-detail-dto-1/)
+- [entry-update-dto](https://apis.io/schemas/hmcts/hmcts-entry-update-dto/)
+- [EventPayload](https://apis.io/schemas/hmcts/hmcts-event-payload/)
+- [EventTypeResponse](https://apis.io/schemas/hmcts/hmcts-event-type-response/)
+- [HmacCredentials](https://apis.io/schemas/hmcts/hmcts-hmac-credentials/)
+- [job-acknowledgement](https://apis.io/schemas/hmcts/hmcts-job-acknowledgement/)
+- [RotateSecretRequest](https://apis.io/schemas/hmcts/hmcts-rotate-secret-request/)
+- [RuleDetailResponse](https://apis.io/schemas/hmcts/hmcts-rule-detail-response/)
+- [RuleListResponse](https://apis.io/schemas/hmcts/hmcts-rule-list-response/)
+- [UpdateRuleRequest](https://apis.io/schemas/hmcts/hmcts-update-rule-request/)
+
+#### JSON-LD (1)
+
+Linked-data contexts for the provider's vocabulary.
+
+- [Hmcts Context](https://apis.io/jsonld/hmcts/hmcts-context/)
+
+#### Overlays (5)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Hmcts Applications Register Overlay](https://apis.io/overlays/hmcts/hmcts-applications-register-overlay/)
+- [Hmcts Core Case Data Aggregated Overlay](https://apis.io/overlays/hmcts/hmcts-core-case-data-aggregated-overlay/)
+- [Hmcts Core Case Data Definition Overlay](https://apis.io/overlays/hmcts/hmcts-core-case-data-definition-overlay/)
+- [Hmcts Crime Hearing Results Document Subscription Overlay](https://apis.io/overlays/hmcts/hmcts-crime-hearing-results-document-subscription-overlay/)
+- [Hmcts Results Validation Service Overlay](https://apis.io/overlays/hmcts/hmcts-results-validation-service-overlay/)
+
+#### Governance rules (2)
+
+Spectral rulesets for the provider's contracts.
+
+- [HM Courts & Tribunals Service — api cp crime hearing results document subscription rules](https://apis.io/rules/hmcts/hmcts-api-cp-crime-hearing-results-document-subscription-spectral-rules/)
+- [HM Courts & Tribunals Service API Rules](https://apis.io/rules/hmcts/hmcts-rules/)
+
+#### Security (3)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Hmcts Authentication](https://apis.io/security/hmcts/hmcts-authentication/)
+- [Hmcts Domain Security](https://apis.io/security/hmcts/hmcts-domain-security/)
+- [Hmcts Vulnerability Disclosure](https://apis.io/security/hmcts/hmcts-vulnerability-disclosure/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Hmcts Plans Pricing](https://apis.io/plans/hmcts/hmcts-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Hmcts Rate Limits](https://apis.io/rate-limits/hmcts/hmcts-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.gov.uk/government/organisations/hm-courts-and-tribunals-service)
+- [Documentation](https://hmcts.github.io/)
+- [Sign up](https://www.gov.uk/government/publications/register-a-food-business-privacy-notice)
+- [Support](https://www.gov.uk/help)
+- [Blog](https://insidehmcts.blog.gov.uk/)
+- [Security](https://www.gov.uk/help/report-vulnerability)
+- [Terms of service](https://www.gov.uk/help/terms-conditions)
+- [Privacy policy](https://www.gov.uk/government/organisations/hm-courts-and-tribunals-service/about/personal-information-charter)
+- [GitHub](https://github.com/hmcts)
+
+## API Evangelist rating
+
+**Kin Score 50.0** — developing · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 73.2 |
+| Contract quality | 71.9 |
+| Contract governance | 35.6 |
+| Operational transparency | 23.7 |
+| Developer ergonomics | 37.5 |
+| Access clarity | 34.2 |
+
+**Agent readiness 35.9** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | verified |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | yes |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | — |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 30.4** — Government & Public Sector
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/hmcts/](https://apis.io/providers/hmcts/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for HM Courts & Tribunals Service: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/hmcts/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
